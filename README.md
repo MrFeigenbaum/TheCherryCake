@@ -386,6 +386,13 @@ mvn jacoco:report
 HTML coverage reports are generated at:
 `target/site/jacoco/index.html`
 
+### Quality Assurance & Automated Testing Suite
+
+For the complete 24-request Postman collection, Newman CLI automation, 16-country mathematical traces, and WCAG 2.1 AA accessibility checklists:
+- [🌸 **Explore QA Suite & Postman Testing Collection (/qa)**](qa/README.md)
+- [🌸 **Formula Test Cases & 16-Country Reconciliations**](qa/test-cases/formula-test-cases.md)
+- [🌸 **UI & Accessibility Quality Checklist**](qa/checklists/ui-accessibility-checklist.md)
+
 <p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
 
 <p align="center">
