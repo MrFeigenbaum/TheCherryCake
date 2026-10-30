@@ -2163,6 +2163,186 @@
             }
         }
 
+        
+        /* REAL-TIME AUDIO EQUALIZER */
+        .audio-equalizer {
+            display: inline-flex;
+            gap: 2.5px;
+            align-items: flex-end;
+            height: 14px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .audio-equalizer span {
+            width: 2.5px;
+            height: 3px;
+            min-height: 3px;
+            background: var(--raspberry-coulis);
+            border-radius: 1.5px;
+            transition: height 0.08s ease, background-color 0.2s ease;
+            box-shadow: 0 0 4px rgba(230, 57, 96, 0.4);
+            display: inline-block;
+        }
+
+        .audio-equalizer.playing span {
+            background: var(--raspberry-bright);
+        }
+
+        /* Fallback keyframes if AudioContext is not accessible */
+        .audio-equalizer.fallback-anim.playing .bar-1 { animation: eqBounce1 0.45s ease-in-out infinite alternate; }
+        .audio-equalizer.fallback-anim.playing .bar-2 { animation: eqBounce2 0.35s ease-in-out 0.1s infinite alternate; }
+        .audio-equalizer.fallback-anim.playing .bar-3 { animation: eqBounce3 0.5s ease-in-out 0.2s infinite alternate; }
+        .audio-equalizer.fallback-anim.playing .bar-4 { animation: eqBounce4 0.4s ease-in-out 0.15s infinite alternate; }
+
+        @keyframes eqBounce1 { 0% { height: 3px; } 100% { height: 13px; } }
+        @keyframes eqBounce2 { 0% { height: 4px; } 100% { height: 15px; } }
+        @keyframes eqBounce3 { 0% { height: 3px; } 100% { height: 11px; } }
+        @keyframes eqBounce4 { 0% { height: 4px; } 100% { height: 14px; } }
+
+        /* LUXURY CUSTOM COUNTRY SELECTOR WITH REAL SVG FLAGS */
+        .custom-region-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .region-select-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--cherry-card) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-main) !important;
+            padding: 6px 14px 6px 10px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .region-select-trigger:hover,
+        .region-select-trigger:focus {
+            outline: none;
+            border-color: var(--raspberry-coulis) !important;
+            background: var(--cherry-card-hover) !important;
+            box-shadow: 0 0 14px var(--cherry-border-glow);
+        }
+
+        .region-flag-img {
+            width: 20px;
+            height: 14px;
+            object-fit: cover;
+            border-radius: 2.5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        .region-select-arrow {
+            color: var(--sakura-pink);
+            font-size: 0.72rem;
+            transition: transform 0.25s ease;
+            margin-left: 2px;
+        }
+
+        .region-select-trigger.active .region-select-arrow {
+            transform: rotate(180deg);
+        }
+
+        .region-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 290px;
+            max-height: 380px;
+            overflow-y: auto;
+            background: var(--cherry-panel);
+            border: 1px solid var(--cherry-border);
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+            z-index: 1200;
+            display: none;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .region-dropdown-menu.open {
+            display: block;
+            animation: fadeInRegionMenu 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeInRegionMenu {
+            from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .region-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-main);
+            font-size: 0.85rem;
+        }
+
+        .region-option:hover {
+            background: var(--cherry-card-hover);
+            color: var(--raspberry-coulis);
+        }
+
+        .region-option.selected {
+            background: rgba(230, 57, 96, 0.12);
+            color: var(--raspberry-bright);
+            font-weight: 700;
+            border-left: 3px solid var(--raspberry-coulis);
+        }
+
+        .region-option-code {
+            font-weight: 700;
+            min-width: 34px;
+            letter-spacing: 0.04em;
+        }
+
+        .region-option-name {
+            flex-grow: 1;
+            color: var(--text-dim);
+            font-size: 0.82rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .region-option.selected .region-option-name {
+            color: var(--text-main);
+        }
+
+        .region-option-meta {
+            font-size: 0.72rem;
+            color: var(--sakura-pink);
+            font-weight: 600;
+            white-space: nowrap;
+            background: rgba(255, 183, 197, 0.08);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        /* Mobile specific adjustments */
+        .mobile-region-dropdown .region-dropdown-menu {
+            position: static;
+            width: 100%;
+            max-height: 260px;
+            margin-top: 8px;
+            box-shadow: none;
+        }
+
         /* STOREFRONT LUXURY FOOTER */
         .storefront-footer {
             background: linear-gradient(180deg, #190814 0%, #0a0308 100%) !important;
@@ -2623,27 +2803,130 @@
                     <span id="themeToggleLabel">Light</span>
                 </button>
 
-                <!-- 16-Country Dynamic Switcher -->
-                <div class="region-select-wrap">
-                    <select id="globalRegionSelect" class="region-select" title="Switch Operating Country &amp; Currency">
-                    <option value="UZB" selected>🇺🇿 UZB</option>
-                    <option value="KAZ">🇰🇿 KAZ</option>
-                    <option value="GEO">🇬🇪 GEO</option>
-                    <option value="UKR">🇺🇦 UKR</option>
-                    <option value="CHN">🇨🇳 CHN</option>
-                    <option value="BLR">🇧🇾 BLR</option>
-                    <option value="LTU">🇱🇹 LTU</option>
-                    <option value="LVA">🇱🇻 LVA</option>
-                    <option value="EST">🇪🇪 EST</option>
-                    <option value="FIN">🇫🇮 FIN</option>
-                    <option value="SWE">🇸🇪 SWE</option>
-                    <option value="MDA">🇲🇩 MDA</option>
-                    <option value="ROU">🇷🇴 ROU</option>
-                    <option value="TUR">🇹🇷 TUR</option>
-                    <option value="AZE">🇦🇿 AZE</option>
-                    <option value="ARM">🇦🇲 ARM</option>
-                </select>
-                    <span class="region-select-arrow">&#9662;</span>
+                <!-- 16-Country Dynamic Switcher with Official Downloaded SVG Flags -->
+                <div class="custom-region-dropdown" id="desktopRegionDropdown">
+                    <button type="button" class="region-select-trigger" id="desktopRegionTrigger" onclick="toggleRegionDropdown(event, 'desktop')" aria-haspopup="listbox" aria-expanded="false" title="Switch Operating Country &amp; Currency">
+                        <img id="desktopRegionFlag" class="region-flag-img" src="assets/flags/uzb.svg" alt="UZB">
+                        <span id="desktopRegionCode">UZB</span>
+                        <span class="region-select-arrow">&#9662;</span>
+                    </button>
+                    <div class="region-dropdown-menu" id="desktopRegionMenu" role="listbox">
+                        
+                        <div class="region-option selected" data-code="UZB" onclick="selectRegion('UZB')">
+                            <img src="assets/flags/uzb.svg" class="region-flag-img" alt="UZB">
+                            <span class="region-option-code">UZB</span>
+                            <span class="region-option-name">Uzbekistan</span>
+                            <span class="region-option-meta">15% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="KAZ" onclick="selectRegion('KAZ')">
+                            <img src="assets/flags/kaz.svg" class="region-flag-img" alt="KAZ">
+                            <span class="region-option-code">KAZ</span>
+                            <span class="region-option-name">Kazakhstan</span>
+                            <span class="region-option-meta">20% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="GEO" onclick="selectRegion('GEO')">
+                            <img src="assets/flags/geo.svg" class="region-flag-img" alt="GEO">
+                            <span class="region-option-code">GEO</span>
+                            <span class="region-option-name">Georgia</span>
+                            <span class="region-option-meta">12% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="UKR" onclick="selectRegion('UKR')">
+                            <img src="assets/flags/ukr.svg" class="region-flag-img" alt="UKR">
+                            <span class="region-option-code">UKR</span>
+                            <span class="region-option-name">Ukraine</span>
+                            <span class="region-option-meta">8% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="CHN" onclick="selectRegion('CHN')">
+                            <img src="assets/flags/chn.svg" class="region-flag-img" alt="CHN">
+                            <span class="region-option-code">CHN</span>
+                            <span class="region-option-name">China</span>
+                            <span class="region-option-meta">18% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="BLR" onclick="selectRegion('BLR')">
+                            <img src="assets/flags/blr.svg" class="region-flag-img" alt="BLR">
+                            <span class="region-option-code">BLR</span>
+                            <span class="region-option-name">Belarus</span>
+                            <span class="region-option-meta">20% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="LTU" onclick="selectRegion('LTU')">
+                            <img src="assets/flags/ltu.svg" class="region-flag-img" alt="LTU">
+                            <span class="region-option-code">LTU</span>
+                            <span class="region-option-name">Lithuania</span>
+                            <span class="region-option-meta">21% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="LVA" onclick="selectRegion('LVA')">
+                            <img src="assets/flags/lva.svg" class="region-flag-img" alt="LVA">
+                            <span class="region-option-code">LVA</span>
+                            <span class="region-option-name">Latvia</span>
+                            <span class="region-option-meta">21% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="EST" onclick="selectRegion('EST')">
+                            <img src="assets/flags/est.svg" class="region-flag-img" alt="EST">
+                            <span class="region-option-code">EST</span>
+                            <span class="region-option-name">Estonia</span>
+                            <span class="region-option-meta">22% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="FIN" onclick="selectRegion('FIN')">
+                            <img src="assets/flags/fin.svg" class="region-flag-img" alt="FIN">
+                            <span class="region-option-code">FIN</span>
+                            <span class="region-option-name">Finland</span>
+                            <span class="region-option-meta">25.5% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="SWE" onclick="selectRegion('SWE')">
+                            <img src="assets/flags/swe.svg" class="region-flag-img" alt="SWE">
+                            <span class="region-option-code">SWE</span>
+                            <span class="region-option-name">Sweden</span>
+                            <span class="region-option-meta">25% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="MDA" onclick="selectRegion('MDA')">
+                            <img src="assets/flags/mda.svg" class="region-flag-img" alt="MDA">
+                            <span class="region-option-code">MDA</span>
+                            <span class="region-option-name">Moldova</span>
+                            <span class="region-option-meta">20% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="ROU" onclick="selectRegion('ROU')">
+                            <img src="assets/flags/rou.svg" class="region-flag-img" alt="ROU">
+                            <span class="region-option-code">ROU</span>
+                            <span class="region-option-name">Romania</span>
+                            <span class="region-option-meta">19% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="TUR" onclick="selectRegion('TUR')">
+                            <img src="assets/flags/tur.svg" class="region-flag-img" alt="TUR">
+                            <span class="region-option-code">TUR</span>
+                            <span class="region-option-name">Turkey</span>
+                            <span class="region-option-meta">20% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="AZE" onclick="selectRegion('AZE')">
+                            <img src="assets/flags/aze.svg" class="region-flag-img" alt="AZE">
+                            <span class="region-option-code">AZE</span>
+                            <span class="region-option-name">Azerbaijan</span>
+                            <span class="region-option-meta">18% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="ARM" onclick="selectRegion('ARM')">
+                            <img src="assets/flags/arm.svg" class="region-flag-img" alt="ARM">
+                            <span class="region-option-code">ARM</span>
+                            <span class="region-option-name">Armenia</span>
+                            <span class="region-option-meta">20% VAT</span>
+                        </div>
+                    </div>
+                    <select id="globalRegionSelect" style="display: none;" aria-hidden="true">
+                        <option value="UZB" selected>UZB</option>
+                        <option value="KAZ">KAZ</option>
+                        <option value="GEO">GEO</option>
+                        <option value="UKR">UKR</option>
+                        <option value="CHN">CHN</option>
+                        <option value="BLR">BLR</option>
+                        <option value="LTU">LTU</option>
+                        <option value="LVA">LVA</option>
+                        <option value="EST">EST</option>
+                        <option value="FIN">FIN</option>
+                        <option value="SWE">SWE</option>
+                        <option value="MDA">MDA</option>
+                        <option value="ROU">ROU</option>
+                        <option value="TUR">TUR</option>
+                        <option value="AZE">AZE</option>
+                        <option value="ARM">ARM</option>
+                    </select>
                 </div>
 
                 <!-- Slide-Out Cart Trigger Button -->
@@ -2697,26 +2980,116 @@
 
         <div class="mobile-nav-footer">
             <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px;">TERRITORY &amp; CURRENCY</div>
-            <div class="region-select-wrap" style="width: 100%; margin-bottom: 14px;">
-                <select id="mobileRegionSelect" class="region-select" style="width: 100%;" onchange="syncRegionSelect(this.value)">
-                    <option value="UZB" selected>🇺🇿 UZB</option>
-                    <option value="KAZ">🇰🇿 KAZ</option>
-                    <option value="GEO">🇬🇪 GEO</option>
-                    <option value="UKR">🇺🇦 UKR</option>
-                    <option value="CHN">🇨🇳 CHN</option>
-                    <option value="BLR">🇧🇾 BLR</option>
-                    <option value="LTU">🇱🇹 LTU</option>
-                    <option value="LVA">🇱🇻 LVA</option>
-                    <option value="EST">🇪🇪 EST</option>
-                    <option value="FIN">🇫🇮 FIN</option>
-                    <option value="SWE">🇸🇪 SWE</option>
-                    <option value="MDA">🇲🇩 MDA</option>
-                    <option value="ROU">🇷🇴 ROU</option>
-                    <option value="TUR">🇹🇷 TUR</option>
-                    <option value="AZE">🇦🇿 AZE</option>
-                    <option value="ARM">🇦🇲 ARM</option>
+            <div class="custom-region-dropdown mobile-region-dropdown" id="mobileRegionDropdown" style="width: 100%; margin-bottom: 14px;">
+                <button type="button" class="region-select-trigger" id="mobileRegionTrigger" onclick="toggleRegionDropdown(event, 'mobile')" style="width: 100%; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <img id="mobileRegionFlag" class="region-flag-img" src="assets/flags/uzb.svg" alt="UZB">
+                        <span id="mobileRegionCode">UZB</span>
+                    </div>
+                    <span class="region-select-arrow">&#9662;</span>
+                </button>
+                <div class="region-dropdown-menu" id="mobileRegionMenu" role="listbox">
+                    
+                        <div class="region-option selected" data-code="UZB" onclick="selectRegion('UZB')">
+                            <img src="assets/flags/uzb.svg" class="region-flag-img" alt="UZB">
+                            <span class="region-option-code">UZB</span>
+                            <span class="region-option-name">Uzbekistan</span>
+                            <span class="region-option-meta">15% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="KAZ" onclick="selectRegion('KAZ')">
+                            <img src="assets/flags/kaz.svg" class="region-flag-img" alt="KAZ">
+                            <span class="region-option-code">KAZ</span>
+                            <span class="region-option-name">Kazakhstan</span>
+                            <span class="region-option-meta">20% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="GEO" onclick="selectRegion('GEO')">
+                            <img src="assets/flags/geo.svg" class="region-flag-img" alt="GEO">
+                            <span class="region-option-code">GEO</span>
+                            <span class="region-option-name">Georgia</span>
+                            <span class="region-option-meta">12% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="UKR" onclick="selectRegion('UKR')">
+                            <img src="assets/flags/ukr.svg" class="region-flag-img" alt="UKR">
+                            <span class="region-option-code">UKR</span>
+                            <span class="region-option-name">Ukraine</span>
+                            <span class="region-option-meta">8% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="CHN" onclick="selectRegion('CHN')">
+                            <img src="assets/flags/chn.svg" class="region-flag-img" alt="CHN">
+                            <span class="region-option-code">CHN</span>
+                            <span class="region-option-name">China</span>
+                            <span class="region-option-meta">18% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="BLR" onclick="selectRegion('BLR')">
+                            <img src="assets/flags/blr.svg" class="region-flag-img" alt="BLR">
+                            <span class="region-option-code">BLR</span>
+                            <span class="region-option-name">Belarus</span>
+                            <span class="region-option-meta">20% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="LTU" onclick="selectRegion('LTU')">
+                            <img src="assets/flags/ltu.svg" class="region-flag-img" alt="LTU">
+                            <span class="region-option-code">LTU</span>
+                            <span class="region-option-name">Lithuania</span>
+                            <span class="region-option-meta">21% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="LVA" onclick="selectRegion('LVA')">
+                            <img src="assets/flags/lva.svg" class="region-flag-img" alt="LVA">
+                            <span class="region-option-code">LVA</span>
+                            <span class="region-option-name">Latvia</span>
+                            <span class="region-option-meta">21% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="EST" onclick="selectRegion('EST')">
+                            <img src="assets/flags/est.svg" class="region-flag-img" alt="EST">
+                            <span class="region-option-code">EST</span>
+                            <span class="region-option-name">Estonia</span>
+                            <span class="region-option-meta">22% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="FIN" onclick="selectRegion('FIN')">
+                            <img src="assets/flags/fin.svg" class="region-flag-img" alt="FIN">
+                            <span class="region-option-code">FIN</span>
+                            <span class="region-option-name">Finland</span>
+                            <span class="region-option-meta">25.5% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="SWE" onclick="selectRegion('SWE')">
+                            <img src="assets/flags/swe.svg" class="region-flag-img" alt="SWE">
+                            <span class="region-option-code">SWE</span>
+                            <span class="region-option-name">Sweden</span>
+                            <span class="region-option-meta">25% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="MDA" onclick="selectRegion('MDA')">
+                            <img src="assets/flags/mda.svg" class="region-flag-img" alt="MDA">
+                            <span class="region-option-code">MDA</span>
+                            <span class="region-option-name">Moldova</span>
+                            <span class="region-option-meta">20% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="ROU" onclick="selectRegion('ROU')">
+                            <img src="assets/flags/rou.svg" class="region-flag-img" alt="ROU">
+                            <span class="region-option-code">ROU</span>
+                            <span class="region-option-name">Romania</span>
+                            <span class="region-option-meta">19% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="TUR" onclick="selectRegion('TUR')">
+                            <img src="assets/flags/tur.svg" class="region-flag-img" alt="TUR">
+                            <span class="region-option-code">TUR</span>
+                            <span class="region-option-name">Turkey</span>
+                            <span class="region-option-meta">20% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="AZE" onclick="selectRegion('AZE')">
+                            <img src="assets/flags/aze.svg" class="region-flag-img" alt="AZE">
+                            <span class="region-option-code">AZE</span>
+                            <span class="region-option-name">Azerbaijan</span>
+                            <span class="region-option-meta">18% VAT</span>
+                        </div>
+                        <div class="region-option" data-code="ARM" onclick="selectRegion('ARM')">
+                            <img src="assets/flags/arm.svg" class="region-flag-img" alt="ARM">
+                            <span class="region-option-code">ARM</span>
+                            <span class="region-option-name">Armenia</span>
+                            <span class="region-option-meta">20% VAT</span>
+                        </div>
+                </div>
+                <select id="mobileRegionSelect" style="display: none;" aria-hidden="true">
+                    <option value="UZB" selected>UZB</option>
                 </select>
-                <span class="region-select-arrow">&#9662;</span>
             </div>
 
             <button class="theme-toggle-btn" style="width: 100%; justify-content: center;" onclick="toggleTheme()">
@@ -2789,7 +3162,10 @@
                     <span class="audio-track-name" id="audioTrackName">Rio - Fly Love</span>
                     <span class="audio-status-label" id="audioStatus">
                         <span class="audio-equalizer" id="audioEq">
-                            <span></span><span></span><span></span>
+                            <span class="eq-bar bar-1"></span>
+                            <span class="eq-bar bar-2"></span>
+                            <span class="eq-bar bar-3"></span>
+                            <span class="eq-bar bar-4"></span>
                         </span>
                         <span id="audioStatusText">Click to play</span>
                     </span>
@@ -2855,7 +3231,7 @@
                 </p>
                 <div class="region-status-badge">
                     <span>Active Territory:</span>
-                    <strong id="activeRegionName">Uzbekistan (UZB)</strong>
+                    <span style="display: inline-flex; align-items: center; gap: 6px;"><img id="activeRegionBadgeFlag" class="region-flag-img" src="assets/flags/uzb.svg" alt="UZB"><strong id="activeRegionName">Uzbekistan (UZB)</strong></span>
                     <span>&bull;</span>
                     <span id="activeCurrencyDisplay">Currency: UZS (soʻm)</span>
                     <span class="rate-pill" id="activeVatDisplay">15% Legal VAT</span>
@@ -3288,12 +3664,28 @@
                 if (audioDisc) audioDisc.classList.add('spinning');
                 if (audioEq) audioEq.classList.add('playing');
                 if (audioStatusText) audioStatusText.textContent = 'Now Playing';
+
+                initAudioAnalyser();
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                if (!eqAnimFrameId) {
+                    eqAnimFrameId = requestAnimationFrame(updateEqualizerFrame);
+                }
             } else {
                 if (playIcon) playIcon.style.display = 'block';
                 if (pauseIcon) pauseIcon.style.display = 'none';
                 if (audioDisc) audioDisc.classList.remove('spinning');
                 if (audioEq) audioEq.classList.remove('playing');
                 if (audioStatusText) audioStatusText.textContent = 'Paused';
+
+                if (eqAnimFrameId) {
+                    cancelAnimationFrame(eqAnimFrameId);
+                    eqAnimFrameId = null;
+                }
+                if (audioEq) {
+                    audioEq.querySelectorAll('span').forEach(b => b.style.height = '3px');
+                }
             }
         }
 
@@ -3924,48 +4316,201 @@
             }
         }
 
-                const COUNTRY_FLAGS = {
-            'UZB': '🇺🇿',
-            'KAZ': '🇰🇿',
-            'GEO': '🇬🇪',
-            'UKR': '🇺🇦',
-            'CHN': '🇨🇳',
-            'BLR': '🇧🇾',
-            'LTU': '🇱🇹',
-            'LVA': '🇱🇻',
-            'EST': '🇪🇪',
-            'FIN': '🇫🇮',
-            'SWE': '🇸🇪',
-            'MDA': '🇲🇩',
-            'ROU': '🇷🇴',
-            'TUR': '🇹🇷',
-            'AZE': '🇦🇿',
-            'ARM': '🇦🇲'
-        };
+                
+        // =============================================================
+        // OPERATING REGIONS METADATA & CUSTOM SVG FLAG SELECTOR
+        // =============================================================
+        const OPERATING_REGIONS = [
+            { code: 'UZB', name: 'Uzbekistan', currency: 'UZS', symbol: "so'm", vat: '15%' },
+            { code: 'KAZ', name: 'Kazakhstan', currency: 'KZT', symbol: '₸', vat: '20%' },
+            { code: 'GEO', name: 'Georgia', currency: 'GEL', symbol: '₾', vat: '12%' },
+            { code: 'UKR', name: 'Ukraine', currency: 'UAH', symbol: '₴', vat: '8%' },
+            { code: 'CHN', name: 'China', currency: 'CNY', symbol: '¥', vat: '18%' },
+            { code: 'BLR', name: 'Belarus', currency: 'BYN', symbol: 'Br', vat: '20%' },
+            { code: 'LTU', name: 'Lithuania', currency: 'EUR', symbol: '€', vat: '21%' },
+            { code: 'LVA', name: 'Latvia', currency: 'EUR', symbol: '€', vat: '21%' },
+            { code: 'EST', name: 'Estonia', currency: 'EUR', symbol: '€', vat: '22%' },
+            { code: 'FIN', name: 'Finland', currency: 'EUR', symbol: '€', vat: '25.5%' },
+            { code: 'SWE', name: 'Sweden', currency: 'SEK', symbol: 'kr', vat: '25%' },
+            { code: 'MDA', name: 'Moldova', currency: 'MDL', symbol: 'L', vat: '20%' },
+            { code: 'ROU', name: 'Romania', currency: 'RON', symbol: 'lei', vat: '19%' },
+            { code: 'TUR', name: 'Turkey', currency: 'TRY', symbol: '₺', vat: '20%' },
+            { code: 'AZE', name: 'Azerbaijan', currency: 'AZN', symbol: '₼', vat: '18%' },
+            { code: 'ARM', name: 'Armenia', currency: 'AMD', symbol: '֏', vat: '20%' }
+        ];
+
+        function toggleRegionDropdown(e, type) {
+            e.stopPropagation();
+            const deskMenu = document.getElementById('desktopRegionMenu');
+            const mobMenu = document.getElementById('mobileRegionMenu');
+            const deskTrigger = document.getElementById('desktopRegionTrigger');
+            const mobTrigger = document.getElementById('mobileRegionTrigger');
+
+            if (type === 'desktop') {
+                if (mobMenu) mobMenu.classList.remove('open');
+                if (mobTrigger) mobTrigger.classList.remove('active');
+                if (deskMenu) {
+                    const isOpen = deskMenu.classList.toggle('open');
+                    if (deskTrigger) deskTrigger.classList.toggle('active', isOpen);
+                }
+            } else {
+                if (deskMenu) deskMenu.classList.remove('open');
+                if (deskTrigger) deskTrigger.classList.remove('active');
+                if (mobMenu) {
+                    const isOpen = mobMenu.classList.toggle('open');
+                    if (mobTrigger) mobTrigger.classList.toggle('active', isOpen);
+                }
+            }
+        }
+
+        function closeAllRegionDropdowns() {
+            const deskMenu = document.getElementById('desktopRegionMenu');
+            const mobMenu = document.getElementById('mobileRegionMenu');
+            const deskTrigger = document.getElementById('desktopRegionTrigger');
+            const mobTrigger = document.getElementById('mobileRegionTrigger');
+            if (deskMenu) deskMenu.classList.remove('open');
+            if (mobMenu) mobMenu.classList.remove('open');
+            if (deskTrigger) deskTrigger.classList.remove('active');
+            if (mobTrigger) mobTrigger.classList.remove('active');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.custom-region-dropdown')) {
+                closeAllRegionDropdowns();
+            }
+        });
+
+        function selectRegion(code) {
+            const reg = OPERATING_REGIONS.find(r => r.code === code) || { code: code, name: code };
+            const flagSrc = `assets/flags/${code.toLowerCase()}.svg`;
+
+            // Update trigger buttons
+            const deskFlag = document.getElementById('desktopRegionFlag');
+            const deskCode = document.getElementById('desktopRegionCode');
+            const mobFlag = document.getElementById('mobileRegionFlag');
+            const mobCode = document.getElementById('mobileRegionCode');
+            const badgeFlag = document.getElementById('activeRegionBadgeFlag');
+
+            if (deskFlag) { deskFlag.src = flagSrc; deskFlag.alt = code; }
+            if (deskCode) deskCode.textContent = code;
+            if (mobFlag) { mobFlag.src = flagSrc; mobFlag.alt = code; }
+            if (mobCode) mobCode.textContent = code;
+            if (badgeFlag) { badgeFlag.src = flagSrc; badgeFlag.alt = code; }
+
+            // Update selected class in dropdowns
+            document.querySelectorAll('.region-option').forEach(el => {
+                if (el.dataset.code === code) el.classList.add('selected');
+                else el.classList.remove('selected');
+            });
+
+            closeAllRegionDropdowns();
+
+            // Sync hidden select and dispatch change event
+            const gSelect = document.getElementById('globalRegionSelect');
+            if (gSelect) {
+                gSelect.value = code;
+                gSelect.dispatchEvent(new Event('change'));
+            }
+            const mSelect = document.getElementById('mobileRegionSelect');
+            if (mSelect) {
+                mSelect.value = code;
+            }
+        }
 
         function renderRegionSelect(regions) {
-            globalRegionSelect.innerHTML = '';
-            if (mobileRegionSelect) mobileRegionSelect.innerHTML = '';
+            // Update custom dropdown menus with any new or fetched metadata
+            const deskMenu = document.getElementById('desktopRegionMenu');
+            const mobMenu = document.getElementById('mobileRegionMenu');
+            const gSelect = document.getElementById('globalRegionSelect');
+            const mSelect = document.getElementById('mobileRegionSelect');
 
+            if (!regions || regions.length === 0) return;
+
+            let html = '';
+            let optHtml = '';
             regions.forEach(r => {
-                const flag = COUNTRY_FLAGS[r.code] || '🌐';
-                const label = `${flag} ${r.code}`;
-
-                const opt = document.createElement('option');
-                opt.value = r.code;
-                opt.textContent = label;
-                if (r.code === APP_STATE.region) opt.selected = true;
-                globalRegionSelect.appendChild(opt);
-
-                if (mobileRegionSelect) {
-                    const mOpt = document.createElement('option');
-                    mOpt.value = r.code;
-                    mOpt.textContent = label;
-                    if (r.code === APP_STATE.region) mOpt.selected = true;
-                    mobileRegionSelect.appendChild(mOpt);
-                }
+                const flagSrc = `assets/flags/${r.code.toLowerCase()}.svg`;
+                const isSelected = r.code === APP_STATE.region ? 'selected' : '';
+                html += `
+                    <div class="region-option ${isSelected}" data-code="${r.code}" onclick="selectRegion('${r.code}')">
+                        <img src="${flagSrc}" class="region-flag-img" alt="${r.code}">
+                        <span class="region-option-code">${r.code}</span>
+                        <span class="region-option-name">${r.name}</span>
+                        <span class="region-option-meta">${r.vatRate}% VAT</span>
+                    </div>`;
+                optHtml += `<option value="${r.code}" ${isSelected ? 'selected' : ''}>${r.code}</option>`;
             });
+
+            if (deskMenu) deskMenu.innerHTML = html;
+            if (mobMenu) mobMenu.innerHTML = html;
+            if (gSelect) gSelect.innerHTML = optHtml;
+            if (mSelect) mSelect.innerHTML = optHtml;
         }
+
+        // =============================================================
+        // REAL-TIME WEB AUDIO API FREQUENCY EQUALIZER
+        // =============================================================
+        let audioCtx = null;
+        let audioAnalyser = null;
+        let audioSourceNode = null;
+        let eqAnimFrameId = null;
+
+        function initAudioAnalyser() {
+            if (audioAnalyser) return;
+            try {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContextClass) {
+                    if (audioEq) audioEq.classList.add('fallback-anim');
+                    return;
+                }
+                audioCtx = new AudioContextClass();
+                audioAnalyser = audioCtx.createAnalyser();
+                audioAnalyser.fftSize = 64; // 32 frequency bins
+                audioAnalyser.smoothingTimeConstant = 0.75;
+
+                audioSourceNode = audioCtx.createMediaElementSource(bgAudio);
+                audioSourceNode.connect(audioAnalyser);
+                audioAnalyser.connect(audioCtx.destination);
+            } catch (err) {
+                console.warn("Web Audio API initialization notice:", err);
+                if (audioEq) audioEq.classList.add('fallback-anim');
+            }
+        }
+
+        function updateEqualizerFrame() {
+            if (!bgAudio || bgAudio.paused) {
+                if (audioEq) {
+                    audioEq.querySelectorAll('span').forEach(b => b.style.height = '3px');
+                }
+                if (eqAnimFrameId) {
+                    cancelAnimationFrame(eqAnimFrameId);
+                    eqAnimFrameId = null;
+                }
+                return;
+            }
+
+            if (audioAnalyser) {
+                const bufferLength = audioAnalyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                audioAnalyser.getByteFrequencyData(dataArray);
+
+                const bars = audioEq ? audioEq.querySelectorAll('span') : [];
+                if (bars.length > 0) {
+                    // 4 frequency bins: bass (bin 1), mid-low (bin 4), mid-high (bin 9), treble (bin 15)
+                    const bins = [1, 4, 9, 15];
+                    bars.forEach((bar, idx) => {
+                        const val = dataArray[bins[idx]] || 0;
+                        const targetHeight = Math.max(3, Math.min(16, Math.round((val / 255) * 16)));
+                        bar.style.height = `${targetHeight}px`;
+                    });
+                }
+            } else if (audioEq && !audioEq.classList.contains('fallback-anim')) {
+                audioEq.classList.add('fallback-anim');
+            }
+
+            eqAnimFrameId = requestAnimationFrame(updateEqualizerFrame);
+        }
+
 
         // -------------------------------------------------------------
         // REST API: Load Pickup Points & Delivery Zones
