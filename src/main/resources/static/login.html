@@ -12,12 +12,21 @@
         rel="stylesheet">
     <link rel="icon" type="image/png" href="assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png">
 
+    <!-- Anti-flash script -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('cherry_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
     <style>
-        :root {
+        :root, [data-theme="dark"] {
             --cherry-void: #12060e;
             --cherry-deep: #190814;
             --cherry-panel: #230b1c;
             --cherry-card: #2d0e24;
+            --cherry-card-hover: #38132d;
             --cherry-border: rgba(255, 183, 197, 0.16);
             --cherry-border-glow: rgba(230, 57, 96, 0.4);
 
@@ -31,11 +40,52 @@
 
             --cheesecake-cream: #fff6ed;
             --crust-gold: #e5b061;
+            --crust-glow: #f5cf8e;
+
             --mint-fresh: #38c172;
+            --mint-glow: rgba(56, 193, 114, 0.3);
 
             --text-main: #fdf2f5;
             --text-dim: #c7a3b3;
             --text-faint: #805f6e;
+
+            --shadow-elevation: 0 16px 40px -10px rgba(0, 0, 0, 0.7);
+            --nav-bg: rgba(18, 6, 14, 0.94);
+            --input-bg: rgba(18, 6, 14, 0.7);
+        }
+
+        [data-theme="light"] {
+            /* Raspberry Cheesecake Tones */
+            --cherry-void: #fcf6f3;
+            --cherry-deep: #f6eae5;
+            --cherry-panel: #ffffff;
+            --cherry-card: #ffffff;
+            --cherry-card-hover: #fff3f6;
+            --cherry-border: rgba(184, 46, 74, 0.16);
+            --cherry-border-glow: rgba(200, 35, 72, 0.35);
+
+            --raspberry-coulis: #c82348;
+            --raspberry-bright: #e02850;
+            --raspberry-dim: #981735;
+
+            --sakura-pink: #c82e50;
+            --sakura-glow: #e04b6e;
+            --sakura-soft: #ffe4eb;
+
+            --cheesecake-cream: #2d0e1e;
+            --crust-gold: #b37329;
+            --crust-glow: #c7863a;
+
+            --mint-fresh: #28a745;
+            --mint-glow: rgba(40, 167, 69, 0.25);
+
+            --text-main: #2d0e1e;
+            --text-dim: #642b3e;
+            --text-faint: #8c5366;
+
+            --shadow-elevation: 0 12px 36px -6px rgba(184, 46, 74, 0.12);
+            --nav-bg: rgba(252, 246, 243, 0.95);
+            --input-bg: #ffffff;
         }
 
         * {
@@ -53,6 +103,7 @@
             flex-direction: column;
             overflow-x: hidden;
             position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .display-font {
@@ -67,28 +118,32 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
+        /* SAKURA BACKGROUND CANVAS */
         #sakura-canvas {
             position: fixed;
-            inset: 0;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
             z-index: 1;
         }
 
-        /* HEADER NAVBAR */
-        .auth-header {
+        /* HEADER */
+        header.auth-header {
             position: relative;
             z-index: 10;
-            background: rgba(18, 6, 14, 0.85);
+            width: 100%;
+            background: var(--nav-bg);
             backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--cherry-border);
-            padding: 14px 24px;
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
-        .auth-nav {
-            max-width: 1100px;
+        .nav-container {
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 12px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -98,44 +153,29 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            text-decoration: none !important;
+            text-decoration: none;
         }
 
-        .brand-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(230, 57, 96, 0.4), rgba(45, 14, 36, 0.8));
-            border: 1px solid rgba(255, 183, 197, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 14px rgba(230, 57, 96, 0.35);
-        }
-
-        .brand-icon img {
-            width: 22px;
-            height: 22px;
+        .brand-link img {
+            width: 32px;
+            height: 32px;
             object-fit: contain;
-            animation: rotateLogo 20s linear infinite;
-        }
-
-        @keyframes rotateLogo {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            filter: drop-shadow(0 0 8px rgba(230, 57, 96, 0.45));
         }
 
         .brand-text h1 {
-            font-family: 'Playfair Display', serif;
             font-size: 1.25rem;
             color: var(--cheesecake-cream);
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
             line-height: 1.1;
         }
 
         .brand-text span {
-            font-family: 'Parisienne', cursive;
-            font-size: 0.95rem;
-            color: var(--sakura-pink);
+            font-size: 0.75rem;
+            color: var(--raspberry-coulis);
+            font-weight: 600;
+            letter-spacing: 0.05em;
         }
 
         .nav-actions {
@@ -145,158 +185,153 @@
         }
 
         .nav-btn {
-            background: rgba(45, 14, 36, 0.7);
-            border: 1px solid var(--cherry-border);
-            color: var(--cheesecake-cream);
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
             padding: 8px 16px;
-            border-radius: 9999px;
+            border-radius: 999px;
             font-size: 0.85rem;
             font-weight: 600;
             text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            border: 1px solid var(--cherry-border);
+            background: var(--cherry-card);
+            color: var(--text-main);
             transition: all 0.25s ease;
         }
 
         .nav-btn:hover {
-            border-color: var(--sakura-pink);
-            background: rgba(56, 19, 45, 0.9);
-            transform: translateY(-2px);
-            color: #fff;
+            border-color: var(--raspberry-coulis);
+            box-shadow: 0 0 14px var(--cherry-border-glow);
+            transform: translateY(-1px);
         }
 
-        /* MAIN CONTAINER */
-        .auth-main {
-            flex-grow: 1;
+        .theme-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid var(--cherry-border);
+            background: var(--cherry-card);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--raspberry-coulis);
+            box-shadow: 0 0 14px var(--cherry-border-glow);
+            transform: translateY(-1px);
+        }
+
+        /* MAIN AUTH CARD */
+        main.auth-main {
+            position: relative;
+            z-index: 10;
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 40px 20px;
-            position: relative;
-            z-index: 5;
         }
 
         .auth-card {
-            background: linear-gradient(160deg, rgba(45, 14, 36, 0.92), rgba(28, 8, 22, 0.95));
-            border: 1px solid var(--cherry-border-glow);
-            border-radius: 24px;
             width: 100%;
             max-width: 480px;
+            background: var(--cherry-panel);
+            border: 1px solid var(--cherry-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-elevation);
             padding: 36px 32px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(230, 57, 96, 0.25);
-            backdrop-filter: blur(14px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .auth-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--raspberry-coulis), var(--crust-gold));
+            backdrop-filter: blur(12px);
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
         .auth-emblem-wrap {
             display: flex;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .auth-emblem {
-            width: 70px;
-            height: 70px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(230, 57, 96, 0.4), rgba(45, 14, 36, 0.9));
-            border: 2px solid rgba(255, 183, 197, 0.4);
+            background: var(--cherry-card);
+            border: 1px solid var(--cherry-border);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 24px rgba(230, 57, 96, 0.35);
+            box-shadow: 0 0 20px var(--cherry-border-glow);
         }
 
         .auth-emblem img {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             object-fit: contain;
         }
 
-        .auth-heading {
+        .auth-header-text {
             text-align: center;
             margin-bottom: 24px;
         }
 
-        .auth-title {
+        .auth-header-text h2 {
             font-size: 1.8rem;
             color: var(--cheesecake-cream);
-            margin-bottom: 6px;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
         }
 
-        .auth-subtitle {
-            font-size: 0.88rem;
+        .auth-header-text p {
             color: var(--text-dim);
-            line-height: 1.4;
+            font-size: 0.9rem;
+            margin-top: 4px;
         }
 
         /* TABS */
         .auth-tabs {
             display: flex;
-            background: rgba(18, 6, 14, 0.6);
+            background: var(--cherry-deep);
             border: 1px solid var(--cherry-border);
-            border-radius: 9999px;
+            border-radius: 12px;
             padding: 4px;
-            margin-bottom: 26px;
+            margin-bottom: 24px;
         }
 
-        .auth-tab-btn {
+        .tab-btn {
             flex: 1;
             background: transparent;
             border: none;
             color: var(--text-dim);
-            padding: 9px;
-            border-radius: 9999px;
+            font-family: inherit;
+            font-weight: 600;
             font-size: 0.9rem;
-            font-weight: 700;
+            padding: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.25s ease;
-            text-align: center;
         }
 
-        .auth-tab-btn.active {
-            background: linear-gradient(135deg, var(--raspberry-coulis), var(--raspberry-dim));
-            color: #fff;
-            box-shadow: 0 3px 12px rgba(230, 57, 96, 0.4);
+        .tab-btn.active {
+            background: var(--raspberry-coulis);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(230, 57, 96, 0.4);
         }
 
-        /* FORMS */
-        .form-pane {
-            display: none;
-        }
-
-        .form-pane.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        /* FORM ELEMENTS */
+        .form-group {
             margin-bottom: 16px;
         }
 
-        .input-group label {
-            font-size: 0.82rem;
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
             font-weight: 600;
-            color: var(--sakura-pink);
+            color: var(--cheesecake-cream);
+            margin-bottom: 6px;
         }
 
         .input-wrapper {
@@ -307,20 +342,20 @@
 
         .input-wrapper input {
             width: 100%;
-            background: rgba(18, 6, 14, 0.7);
+            background: var(--input-bg);
             border: 1px solid var(--cherry-border);
-            color: var(--cheesecake-cream);
-            padding: 11px 14px;
+            color: var(--text-main);
+            padding: 12px 14px;
             border-radius: 10px;
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             font-family: inherit;
             outline: none;
             transition: all 0.2s;
         }
 
         .input-wrapper input:focus {
-            border-color: var(--sakura-pink);
-            box-shadow: 0 0 14px rgba(230, 57, 96, 0.3);
+            border-color: var(--raspberry-coulis);
+            box-shadow: 0 0 14px var(--cherry-border-glow);
         }
 
         .toggle-pwd-btn {
@@ -330,31 +365,36 @@
             border: none;
             color: var(--text-dim);
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            padding: 4px;
         }
 
         .toggle-pwd-btn:hover {
-            color: var(--sakura-pink);
+            color: var(--raspberry-coulis);
         }
 
         .submit-btn {
             width: 100%;
             background: linear-gradient(135deg, var(--raspberry-coulis), var(--raspberry-bright));
             border: none;
-            color: #fff;
+            color: #ffffff;
             padding: 13px;
             border-radius: 10px;
             font-size: 0.98rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.25s ease;
-            box-shadow: 0 4px 20px rgba(230, 57, 96, 0.4);
+            box-shadow: 0 4px 18px rgba(230, 57, 96, 0.4);
             margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 26px rgba(230, 57, 96, 0.65);
+            box-shadow: 0 6px 24px rgba(230, 57, 96, 0.6);
         }
 
         .submit-btn:disabled {
@@ -363,187 +403,178 @@
             transform: none;
         }
 
-        /* QUICK TEST CREDENTIALS */
-        .demo-credentials-box {
+        /* DEMO CREDENTIALS BOX */
+        .demo-box {
             margin-top: 24px;
-            background: rgba(18, 6, 14, 0.5);
-            border: 1px dashed var(--cherry-border);
-            border-radius: 12px;
-            padding: 14px;
-            font-size: 0.8rem;
-            color: var(--text-dim);
+            padding-top: 20px;
+            border-top: 1px solid var(--cherry-border);
         }
 
         .demo-title {
-            font-weight: 700;
-            color: var(--sakura-pink);
-            margin-bottom: 8px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .demo-pills {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .demo-btn {
+            background: var(--cherry-card);
+            border: 1px dashed var(--cherry-border);
+            color: var(--text-main);
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: space-between;
+            transition: all 0.2s ease;
         }
 
-        .demo-chips {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+        .demo-btn:hover {
+            border-color: var(--raspberry-coulis);
+            background: var(--cherry-card-hover);
         }
 
-        .demo-chip {
-            background: rgba(45, 14, 36, 0.8);
-            border: 1px solid var(--cherry-border);
-            color: var(--cheesecake-cream);
-            padding: 6px 12px;
-            border-radius: 9999px;
-            font-size: 0.76rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
+        .demo-btn strong {
+            color: var(--raspberry-coulis);
         }
 
-        .demo-chip:hover {
-            border-color: var(--sakura-pink);
-            background: var(--raspberry-coulis);
-            color: #fff;
-        }
-
-        /* SIGNED IN PROFILE CARD */
-        .profile-card {
+        /* ALERT / TOAST */
+        .alert-box {
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            margin-bottom: 16px;
             display: none;
-            text-align: center;
-            animation: fadeIn 0.4s ease;
         }
 
-        .profile-card.active {
+        .alert-box.error {
+            background: rgba(220, 53, 69, 0.15);
+            border: 1px solid #dc3545;
+            color: #ff6b6b;
             display: block;
         }
 
-        .profile-avatar {
-            width: 76px;
-            height: 76px;
+        .alert-box.success {
+            background: rgba(40, 167, 69, 0.15);
+            border: 1px solid #28a745;
+            color: #28a745;
+            display: block;
+        }
+
+        /* LOGGED-IN VIEW */
+        .logged-in-panel {
+            display: none;
+            text-align: center;
+        }
+
+        .user-avatar-wrap {
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--raspberry-coulis), var(--crust-gold));
-            color: #fff;
+            background: var(--cherry-card);
+            border: 2px solid var(--raspberry-coulis);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            font-weight: 800;
-            margin: 0 auto 16px auto;
+            margin: 0 auto 16px;
+            font-size: 2.2rem;
             box-shadow: 0 0 24px rgba(230, 57, 96, 0.4);
         }
 
-        .profile-name {
-            font-size: 1.4rem;
+        .user-welcome-name {
+            font-size: 1.5rem;
             color: var(--cheesecake-cream);
-            margin-bottom: 4px;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
         }
 
-        .profile-email {
-            font-size: 0.88rem;
-            color: var(--text-dim);
-            margin-bottom: 12px;
-        }
-
-        .profile-role-pill {
+        .user-role-badge {
             display: inline-block;
-            background: rgba(56, 193, 114, 0.2);
-            border: 1px solid var(--mint-fresh);
-            color: var(--mint-fresh);
-            font-size: 0.78rem;
-            font-weight: 700;
+            margin-top: 6px;
             padding: 3px 12px;
-            border-radius: 9999px;
-            margin-bottom: 22px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
             letter-spacing: 0.05em;
-        }
-
-        .profile-role-pill.admin {
-            background: rgba(230, 57, 96, 0.2);
-            border-color: var(--raspberry-coulis);
-            color: var(--sakura-pink);
-        }
-
-        .token-box {
-            background: rgba(18, 6, 14, 0.7);
+            background: rgba(230, 57, 96, 0.15);
+            color: var(--raspberry-coulis);
             border: 1px solid var(--cherry-border);
-            border-radius: 10px;
+        }
+
+        .logged-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .action-link {
             padding: 12px;
-            font-size: 0.76rem;
-            color: var(--text-dim);
-            margin-bottom: 24px;
-            text-align: left;
-        }
-
-        .token-label {
-            font-weight: 700;
-            color: var(--crust-gold);
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .token-val {
-            word-break: break-all;
-            color: var(--sakura-soft);
-        }
-
-        .profile-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .btn-signout {
-            background: rgba(45, 14, 36, 0.8);
-            border: 1px solid var(--cherry-border);
-            color: #ff6b81;
-            padding: 11px;
             border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-signout:hover {
-            background: rgba(230, 57, 96, 0.25);
-            border-color: #ff6b81;
-            color: #fff;
-        }
-
-        /* TOAST NOTIFICATIONS */
-        .toast-container {
-            position: fixed;
-            bottom: 24px;
-            left: 24px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-
-        .toast-card {
-            background: rgba(30, 9, 23, 0.95);
-            border: 1px solid var(--cherry-border-glow);
-            color: var(--cheesecake-cream);
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-size: 0.88rem;
+            font-size: 0.92rem;
             font-weight: 600;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(12px);
+            text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 10px;
-            animation: slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            pointer-events: auto;
-            max-width: 360px;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s ease;
         }
 
-        @keyframes slideInToast {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .action-link.primary {
+            background: linear-gradient(135deg, var(--raspberry-coulis), var(--raspberry-bright));
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(230, 57, 96, 0.4);
+        }
+
+        .action-link.secondary {
+            background: var(--cherry-card);
+            border: 1px solid var(--cherry-border);
+            color: var(--text-main);
+        }
+
+        .action-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid rgba(220, 53, 69, 0.4);
+            color: #ff6b6b;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.12);
+        }
+
+        /* FOOTER */
+        footer.auth-footer {
+            position: relative;
+            z-index: 10;
+            background: var(--cherry-deep);
+            border-top: 1px solid var(--cherry-border);
+            padding: 20px 24px;
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
     </style>
 </head>
@@ -553,11 +584,9 @@
 
     <!-- HEADER NAVBAR -->
     <header class="auth-header">
-        <nav class="auth-nav">
+        <div class="nav-container">
             <a href="/index.html" class="brand-link">
-                <div class="brand-icon">
-                    <img src="assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png" alt="Cherry Logo">
-                </div>
+                <img src="assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png" alt="Cherry Logo">
                 <div class="brand-text">
                     <h1>Cherry Cake</h1>
                     <span>Bakery &amp; Café</span>
@@ -566,17 +595,17 @@
 
             <div class="nav-actions">
                 <a href="/index.html" class="nav-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    Artisan Storefront
+                    <span>🌸</span> Storefront
                 </a>
                 <a href="/swagger.html" class="nav-btn">
-                    API Docs
+                    <span>📖</span> API Docs
                 </a>
+                <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Theme">
+                    <span id="themeToggleIcon">🍰</span>
+                    <span id="themeToggleLabel">Cheesecake</span>
+                </button>
             </div>
-        </nav>
+        </div>
     </header>
 
     <!-- AUTH MAIN CONTENT -->
@@ -589,357 +618,372 @@
                 </div>
             </div>
 
-            <!-- Heading -->
-            <div class="auth-heading" id="authHeading">
-                <h2 class="auth-title display-font">Cherry Cake Portal</h2>
-                <p class="auth-subtitle">Sign in to your account or register to collect sweet rewards</p>
+            <!-- LOGGED-IN VIEW (shown if token exists) -->
+            <div id="loggedInPanel" class="logged-in-panel">
+                <div class="user-avatar-wrap" id="userAvatar">🌸</div>
+                <div class="user-welcome-name" id="userWelcomeName">Welcome, Customer!</div>
+                <div class="user-role-badge" id="userRoleBadge">ROLE_USER</div>
+                <p id="userEmailText" style="color:var(--text-dim); font-size:0.88rem; margin-top:6px;"></p>
+
+                <div class="logged-actions">
+                    <a href="/index.html" class="action-link primary">
+                        <span>🌸</span> Open Artisan Storefront
+                    </a>
+                    <a href="/swagger.html" class="action-link secondary">
+                        <span>📖</span> Open Swagger API Console
+                    </a>
+                    <button class="logout-btn" onclick="handleLogout()">Sign Out of Session</button>
+                </div>
             </div>
 
-            <!-- TABS -->
-            <div class="auth-tabs" id="authTabs">
-                <button class="auth-tab-btn active" id="tabLoginBtn">Sign In</button>
-                <button class="auth-tab-btn" id="tabRegisterBtn">Create Account</button>
-            </div>
+            <!-- AUTH FORM CONTAINER (shown if not logged in) -->
+            <div id="authFormsPanel">
+                <div class="auth-header-text">
+                    <h2>Welcome to Cherry Cake</h2>
+                    <p>Artisanal Confectionery &amp; Customer Portal</p>
+                </div>
 
-            <!-- 1. SIGN IN FORM -->
-            <div class="form-pane active" id="loginPane">
-                <form id="loginForm" onsubmit="return false;">
-                    <div class="input-group">
+                <div class="auth-tabs">
+                    <button class="tab-btn active" id="tabLoginBtn" onclick="switchTab('login')">Sign In</button>
+                    <button class="tab-btn" id="tabRegisterBtn" onclick="switchTab('register')">Create Account</button>
+                </div>
+
+                <!-- SIGN IN FORM -->
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div id="loginAlert" class="alert-box"></div>
+
+                    <div class="form-group">
                         <label for="loginEmail">Email Address</label>
                         <div class="input-wrapper">
-                            <input type="email" id="loginEmail" required placeholder="customer@cherrycake.com" autofocus>
+                            <input type="email" id="loginEmail" placeholder="customer@cherrycake.com" required autocomplete="email">
                         </div>
                     </div>
 
-                    <div class="input-group">
+                    <div class="form-group">
                         <label for="loginPassword">Password</label>
                         <div class="input-wrapper">
-                            <input type="password" id="loginPassword" required placeholder="••••••••">
-                            <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('loginPassword')">Show</button>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+                            <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('loginPassword', this)">👁</button>
                         </div>
                     </div>
 
                     <button type="submit" class="submit-btn" id="loginSubmitBtn">
-                        Sign In
+                        <span>Sign In</span>
                     </button>
+
+                    <!-- ONE CLICK DEMO CREDENTIALS -->
+                    <div class="demo-box">
+                        <div class="demo-title">One-Click Test Accounts</div>
+                        <div class="demo-pills">
+                            <button type="button" class="demo-btn" onclick="fillDemo('customer@cherrycake.com', 'password123')">
+                                <span>🌸 <strong>Customer:</strong> customer@cherrycake.com</span>
+                                <span>Fill →</span>
+                            </button>
+                            <button type="button" class="demo-btn" onclick="fillDemo('admin@cherrycake.com', 'password123')">
+                                <span>👑 <strong>Administrator:</strong> admin@cherrycake.com</span>
+                                <span>Fill →</span>
+                            </button>
+                        </div>
+                    </div>
                 </form>
 
-                <!-- Quick Test Credentials -->
-                <div class="demo-credentials-box">
-                    <div class="demo-title">
-                        🌸 Quick Test Accounts:
-                    </div>
-                    <div class="demo-chips">
-                        <button class="demo-chip" onclick="fillCredentials('customer@cherrycake.com', 'password123')">
-                            Customer (ROLE_USER)
-                        </button>
-                        <button class="demo-chip" onclick="fillCredentials('admin@cherrycake.com', 'password123')">
-                            Administrator (ROLE_ADMIN)
-                        </button>
-                    </div>
-                </div>
-            </div>
+                <!-- REGISTER FORM -->
+                <form id="registerForm" style="display:none;" onsubmit="handleRegister(event)">
+                    <div id="registerAlert" class="alert-box"></div>
 
-            <!-- 2. REGISTER FORM -->
-            <div class="form-pane" id="registerPane">
-                <form id="registerForm" onsubmit="return false;">
-                    <div class="input-group">
-                        <label for="regFullName">Full Name *</label>
+                    <div class="form-group">
+                        <label for="regName">Full Name</label>
                         <div class="input-wrapper">
-                            <input type="text" id="regFullName" required placeholder="e.g. Adrian Zakirov">
+                            <input type="text" id="regName" placeholder="Adrian Zakirov" required>
                         </div>
                     </div>
 
-                    <div class="input-group">
-                        <label for="regEmail">Email Address *</label>
+                    <div class="form-group">
+                        <label for="regEmail">Email Address</label>
                         <div class="input-wrapper">
-                            <input type="email" id="regEmail" required placeholder="guest@cherrycake.com">
+                            <input type="email" id="regEmail" placeholder="your.name@example.com" required autocomplete="email">
                         </div>
                     </div>
 
-                    <div class="input-group">
+                    <div class="form-group">
                         <label for="regPhone">Phone Number</label>
                         <div class="input-wrapper">
-                            <input type="tel" id="regPhone" placeholder="+998901234567">
+                            <input type="tel" id="regPhone" placeholder="+998901234567" required pattern="^\+?[0-9]{9,15}$">
                         </div>
                     </div>
 
-                    <div class="input-group">
-                        <label for="regPassword">Password * (min 6 characters)</label>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
                         <div class="input-wrapper">
-                            <input type="password" id="regPassword" required minlength="6" placeholder="Create strong password">
-                            <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('regPassword')">Show</button>
+                            <input type="password" id="regPassword" placeholder="Minimum 6 characters" required minlength="6" autocomplete="new-password">
+                            <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('regPassword', this)">👁</button>
                         </div>
                     </div>
 
                     <button type="submit" class="submit-btn" id="registerSubmitBtn">
-                        Create Account
+                        <span>Create Account</span>
                     </button>
                 </form>
             </div>
-
-            <!-- 3. SIGNED IN PROFILE CARD -->
-            <div class="profile-card" id="profilePane">
-                <div class="profile-avatar" id="userInitial">C</div>
-                <h3 class="profile-name display-font" id="userFullName">Cherry Guest</h3>
-                <p class="profile-email" id="userEmail">customer@cherrycake.com</p>
-                <div class="profile-role-pill" id="userRole">ROLE_USER</div>
-
-                <div class="token-box">
-                    <span class="token-label mono">Active JWT Token:</span>
-                    <span class="token-val mono" id="userTokenPreview">eyJh...</span>
-                </div>
-
-                <div class="profile-actions">
-                    <a href="/index.html" class="submit-btn" style="text-decoration:none; text-align:center;">
-                        🌸 Return to Storefront
-                    </a>
-                    <a href="/swagger.html" class="nav-btn" style="justify-content:center;">
-                        📊 Explore REST API Documentation
-                    </a>
-                    <button class="btn-signout" onclick="handleSignOut()">
-                        Sign Out
-                    </button>
-                </div>
-            </div>
-
         </div>
     </main>
 
-    <!-- TOASTS -->
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- FOOTER -->
+    <footer class="auth-footer">
+        Cherry Cake Bakery &amp; Café &bull; ITPU University Teamwork 2026 &bull; Spring Boot 3.3.4 &bull; Java 21 LTS
+    </footer>
 
+    <!-- SCRIPTS -->
     <script>
-        // Sakura Falling Canvas
-        const sCanvas = document.getElementById('sakura-canvas');
-        const sCtx = sCanvas.getContext('2d');
-        function resizeCanvas() {
-            sCanvas.width = window.innerWidth;
-            sCanvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        const flowerImg = new Image();
-        flowerImg.src = 'assets/images/Partical%20Effects/flower-particle-soft.png';
-
-        const petals = [];
-        for (let i = 0; i < 24; i++) {
-            petals.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                size: 16 + Math.random() * 18,
-                speedY: 0.6 + Math.random() * 1.2,
-                speedX: -0.3 + Math.random() * 0.8,
-                angle: Math.random() * Math.PI * 2,
-                spinSpeed: (Math.random() - 0.5) * 0.03,
-                opacity: 0.4 + Math.random() * 0.4
-            });
+        // 1. THEME SWITCHER
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme') || 'dark';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('cherry_theme', next);
+            updateThemeToggleUI(next);
         }
 
-        function renderPetals() {
-            sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
-            for (const p of petals) {
-                p.y += p.speedY;
-                p.x += p.speedX;
-                p.angle += p.spinSpeed;
-                if (p.y > sCanvas.height + 30) p.y = -30;
-                if (p.x > sCanvas.width + 30) p.x = -30;
-                if (p.x < -30) p.x = sCanvas.width + 30;
-
-                if (flowerImg.complete && flowerImg.naturalWidth > 0) {
-                    sCtx.save();
-                    sCtx.translate(p.x, p.y);
-                    sCtx.rotate(p.angle);
-                    sCtx.globalAlpha = p.opacity;
-                    sCtx.drawImage(flowerImg, -p.size / 2, -p.size / 2, p.size, p.size);
-                    sCtx.restore();
-                }
+        function updateThemeToggleUI(theme) {
+            const icon = document.getElementById('themeToggleIcon');
+            const label = document.getElementById('themeToggleLabel');
+            if (!icon || !label) return;
+            if (theme === 'light') {
+                icon.textContent = '🌙';
+                label.textContent = 'Dark Void';
+            } else {
+                icon.textContent = '🍰';
+                label.textContent = 'Cheesecake';
             }
-            requestAnimationFrame(renderPetals);
-        }
-        renderPetals();
-
-        // DOM elements
-        const tabLoginBtn = document.getElementById('tabLoginBtn');
-        const tabRegisterBtn = document.getElementById('tabRegisterBtn');
-        const loginPane = document.getElementById('loginPane');
-        const registerPane = document.getElementById('registerPane');
-        const profilePane = document.getElementById('profilePane');
-        const authTabs = document.getElementById('authTabs');
-        const authHeading = document.getElementById('authHeading');
-
-        // Toast Helper
-        function showToast(message, icon = "🌸") {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast-card';
-            toast.innerHTML = `<span style="font-size:1.1rem">${icon}</span><span>${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.transition = 'opacity 0.4s, transform 0.4s';
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(15px)';
-                setTimeout(() => toast.remove(), 400);
-            }, 3200);
         }
 
-        // Toggle Password visibility
-        window.togglePasswordVisibility = function(inputId) {
+        // 2. TAB SWITCHING
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const regForm = document.getElementById('registerForm');
+            const tabLoginBtn = document.getElementById('tabLoginBtn');
+            const tabRegBtn = document.getElementById('tabRegisterBtn');
+
+            if (tab === 'login') {
+                loginForm.style.display = 'block';
+                regForm.style.display = 'none';
+                tabLoginBtn.classList.add('active');
+                tabRegBtn.classList.remove('active');
+            } else {
+                loginForm.style.display = 'none';
+                regForm.style.display = 'block';
+                tabLoginBtn.classList.remove('active');
+                tabRegBtn.classList.add('active');
+            }
+        }
+
+        // 3. PASSWORD VISIBILITY
+        function togglePasswordVisibility(inputId, btn) {
             const input = document.getElementById(inputId);
-            input.type = input.type === 'password' ? 'text' : 'password';
-        };
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🔒';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁';
+            }
+        }
 
-        // Quick fill demo credentials
-        window.fillCredentials = function(email, password) {
+        // 4. DEMO CREDENTIAL FILL
+        function fillDemo(email, pass) {
+            switchTab('login');
             document.getElementById('loginEmail').value = email;
-            document.getElementById('loginPassword').value = password;
-            showToast(`Filled credentials for ${email}`, "🔑");
-        };
+            document.getElementById('loginPassword').value = pass;
+        }
 
-        // Tab Switching
-        tabLoginBtn.addEventListener('click', () => {
-            tabLoginBtn.classList.add('active');
-            tabRegisterBtn.classList.remove('active');
-            loginPane.classList.add('active');
-            registerPane.classList.remove('active');
-        });
-
-        tabRegisterBtn.addEventListener('click', () => {
-            tabRegisterBtn.classList.add('active');
-            tabLoginBtn.classList.remove('active');
-            registerPane.classList.add('active');
-            loginPane.classList.remove('active');
-        });
-
-        // Check authentication state on page load
-        function checkAuthState() {
+        // 5. SESSION MANAGEMENT & LOGGED IN STATE
+        function checkExistingSession() {
             const token = localStorage.getItem('cherry_token');
             const userJson = localStorage.getItem('cherry_user');
-
             if (token && userJson) {
                 try {
                     const user = JSON.parse(userJson);
-                    authTabs.style.display = 'none';
-                    loginPane.classList.remove('active');
-                    registerPane.classList.remove('active');
-                    authHeading.style.display = 'none';
-
-                    profilePane.classList.add('active');
-                    document.getElementById('userFullName').textContent = user.fullName || user.email;
-                    document.getElementById('userEmail').textContent = user.email;
-                    document.getElementById('userInitial').textContent = (user.fullName || user.email)[0].toUpperCase();
-
-                    const rolePill = document.getElementById('userRole');
-                    rolePill.textContent = user.role || 'ROLE_USER';
-                    if (user.role === 'ROLE_ADMIN') {
-                        rolePill.classList.add('admin');
-                    } else {
-                        rolePill.classList.remove('admin');
-                    }
-
-                    document.getElementById('userTokenPreview').textContent = token.slice(0, 24) + '...' + token.slice(-12);
-                    return;
+                    document.getElementById('authFormsPanel').style.display = 'none';
+                    document.getElementById('loggedInPanel').style.display = 'block';
+                    document.getElementById('userWelcomeName').textContent = `Welcome back, ${user.fullName || 'Guest'}!`;
+                    document.getElementById('userRoleBadge').textContent = user.role || 'ROLE_USER';
+                    document.getElementById('userEmailText').textContent = user.email || '';
+                    document.getElementById('userAvatar').textContent = user.role === 'ROLE_ADMIN' ? '👑' : '🌸';
                 } catch (e) {
                     localStorage.removeItem('cherry_token');
                     localStorage.removeItem('cherry_user');
                 }
+            } else {
+                document.getElementById('authFormsPanel').style.display = 'block';
+                document.getElementById('loggedInPanel').style.display = 'none';
             }
-
-            // Unauthenticated state
-            authTabs.style.display = 'flex';
-            authHeading.style.display = 'block';
-            profilePane.classList.remove('active');
-            loginPane.classList.add('active');
         }
 
-        // Login Handler (POST /api/v1/auth/login)
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('loginSubmitBtn');
-            btn.disabled = true;
-            btn.textContent = 'Authenticating...';
-
-            const payload = {
-                email: document.getElementById('loginEmail').value.trim(),
-                password: document.getElementById('loginPassword').value
-            };
-
-            try {
-                const res = await fetch('/api/v1/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await res.json();
-                if (res.ok && data.data && data.data.token) {
-                    localStorage.setItem('cherry_token', data.data.token);
-                    localStorage.setItem('cherry_user', JSON.stringify(data.data));
-                    showToast(`Welcome back, ${data.data.fullName || data.data.email}!`, "🌸");
-                    setTimeout(checkAuthState, 600);
-                } else {
-                    alert(`Login failed: ${data.message || 'Invalid email or password'}`);
-                    btn.disabled = false;
-                    btn.textContent = 'Sign In';
-                }
-            } catch (err) {
-                console.error("Login error:", err);
-                alert("Network error connecting to backend server.");
-                btn.disabled = false;
-                btn.textContent = 'Sign In';
-            }
-        });
-
-        // Register Handler (POST /api/v1/auth/register)
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('registerSubmitBtn');
-            btn.disabled = true;
-            btn.textContent = 'Creating Account...';
-
-            const payload = {
-                fullName: document.getElementById('regFullName').value.trim(),
-                email: document.getElementById('regEmail').value.trim(),
-                phone: document.getElementById('regPhone').value.trim() || null,
-                password: document.getElementById('regPassword').value
-            };
-
-            try {
-                const res = await fetch('/api/v1/auth/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await res.json();
-                if (res.ok && data.data && data.data.token) {
-                    localStorage.setItem('cherry_token', data.data.token);
-                    localStorage.setItem('cherry_user', JSON.stringify(data.data));
-                    showToast(`Account created! Welcome, ${data.data.fullName}!`, "🎉");
-                    setTimeout(checkAuthState, 600);
-                } else {
-                    alert(`Registration failed: ${data.message || 'Email might already be in use'}`);
-                    btn.disabled = false;
-                    btn.textContent = 'Create Account';
-                }
-            } catch (err) {
-                console.error("Registration error:", err);
-                alert("Network error creating account.");
-                btn.disabled = false;
-                btn.textContent = 'Create Account';
-            }
-        });
-
-        // Sign Out Handler
-        window.handleSignOut = function() {
+        function handleLogout() {
             localStorage.removeItem('cherry_token');
             localStorage.removeItem('cherry_user');
-            showToast("Signed out successfully", "👋");
-            checkAuthState();
-        };
+            checkExistingSession();
+        }
 
-        checkAuthState();
+        // 6. LOGIN AJAX
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const alert = document.getElementById('loginAlert');
+            const btn = document.getElementById('loginSubmitBtn');
+
+            alert.className = 'alert-box';
+            alert.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = '<span>Signing in...</span>';
+
+            try {
+                const response = await fetch('/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const json = await response.json();
+                if (response.ok && json.data && json.data.token) {
+                    localStorage.setItem('cherry_token', json.data.token);
+                    localStorage.setItem('cherry_user', JSON.stringify({
+                        userId: json.data.userId,
+                        email: json.data.email,
+                        fullName: json.data.fullName,
+                        role: json.data.role
+                    }));
+                    alert.className = 'alert-box success';
+                    alert.textContent = `Sign in successful! Welcome ${json.data.fullName}.`;
+                    alert.style.display = 'block';
+                    setTimeout(() => { checkExistingSession(); }, 600);
+                } else {
+                    alert.className = 'alert-box error';
+                    alert.textContent = json.message || 'Invalid email or password.';
+                    alert.style.display = 'block';
+                }
+            } catch (err) {
+                alert.className = 'alert-box error';
+                alert.textContent = 'Network or server connection error. Please try again.';
+                alert.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Sign In</span>';
+            }
+        }
+
+        // 7. REGISTER AJAX
+        async function handleRegister(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const alert = document.getElementById('registerAlert');
+            const btn = document.getElementById('registerSubmitBtn');
+
+            alert.className = 'alert-box';
+            alert.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = '<span>Creating Account...</span>';
+
+            try {
+                const response = await fetch('/api/v1/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fullName, email, phone, password })
+                });
+
+                const json = await response.json();
+                if (response.ok) {
+                    alert.className = 'alert-box success';
+                    alert.textContent = 'Account created successfully! You can now sign in.';
+                    alert.style.display = 'block';
+                    setTimeout(() => {
+                        switchTab('login');
+                        document.getElementById('loginEmail').value = email;
+                        document.getElementById('loginPassword').value = '';
+                    }, 1200);
+                } else {
+                    alert.className = 'alert-box error';
+                    alert.textContent = json.message || 'Registration failed. Email or phone may already exist.';
+                    alert.style.display = 'block';
+                }
+            } catch (err) {
+                alert.className = 'alert-box error';
+                alert.textContent = 'Network error during registration. Please verify connection.';
+                alert.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Create Account</span>';
+            }
+        }
+
+        // 8. SAKURA PETALS ANIMATION
+        function initSakuraPetals() {
+            const canvas = document.getElementById('sakura-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h, petals = [];
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            const petalCount = 28;
+            for (let i = 0; i < petalCount; i++) {
+                petals.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    size: Math.random() * 8 + 6,
+                    speedX: Math.random() * 1.5 - 0.5,
+                    speedY: Math.random() * 1.2 + 0.8,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 2 - 1,
+                    opacity: Math.random() * 0.45 + 0.25
+                });
+            }
+
+            function drawPetal(x, y, size, rotation, opacity) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate((rotation * Math.PI) / 180);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-size / 2, -size / 2, -size, size / 3, 0, size);
+                ctx.bezierCurveTo(size, size / 3, size / 2, -size / 2, 0, 0);
+                ctx.fillStyle = `rgba(255, 183, 197, ${opacity})`;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                petals.forEach(p => {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    p.rotation += p.rotationSpeed;
+                    if (p.y > h + 20) { p.y = -20; p.x = Math.random() * w; }
+                    if (p.x > w + 20) { p.x = -20; }
+                    if (p.x < -20) { p.x = w + 20; }
+                    drawPetal(p.x, p.y, p.size, p.rotation, p.opacity);
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // Initialize on DOMContentLoaded
+        window.addEventListener('DOMContentLoaded', () => {
+            const activeTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            updateThemeToggleUI(activeTheme);
+            checkExistingSession();
+            initSakuraPetals();
+        });
     </script>
 </body>
 
