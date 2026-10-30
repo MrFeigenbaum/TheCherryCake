@@ -601,8 +601,8 @@
                     <span>📖</span> API Docs
                 </a>
                 <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Theme">
-                    <span id="themeToggleIcon">🍰</span>
-                    <span id="themeToggleLabel">Cheesecake</span>
+                    <span id="themeToggleIcon">☀️</span>
+                    <span id="themeToggleLabel">Light</span>
                 </button>
             </div>
         </div>
@@ -750,10 +750,10 @@
             if (!icon || !label) return;
             if (theme === 'light') {
                 icon.textContent = '🌙';
-                label.textContent = 'Dark Void';
+                label.textContent = 'Dark';
             } else {
-                icon.textContent = '🍰';
-                label.textContent = 'Cheesecake';
+                icon.textContent = '☀️';
+                label.textContent = 'Light';
             }
         }
 
@@ -939,7 +939,7 @@
                 petals.push({
                     x: Math.random() * w,
                     y: Math.random() * h,
-                    size: Math.random() * 8 + 6,
+                    size: Math.random() * 16 + 20,
                     speedX: Math.random() * 1.5 - 0.5,
                     speedY: Math.random() * 1.2 + 0.8,
                     rotation: Math.random() * 360,
@@ -948,16 +948,16 @@
                 });
             }
 
+            const sakuraLogoImg = new Image();
+            sakuraLogoImg.src = 'assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png';
+
             function drawPetal(x, y, size, rotation, opacity) {
+                if (!sakuraLogoImg.complete || sakuraLogoImg.naturalWidth === 0) return;
                 ctx.save();
                 ctx.translate(x, y);
                 ctx.rotate((rotation * Math.PI) / 180);
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.bezierCurveTo(-size / 2, -size / 2, -size, size / 3, 0, size);
-                ctx.bezierCurveTo(size, size / 3, size / 2, -size / 2, 0, 0);
-                ctx.fillStyle = `rgba(255, 183, 197, ${opacity})`;
-                ctx.fill();
+                ctx.globalAlpha = opacity;
+                ctx.drawImage(sakuraLogoImg, -size / 2, -size / 2, size, size);
                 ctx.restore();
             }
 

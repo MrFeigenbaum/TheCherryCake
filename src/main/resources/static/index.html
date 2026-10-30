@@ -914,7 +914,7 @@
         }
 
         .region-select-wrap::before {
-            content: '🌐';
+            content: ''; display: none;
             position: absolute;
             left: 12px;
             font-size: 0.85rem;
@@ -2356,6 +2356,201 @@
             color: var(--raspberry-coulis);
         }
 
+    
+        /* LIGHT THEME OVERRIDES: NO SHADOW TRANSITION & CRISP CONTRAST */
+        [data-theme="light"] .hero::after {
+            display: none !important;
+        }
+
+        [data-theme="light"] .hero {
+            background:
+                radial-gradient(circle at 50% 25%, rgba(200, 35, 72, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(255, 183, 197, 0.15) 0%, transparent 50%),
+                #fcf6f3 !important;
+        }
+
+        /* FIX ALL FONT COLOURS (ELIMINATE BLACK-ON-BLACK IN LIGHT & DARK MODES) */
+        .btn-secondary {
+            background: var(--cherry-card) !important;
+            color: var(--text-main) !important;
+            border: 1px solid var(--cherry-border) !important;
+        }
+
+        .btn-secondary:hover {
+            background: var(--cherry-card-hover) !important;
+            border-color: var(--raspberry-coulis) !important;
+            color: var(--raspberry-coulis) !important;
+        }
+
+        .region-status-badge {
+            background: var(--cherry-card) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-dim) !important;
+        }
+
+        .region-status-badge strong {
+            color: var(--text-main) !important;
+        }
+
+        .cat-tab-btn {
+            background: var(--cherry-card) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-dim) !important;
+        }
+
+        .cat-tab-btn:hover {
+            color: var(--raspberry-coulis) !important;
+            border-color: var(--raspberry-coulis) !important;
+            background: var(--cherry-card-hover) !important;
+        }
+
+        .cat-tab-btn.active {
+            background: var(--raspberry-coulis) !important;
+            color: #ffffff !important;
+            border-color: var(--raspberry-coulis) !important;
+            box-shadow: 0 4px 14px rgba(230, 57, 96, 0.35);
+        }
+
+        .modifiers-section {
+            background: var(--cherry-panel) !important;
+            border: 1px dashed var(--cherry-border) !important;
+            color: var(--text-main) !important;
+        }
+
+        .modifier-pill {
+            background: var(--cherry-card) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-main) !important;
+        }
+
+        .qty-stepper {
+            background: var(--cherry-panel) !important;
+            border: 1px solid var(--cherry-border) !important;
+        }
+
+        .qty-btn,
+        .qty-display {
+            color: var(--text-main) !important;
+        }
+
+        .fulfillment-box {
+            background: var(--cherry-panel) !important;
+            border: 1px solid var(--cherry-border) !important;
+        }
+
+        .fulfillment-btn {
+            background: var(--cherry-card) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-dim) !important;
+        }
+
+        .fulfillment-btn.active {
+            background: var(--raspberry-coulis) !important;
+            color: #ffffff !important;
+            border-color: var(--raspberry-coulis) !important;
+        }
+
+        .cart-item-card {
+            background: var(--cherry-card) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-main) !important;
+        }
+
+        .item-name {
+            color: var(--cheesecake-cream) !important;
+        }
+
+        .promo-input {
+            background: var(--input-bg) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-main) !important;
+        }
+
+        .btn-apply-promo {
+            background: var(--cherry-card) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-main) !important;
+        }
+
+        .btn-apply-promo:hover {
+            border-color: var(--raspberry-coulis) !important;
+            color: var(--raspberry-coulis) !important;
+        }
+
+        .cart-finance-box {
+            background: var(--cherry-card) !important;
+            border: 1px solid var(--cherry-border) !important;
+        }
+
+        .fin-row span {
+            color: var(--text-dim) !important;
+        }
+
+        .fin-row strong {
+            color: var(--cheesecake-cream) !important;
+        }
+
+        .cart-drawer-header,
+        .cart-drawer-footer,
+        .modal-header {
+            background: var(--cherry-deep) !important;
+        }
+
+        .drawer-close-btn,
+        .modal-close-btn {
+            background: var(--cherry-card) !important;
+            color: var(--text-dim) !important;
+        }
+
+        .form-field label {
+            color: var(--text-main) !important;
+            font-weight: 600;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            background: var(--input-bg) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-main) !important;
+        }
+
+        .reservation-banner {
+            border: 1px solid var(--cherry-border) !important;
+        }
+
+        [data-theme="dark"] .reservation-banner {
+            background: linear-gradient(135deg, rgba(45, 14, 36, 0.8), rgba(28, 8, 22, 0.9)) !important;
+        }
+
+        [data-theme="light"] .reservation-banner {
+            background: linear-gradient(135deg, #ffffff, #fff2f5) !important;
+        }
+
+        .audio-bar {
+            background: var(--nav-bg) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-main) !important;
+        }
+
+        .audio-track-name {
+            color: var(--text-main) !important;
+        }
+
+        .audio-status-label {
+            color: var(--text-dim) !important;
+        }
+
+        .audio-nav-btn {
+            background: var(--cherry-card) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-main) !important;
+        }
+
+        .region-select {
+            padding: 8px 28px 8px 16px !important;
+        }
+
     </style>
 </head>
 
@@ -2385,14 +2580,14 @@
             <div class="navbar-actions">
                 <!-- Theme Switcher (Cheesecake / Dark Void) -->
                 <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Theme">
-                    <span id="themeToggleIcon">🍰</span>
-                    <span id="themeToggleLabel">Cheesecake</span>
+                    <span id="themeToggleIcon">☀️</span>
+                    <span id="themeToggleLabel">Light</span>
                 </button>
 
                 <!-- 16-Country Dynamic Switcher -->
                 <div class="region-select-wrap">
                     <select id="globalRegionSelect" class="region-select" title="Switch Operating Country &amp; Currency">
-                        <option value="UZB" selected>UZB &bull; Uzbekistan (soʻm, 15% VAT)</option>
+                        <option value="UZB" selected>🇺🇿 UZB</option>
                     </select>
                     <span class="region-select-arrow">&#9662;</span>
                 </div>
@@ -2455,8 +2650,8 @@
             </div>
 
             <button class="theme-toggle-btn" style="width: 100%; justify-content: center;" onclick="toggleTheme()">
-                <span id="mobileThemeToggleIcon">🍰</span>
-                <span id="mobileThemeToggleLabel" style="margin-left:6px;">Cheesecake Theme</span>
+                <span id="mobileThemeToggleIcon">☀️</span>
+                <span id="mobileThemeToggleLabel" style="margin-left:6px;">Light Theme</span>
             </button>
         </div>
     </aside>
@@ -2964,11 +3159,21 @@
         function updateThemeToggleUI(theme) {
             const icon = document.getElementById('themeToggleIcon');
             const label = document.getElementById('themeToggleLabel');
-            if (!icon || !label) return;
+            const mobIcon = document.getElementById('mobileThemeToggleIcon');
+            const mobLabel = document.getElementById('mobileThemeToggleLabel');
+
             if (theme === 'light') {
-                icon.textContent = '🌙';
-                label.textContent = 'Dark Void';
+                if (icon) icon.textContent = '🌙';
+                if (label) label.textContent = 'Dark';
+                if (mobIcon) mobIcon.textContent = '🌙';
+                if (mobLabel) mobLabel.textContent = 'Dark';
             } else {
+                if (icon) icon.textContent = '☀️';
+                if (label) label.textContent = 'Light';
+                if (mobIcon) mobIcon.textContent = '☀️';
+                if (mobLabel) mobLabel.textContent = 'Light';
+            }
+        } else {
                 icon.textContent = '🍰';
                 label.textContent = 'Cheesecake';
             }
@@ -3094,7 +3299,7 @@
                 petals.push({
                     x: Math.random() * w,
                     y: Math.random() * h,
-                    size: Math.random() * 9 + 6,
+                    size: Math.random() * 16 + 20,
                     speedX: Math.random() * 1.5 - 0.4,
                     speedY: Math.random() * 1.2 + 0.8,
                     rotation: Math.random() * 360,
@@ -3103,16 +3308,17 @@
                 });
             }
 
+            // Preload transparent sakura flower logo image (no heart shapes)
+            const sakuraLogoImg = new Image();
+            sakuraLogoImg.src = 'assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png';
+
             function drawPetal(x, y, size, rotation, opacity) {
+                if (!sakuraLogoImg.complete || sakuraLogoImg.naturalWidth === 0) return;
                 ctx.save();
                 ctx.translate(x, y);
                 ctx.rotate((rotation * Math.PI) / 180);
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.bezierCurveTo(-size / 2, -size / 2, -size, size / 3, 0, size);
-                ctx.bezierCurveTo(size, size / 3, size / 2, -size / 2, 0, 0);
-                ctx.fillStyle = `rgba(255, 183, 197, ${opacity})`;
-                ctx.fill();
+                ctx.globalAlpha = opacity;
+                ctx.drawImage(sakuraLogoImg, -size / 2, -size / 2, size, size);
                 ctx.restore();
             }
 
@@ -3140,197 +3346,377 @@
 
         // Retina Vector Dessert SVG Artwork
         const DESSERT_ART = {
-            'CHERRY_BLOSSOM': `
-                <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="cbGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#ffd5df"/>
-                            <stop offset="60%" stop-color="#ffb7c5"/>
-                            <stop offset="100%" stop-color="#e63960"/>
-                        </linearGradient>
-                        <radialGradient id="glazeGrad" cx="50%" cy="30%" r="60%">
-                            <stop offset="0%" stop-color="#ff4d79"/>
-                            <stop offset="100%" stop-color="#a81938"/>
-                        </radialGradient>
-                    </defs>
-                    <!-- Pedestal -->
-                    <ellipse cx="100" cy="162" rx="70" ry="10" fill="#2d0e24" stroke="rgba(255,183,197,0.3)" stroke-width="2"/>
-                    <path d="M75,160 L125,160 L115,172 L85,172 Z" fill="#e5b061"/>
-                    <!-- Cake Base Tier -->
-                    <path d="M45,115 C45,100 155,100 155,115 L155,145 C155,155 45,155 45,145 Z" fill="url(#cbGrad)"/>
-                    <ellipse cx="100" cy="115" rx="55" ry="12" fill="#fff6ed"/>
-                    <!-- Top Tier -->
-                    <path d="M60,80 C60,68 140,68 140,80 L140,110 C140,118 60,118 60,110 Z" fill="url(#cbGrad)"/>
-                    <ellipse cx="100" cy="80" rx="40" ry="10" fill="url(#glazeGrad)"/>
-                    <!-- Glaze Drips -->
-                    <path d="M60,82 Q65,100 70,84 Q76,104 82,83 Q92,106 100,84 Q112,105 120,83 Q128,102 135,84 Q140,95 140,82" fill="url(#glazeGrad)"/>
-                    <!-- Topping Cherries -->
-                    <circle cx="92" cy="62" r="11" fill="#e63960"/>
-                    <circle cx="89" cy="59" r="3.5" fill="#fff" opacity="0.65"/>
-                    <circle cx="108" cy="66" r="10" fill="#ba1c3f"/>
-                    <circle cx="105" cy="63" r="3" fill="#fff" opacity="0.65"/>
-                    <path d="M92,52 Q96,35 110,32" stroke="#4a8505" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                    <path d="M108,56 Q104,42 110,32" stroke="#4a8505" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                    <!-- Sakura Petals -->
-                    <circle cx="146" cy="122" r="6" fill="#ffd5df" opacity="0.9"/>
-                    <circle cx="152" cy="126" r="5" fill="#ffb7c5" opacity="0.9"/>
-                    <circle cx="50" cy="132" r="5" fill="#ffd5df" opacity="0.9"/>
-                </svg>`,
-            'BLACK_FOREST': `
-                <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="chocGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#4a222c"/>
-                            <stop offset="100%" stop-color="#230d15"/>
-                        </linearGradient>
-                    </defs>
-                    <ellipse cx="100" cy="160" rx="72" ry="10" fill="#2d0e24" stroke="rgba(255,183,197,0.3)" stroke-width="2"/>
-                    <!-- Chocolate Sponge -->
-                    <path d="M42,95 C42,80 158,80 158,95 L158,145 C158,155 42,155 42,145 Z" fill="url(#chocGrad)"/>
-                    <!-- Cream Layers -->
-                    <ellipse cx="100" cy="125" rx="57" ry="9" fill="#fff6ed"/>
-                    <ellipse cx="100" cy="108" rx="57" ry="9" fill="#fff6ed"/>
-                    <ellipse cx="100" cy="92" rx="58" ry="12" fill="#fff6ed"/>
-                    <!-- Whipped Cream Dollops -->
-                    <circle cx="62" cy="85" r="9" fill="#fff"/>
-                    <circle cx="82" cy="82" r="9" fill="#fff"/>
-                    <circle cx="100" cy="80" r="10" fill="#fff"/>
-                    <circle cx="118" cy="82" r="9" fill="#fff"/>
-                    <circle cx="138" cy="85" r="9" fill="#fff"/>
-                    <!-- Dark Cherries -->
-                    <circle cx="62" cy="78" r="6" fill="#800a26"/>
-                    <circle cx="100" cy="72" r="7" fill="#800a26"/>
-                    <circle cx="138" cy="78" r="6" fill="#800a26"/>
-                    <!-- Shaved Chocolate Curls -->
-                    <path d="M88,88 Q95,84 102,89" stroke="#33141c" stroke-width="2.5" fill="none"/>
-                    <path d="M106,86 Q112,82 118,87" stroke="#33141c" stroke-width="2.5" fill="none"/>
-                </svg>`,
-            'RED_VELVET': `
-                <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="rvGrad" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#ff3366"/>
-                            <stop offset="60%" stop-color="#c2133f"/>
-                            <stop offset="100%" stop-color="#73051f"/>
-                        </linearGradient>
-                    </defs>
-                    <ellipse cx="100" cy="160" rx="72" ry="10" fill="#2d0e24" stroke="rgba(255,183,197,0.3)" stroke-width="2"/>
-                    <!-- Cake Slice Wedge -->
-                    <path d="M50,135 L145,152 L155,75 L62,60 Z" fill="url(#rvGrad)"/>
-                    <!-- Frosting Layers -->
-                    <path d="M50,110 L145,127 L147,121 L52,104 Z" fill="#fff8f0"/>
-                    <path d="M53,88 L149,103 L151,97 L55,82 Z" fill="#fff8f0"/>
-                    <!-- Back Swirl -->
-                    <path d="M62,60 Q105,48 155,75 L155,152 Q105,130 50,135 Z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-                    <path d="M62,60 Q105,48 155,75" fill="none" stroke="#fff8f0" stroke-width="12" stroke-linecap="round"/>
-                    <!-- Top Cherry -->
-                    <circle cx="112" cy="46" r="11" fill="#e63960"/>
-                    <circle cx="108" cy="42" r="3.5" fill="#fff" opacity="0.6"/>
-                    <path d="M112,35 Q125,20 135,26" stroke="#4a8505" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                </svg>`,
-            'CHERRY_DANISH': `
-                <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <radialGradient id="danishCrust" cx="50%" cy="50%" r="50%">
-                            <stop offset="0%" stop-color="#f7d088"/>
-                            <stop offset="70%" stop-color="#d4924b"/>
-                            <stop offset="100%" stop-color="#8a531e"/>
-                        </radialGradient>
-                    </defs>
-                    <ellipse cx="100" cy="155" rx="65" ry="9" fill="#2d0e24" opacity="0.7"/>
-                    <!-- Flaky Danish Body -->
-                    <rect x="48" y="70" width="104" height="74" rx="28" fill="url(#danishCrust)" transform="rotate(-6 100 107)"/>
-                    <rect x="54" y="76" width="92" height="62" rx="22" fill="#e5b061" transform="rotate(-6 100 107)"/>
-                    <!-- Custard Well -->
-                    <ellipse cx="100" cy="106" rx="34" ry="22" fill="#fff3cd"/>
-                    <!-- Ruby Cherry Compote Center -->
-                    <circle cx="92" cy="104" r="10" fill="#c2133f"/>
-                    <circle cx="108" cy="102" r="11" fill="#e63960"/>
-                    <circle cx="101" cy="112" r="9" fill="#9e0a2e"/>
-                    <circle cx="106" cy="99" r="3" fill="#fff" opacity="0.7"/>
-                    <!-- Sugar Glaze Drizzles -->
-                    <path d="M55,90 Q100,75 145,95" stroke="#fff8f0" stroke-width="3" fill="none" opacity="0.85"/>
-                    <path d="M58,110 Q100,95 142,120" stroke="#fff8f0" stroke-width="3" fill="none" opacity="0.85"/>
-                    <!-- Almond Slivers -->
-                    <ellipse cx="72" cy="85" rx="6" ry="2.5" fill="#fff2db" transform="rotate(25 72 85)"/>
-                    <ellipse cx="128" cy="120" rx="6" ry="2.5" fill="#fff2db" transform="rotate(-30 128 120)"/>
-                </svg>`,
-            'BUTTER_CROISSANT': `
-                <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="croissantGrad" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#ffd580"/>
-                            <stop offset="50%" stop-color="#d4924b"/>
-                            <stop offset="100%" stop-color="#7a4613"/>
-                        </linearGradient>
-                    </defs>
-                    <ellipse cx="100" cy="155" rx="70" ry="8" fill="#2d0e24" opacity="0.7"/>
-                    <!-- Crescent Horns -->
-                    <path d="M35,120 Q50,75 100,72 Q150,75 165,120 Q145,130 100,122 Q55,130 35,120 Z" fill="url(#croissantGrad)"/>
-                    <!-- Viennoiserie Swells -->
-                    <path d="M60,118 Q72,80 100,78 Q128,80 140,118" stroke="#fce2aa" stroke-width="4" fill="none" opacity="0.6"/>
-                    <ellipse cx="100" cy="98" rx="26" ry="24" fill="url(#croissantGrad)"/>
-                    <ellipse cx="78" cy="103" rx="19" ry="18" fill="url(#croissantGrad)"/>
-                    <ellipse cx="122" cy="103" rx="19" ry="18" fill="url(#croissantGrad)"/>
-                    <!-- Flaky Score Lines -->
-                    <path d="M92,82 Q100,74 108,82" stroke="#6b3a0c" stroke-width="2" fill="none"/>
-                    <path d="M72,90 Q78,82 85,90" stroke="#6b3a0c" stroke-width="2" fill="none"/>
-                    <path d="M115,90 Q122,82 128,90" stroke="#6b3a0c" stroke-width="2" fill="none"/>
-                </svg>`,
-            'CHERRY_LATTE': `
-                <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="rgba(255,255,255,0.4)"/>
-                            <stop offset="25%" stop-color="rgba(255,255,255,0.08)"/>
-                            <stop offset="75%" stop-color="rgba(255,255,255,0.15)"/>
-                            <stop offset="100%" stop-color="rgba(255,255,255,0.3)"/>
-                        </linearGradient>
-                    </defs>
-                    <ellipse cx="100" cy="162" rx="42" ry="7" fill="#2d0e24" opacity="0.6"/>
-                    <!-- Glass Body -->
-                    <path d="M68,55 L75,148 Q100,158 125,148 L132,55 Z" fill="#2a121e"/>
-                    <!-- Layers: Syrup, Milk, Espresso, Foam -->
-                    <path d="M74,136 Q100,146 126,136 L125,148 Q100,158 75,148 Z" fill="#e63960"/>
-                    <path d="M72,95 L128,95 L126,136 Q100,146 74,136 Z" fill="#fff6ed"/>
-                    <path d="M70,72 L130,72 L128,95 L72,95 Z" fill="#6f3d23"/>
-                    <ellipse cx="100" cy="55" rx="32" ry="9" fill="#ffb7c5"/>
-                    <!-- Glass Sheen Overlay -->
-                    <path d="M68,55 L75,148 Q100,158 125,148 L132,55 Z" fill="url(#glassGrad)" stroke="rgba(255,183,197,0.35)" stroke-width="2"/>
-                    <!-- Latte Foam Heart Art -->
-                    <path d="M100,56 C97,52 92,52 92,55 C92,59 100,62 100,62 C100,62 108,59 108,55 C108,52 103,52 100,56 Z" fill="#e63960"/>
-                    <!-- Steam Lines -->
-                    <path d="M92,42 Q88,30 94,22" stroke="rgba(255,183,197,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
-                    <path d="M108,40 Q114,28 106,18" stroke="rgba(255,183,197,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
-                </svg>`,
-            'ESPRESSO_SPECIALTY': `
-                <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <radialGradient id="cremaGrad" cx="50%" cy="50%" r="50%">
-                            <stop offset="0%" stop-color="#df9a57"/>
-                            <stop offset="70%" stop-color="#9a5a23"/>
-                            <stop offset="100%" stop-color="#4a2608"/>
-                        </radialGradient>
-                    </defs>
-                    <!-- Saucer -->
-                    <ellipse cx="100" cy="148" rx="68" ry="14" fill="#2d0e24" stroke="rgba(229,176,97,0.4)" stroke-width="2"/>
-                    <ellipse cx="100" cy="146" rx="48" ry="8" fill="#1b0815"/>
-                    <!-- Cup Handle -->
-                    <path d="M130,95 C150,95 150,122 128,124" fill="none" stroke="#2d0e24" stroke-width="6"/>
-                    <path d="M130,95 C150,95 150,122 128,124" fill="none" stroke="rgba(255,183,197,0.3)" stroke-width="2"/>
-                    <!-- Cup -->
-                    <path d="M68,85 Q68,138 100,138 Q132,138 132,85 Z" fill="#2d0e24" stroke="rgba(255,183,197,0.3)" stroke-width="2"/>
-                    <!-- Rim Gold -->
-                    <ellipse cx="100" cy="85" rx="32" ry="8" fill="#e5b061"/>
-                    <ellipse cx="100" cy="85" rx="29" ry="7" fill="url(#cremaGrad)"/>
-                    <!-- Roasted Coffee Beans -->
-                    <ellipse cx="58" cy="148" rx="6" ry="4" fill="#36180e" transform="rotate(-20 58 148)"/>
-                    <path d="M56,145 Q58,148 60,151" stroke="#1c0a05" stroke-width="1.2" fill="none"/>
-                    <!-- Steaming Vapors -->
-                    <path d="M96,72 Q92,58 98,46" stroke="rgba(255,183,197,0.45)" stroke-width="2" fill="none" stroke-linecap="round"/>
-                    <path d="M106,70 Q112,56 104,42" stroke="rgba(255,183,197,0.45)" stroke-width="2" fill="none" stroke-linecap="round"/>
-                </svg>`
+            'CHERRY_BLOSSOM': `<svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="ppShadow1" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.2"/>
+                </filter>
+                <linearGradient id="ppPlate" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="60%" stop-color="#e8ecf4"/>
+                    <stop offset="100%" stop-color="#c5d0e6"/>
+                </linearGradient>
+                <linearGradient id="ppPinkIcing" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ff94b8"/>
+                    <stop offset="50%" stop-color="#ff5e8c"/>
+                    <stop offset="100%" stop-color="#e62e63"/>
+                </linearGradient>
+                <linearGradient id="ppVanillaSponge" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#fff2bd"/>
+                    <stop offset="100%" stop-color="#f5d47a"/>
+                </linearGradient>
+                <linearGradient id="ppCherryRed" x1="0.2" y1="0.2" x2="0.8" y2="0.8">
+                    <stop offset="0%" stop-color="#ff4a6e"/>
+                    <stop offset="40%" stop-color="#d60d37"/>
+                    <stop offset="100%" stop-color="#700015"/>
+                </linearGradient>
+            </defs>
+            <!-- Scalloped Plate -->
+            <ellipse cx="100" cy="162" rx="76" ry="12" fill="url(#ppPlate)" filter="url(#ppShadow1)" stroke="#b0bece" stroke-width="2"/>
+            <ellipse cx="100" cy="160" rx="68" ry="9" fill="#f0f4fa"/>
+            <!-- Bottom Sponge Tier -->
+            <path d="M42,122 C42,106 158,106 158,122 L158,148 C158,158 42,158 42,148 Z" fill="url(#ppVanillaSponge)" stroke="#d4ad57" stroke-width="2"/>
+            <ellipse cx="100" cy="122" rx="58" ry="12" fill="#fff7d6"/>
+            <!-- Cream Layer -->
+            <path d="M42,136 C65,142 135,142 158,136" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+            <!-- Dripping Strawberry Frosting -->
+            <path d="M40,122 C40,110 160,110 160,122 L160,132 C152,130 148,144 140,140 C134,136 130,128 122,129 C115,130 112,146 102,144 C95,142 92,130 84,131 C76,132 72,147 62,143 C54,139 50,130 40,134 Z" fill="url(#ppPinkIcing)" stroke="#b81b45" stroke-width="1.5"/>
+            <ellipse cx="100" cy="121" rx="59" ry="11" fill="#ffaec7"/>
+            <path d="M55,118 C70,113 130,113 145,118" stroke="#ffffff" stroke-width="2.5" fill="none" opacity="0.75" stroke-linecap="round"/>
+            <!-- Top Sponge Tier -->
+            <path d="M62,82 C62,70 138,70 138,82 L138,110 C138,118 62,118 62,110 Z" fill="url(#ppVanillaSponge)" stroke="#d4ad57" stroke-width="2"/>
+            <!-- Top Dripping Frosting -->
+            <path d="M60,82 C60,72 140,72 140,82 L140,94 C134,92 130,103 124,101 C118,98 116,91 110,92 C104,93 101,105 94,103 C87,101 85,92 78,93 C72,94 70,104 64,101 C61,99 60,94 60,94 Z" fill="url(#ppPinkIcing)" stroke="#b81b45" stroke-width="1.5"/>
+            <ellipse cx="100" cy="81" rx="39" ry="8.5" fill="#ffaec7"/>
+            <path d="M72,79 C82,75 118,75 128,79" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.8" stroke-linecap="round"/>
+            <!-- Rainbow Sprinkles -->
+            <rect x="74" y="85" width="5" height="2" rx="1" fill="#00d2ff" transform="rotate(25, 74, 85)"/>
+            <rect x="115" y="86" width="5" height="2" rx="1" fill="#ffeb3b" transform="rotate(-30, 115, 86)"/>
+            <rect x="95" y="89" width="5" height="2" rx="1" fill="#76ff03" transform="rotate(15, 95, 89)"/>
+            <rect x="126" y="93" width="5" height="2" rx="1" fill="#ffffff" transform="rotate(40, 126, 93)"/>
+            <rect x="85" y="126" width="6" height="2.5" rx="1" fill="#00d2ff" transform="rotate(-20, 85, 126)"/>
+            <rect x="120" y="128" width="6" height="2.5" rx="1" fill="#76ff03" transform="rotate(35, 120, 128)"/>
+            <rect x="142" y="126" width="6" height="2.5" rx="1" fill="#ffeb3b" transform="rotate(-10, 142, 126)"/>
+            <!-- Whipped Rosettes -->
+            <path d="M74,75 C70,72 72,66 78,67 C83,64 88,69 86,75 Z" fill="#ffffff" stroke="#e0e8f5" stroke-width="1.5"/>
+            <path d="M114,75 C112,69 117,64 122,67 C128,66 130,72 126,75 Z" fill="#ffffff" stroke="#e0e8f5" stroke-width="1.5"/>
+            <path d="M88,74 C84,68 88,60 96,62 C99,56 107,57 108,63 C115,64 116,70 112,75 Z" fill="#ffffff" stroke="#e0e8f5" stroke-width="1.5"/>
+            <!-- Purble Place Cherry Twin -->
+            <path d="M95,46 C92,30 96,24 104,22 C112,24 116,32 108,48" stroke="#388e3c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M104,22 C108,18 116,19 118,24 C112,25 106,24 104,22 Z" fill="#4caf50"/>
+            <circle cx="94" cy="48" r="9" fill="url(#ppCherryRed)" stroke="#52000d" stroke-width="1.5"/>
+            <circle cx="91.5" cy="45" r="2.5" fill="#ffffff" opacity="0.85"/>
+            <circle cx="108" cy="50" r="9" fill="url(#ppCherryRed)" stroke="#52000d" stroke-width="1.5"/>
+            <circle cx="105.5" cy="47" r="2.5" fill="#ffffff" opacity="0.85"/>
+        </svg>`,
+            'BLACK_FOREST': `<svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="ppShadow2" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.25"/>
+                </filter>
+                <linearGradient id="ppChocPlate" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#d5dde8"/>
+                </linearGradient>
+                <linearGradient id="ppDarkChoc" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#542e18"/>
+                    <stop offset="50%" stop-color="#3d1f0e"/>
+                    <stop offset="100%" stop-color="#241005"/>
+                </linearGradient>
+                <linearGradient id="ppGanache" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#6e391b"/>
+                    <stop offset="60%" stop-color="#45200c"/>
+                    <stop offset="100%" stop-color="#1f0c03"/>
+                </linearGradient>
+                <linearGradient id="ppCherryRed2" x1="0.2" y1="0.2" x2="0.8" y2="0.8">
+                    <stop offset="0%" stop-color="#ff4a6e"/>
+                    <stop offset="40%" stop-color="#d60d37"/>
+                    <stop offset="100%" stop-color="#700015"/>
+                </linearGradient>
+            </defs>
+            <!-- Plate -->
+            <ellipse cx="100" cy="162" rx="76" ry="12" fill="url(#ppChocPlate)" filter="url(#ppShadow2)" stroke="#a5b3c4" stroke-width="2"/>
+            <ellipse cx="100" cy="160" rx="68" ry="9" fill="#f0f4fa"/>
+            <!-- Bottom Chocolate Sponge Tier -->
+            <path d="M42,122 C42,106 158,106 158,122 L158,148 C158,158 42,158 42,148 Z" fill="url(#ppDarkChoc)" stroke="#1f0c03" stroke-width="2"/>
+            <ellipse cx="100" cy="122" rx="58" ry="12" fill="#542e18"/>
+            <!-- Vanilla Cream Filling Band -->
+            <path d="M42,136 C65,142 135,142 158,136" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+            <!-- Dripping Chocolate Fudge Ganache -->
+            <path d="M40,122 C40,110 160,110 160,122 L160,133 C152,131 148,146 139,141 C133,136 130,128 121,129 C114,131 111,147 101,144 C94,142 91,130 83,131 C75,132 71,148 61,143 C53,139 50,130 40,134 Z" fill="url(#ppGanache)" stroke="#1a0802" stroke-width="1.5"/>
+            <ellipse cx="100" cy="121" rx="59" ry="11" fill="#542c15"/>
+            <path d="M55,118 C70,113 130,113 145,118" stroke="#9c633a" stroke-width="2" fill="none" opacity="0.65" stroke-linecap="round"/>
+            <!-- Top Chocolate Sponge Tier -->
+            <path d="M62,82 C62,70 138,70 138,82 L138,110 C138,118 62,118 62,110 Z" fill="url(#ppDarkChoc)" stroke="#1f0c03" stroke-width="2"/>
+            <path d="M60,82 C60,72 140,72 140,82 L140,95 C134,92 130,105 123,101 C117,98 115,91 109,92 C103,93 100,106 93,103 C86,101 84,92 77,93 C71,94 69,105 63,101 C61,99 60,94 60,94 Z" fill="url(#ppGanache)" stroke="#1a0802" stroke-width="1.5"/>
+            <ellipse cx="100" cy="81" rx="39" ry="8.5" fill="#542c15"/>
+            <path d="M72,79 C82,75 118,75 128,79" stroke="#9c633a" stroke-width="2" fill="none" opacity="0.75" stroke-linecap="round"/>
+            <!-- Whipped Cream Dollops on Top -->
+            <circle cx="72" cy="74" r="7" fill="#ffffff" stroke="#e0e8f5" stroke-width="1.2"/>
+            <circle cx="128" cy="74" r="7" fill="#ffffff" stroke="#e0e8f5" stroke-width="1.2"/>
+            <circle cx="85" cy="70" r="8" fill="#ffffff" stroke="#e0e8f5" stroke-width="1.2"/>
+            <circle cx="115" cy="70" r="8" fill="#ffffff" stroke="#e0e8f5" stroke-width="1.2"/>
+            <circle cx="100" cy="67" r="9" fill="#ffffff" stroke="#e0e8f5" stroke-width="1.5"/>
+            <!-- Shaved Chocolate Curls -->
+            <path d="M78,70 Q82,65 86,69" stroke="#241005" stroke-width="2" fill="none"/>
+            <path d="M112,70 Q116,65 120,69" stroke="#241005" stroke-width="2" fill="none"/>
+            <path d="M96,65 Q100,60 104,64" stroke="#241005" stroke-width="2" fill="none"/>
+            <!-- Purble Place Center Big Cherry -->
+            <path d="M100,56 C98,38 102,28 112,24" stroke="#388e3c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M112,24 C116,21 122,23 124,28 C118,29 114,27 112,24 Z" fill="#4caf50"/>
+            <circle cx="100" cy="56" r="11" fill="url(#ppCherryRed2)" stroke="#52000d" stroke-width="1.5"/>
+            <circle cx="97" cy="52" r="3" fill="#ffffff" opacity="0.85"/>
+        </svg>`,
+            'RED_VELVET': `<svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="ppShadow3" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.2"/>
+                </filter>
+                <linearGradient id="ppPlate3" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#d5dde8"/>
+                </linearGradient>
+                <linearGradient id="ppVelvetSponge" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#c41c3b"/>
+                    <stop offset="100%" stop-color="#800a20"/>
+                </linearGradient>
+                <linearGradient id="ppWhiteFrosting" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="70%" stop-color="#fff5fa"/>
+                    <stop offset="100%" stop-color="#ffe3ed"/>
+                </linearGradient>
+                <linearGradient id="ppCherryRed3" x1="0.2" y1="0.2" x2="0.8" y2="0.8">
+                    <stop offset="0%" stop-color="#ff4a6e"/>
+                    <stop offset="40%" stop-color="#d60d37"/>
+                    <stop offset="100%" stop-color="#700015"/>
+                </linearGradient>
+            </defs>
+            <!-- Plate -->
+            <ellipse cx="100" cy="162" rx="76" ry="12" fill="url(#ppPlate3)" filter="url(#ppShadow3)" stroke="#a5b3c4" stroke-width="2"/>
+            <ellipse cx="100" cy="160" rx="68" ry="9" fill="#f0f4fa"/>
+            <!-- Bottom Red Velvet Sponge Tier -->
+            <path d="M44,122 C44,106 156,106 156,122 L156,148 C156,158 44,158 44,148 Z" fill="url(#ppVelvetSponge)" stroke="#5e0516" stroke-width="2"/>
+            <ellipse cx="100" cy="122" rx="56" ry="12" fill="#c41c3b"/>
+            <!-- Thick Cream Cheese Filling -->
+            <path d="M44,136 C65,142 135,142 156,136" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+            <!-- Dripping Cream Cheese Frosting -->
+            <path d="M42,122 C42,110 158,110 158,122 L158,133 C150,131 146,146 138,141 C132,136 128,128 120,129 C113,131 110,147 101,144 C94,142 91,130 83,131 C75,132 71,147 62,143 C54,139 50,130 42,134 Z" fill="url(#ppWhiteFrosting)" stroke="#e0c2ce" stroke-width="1.5"/>
+            <ellipse cx="100" cy="121" rx="57" ry="11" fill="#ffffff"/>
+            <!-- Top Heart / Dome Tier -->
+            <path d="M64,82 C64,70 136,70 136,82 L136,110 C136,118 64,118 64,110 Z" fill="url(#ppVelvetSponge)" stroke="#5e0516" stroke-width="2"/>
+            <path d="M62,82 C62,72 138,72 138,82 L138,95 C132,92 128,105 122,101 C116,98 114,91 108,92 C102,93 99,106 93,103 C86,101 84,92 78,93 C72,94 70,105 64,101 C62,99 62,94 62,94 Z" fill="url(#ppWhiteFrosting)" stroke="#e0c2ce" stroke-width="1.5"/>
+            <ellipse cx="100" cy="81" rx="37" ry="8.5" fill="#ffffff"/>
+            <!-- Purble Place Candy Hearts on Cake -->
+            <path d="M80,88 C78,85 75,85 73,87 C71,85 68,85 66,87 C66,90 73,94 73,94 C73,94 80,90 80,88 Z" fill="#ff2e5b" transform="scale(1.2) translate(-10, -5)"/>
+            <path d="M125,88 C123,85 120,85 118,87 C116,85 113,85 111,87 C111,90 118,94 118,94 C118,94 125,90 125,88 Z" fill="#ff2e5b" transform="scale(1.2) translate(-10, -5)"/>
+            <!-- Whipped Rosettes on Top -->
+            <circle cx="82" cy="72" r="7.5" fill="#ffffff" stroke="#e0c2ce" stroke-width="1.2"/>
+            <circle cx="118" cy="72" r="7.5" fill="#ffffff" stroke="#e0c2ce" stroke-width="1.2"/>
+            <circle cx="100" cy="66" r="9" fill="#ffffff" stroke="#e0c2ce" stroke-width="1.5"/>
+            <!-- Giant Purble Place Topping Cherry -->
+            <path d="M100,54 C97,36 102,26 112,22" stroke="#388e3c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M112,22 C116,19 122,21 124,26 C118,27 114,25 112,22 Z" fill="#4caf50"/>
+            <circle cx="100" cy="54" r="11" fill="url(#ppCherryRed3)" stroke="#52000d" stroke-width="1.5"/>
+            <circle cx="97" cy="50" r="3" fill="#ffffff" opacity="0.85"/>
+        </svg>`,
+            'CHERRY_DANISH': `<svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="ppShadow4" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.2"/>
+                </filter>
+                <linearGradient id="ppPlate4" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#d5dde8"/>
+                </linearGradient>
+                <linearGradient id="ppPastry" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffdc8a"/>
+                    <stop offset="60%" stop-color="#e09d3b"/>
+                    <stop offset="100%" stop-color="#a35f12"/>
+                </linearGradient>
+                <linearGradient id="ppCustard" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#fff8d1"/>
+                    <stop offset="100%" stop-color="#ffe07d"/>
+                </linearGradient>
+                <linearGradient id="ppCherryJam" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ff2654"/>
+                    <stop offset="60%" stop-color="#bd062c"/>
+                    <stop offset="100%" stop-color="#690015"/>
+                </linearGradient>
+            </defs>
+            <!-- Plate -->
+            <ellipse cx="100" cy="158" rx="76" ry="12" fill="url(#ppPlate4)" filter="url(#ppShadow4)" stroke="#a5b3c4" stroke-width="2"/>
+            <ellipse cx="100" cy="156" rx="68" ry="9" fill="#f0f4fa"/>
+            <!-- Flaky Danish Pastry Ring (Outer Spiral) -->
+            <ellipse cx="100" cy="115" rx="62" ry="34" fill="url(#ppPastry)" stroke="#854c0b" stroke-width="2.5"/>
+            <!-- Pastry Swirl Folds -->
+            <path d="M46,110 C50,90 150,90 154,110 C154,135 46,135 46,110" fill="none" stroke="#fff1b8" stroke-width="3" opacity="0.6"/>
+            <ellipse cx="100" cy="114" rx="48" ry="24" fill="#cf8a27"/>
+            <ellipse cx="100" cy="113" rx="42" ry="20" fill="url(#ppCustard)" stroke="#e09d3b" stroke-width="2"/>
+            <!-- Glossy Cherry Compote Pool in Center -->
+            <ellipse cx="100" cy="112" rx="30" ry="14" fill="url(#ppCherryJam)" stroke="#80031a" stroke-width="2"/>
+            <ellipse cx="98" cy="109" rx="24" ry="9" fill="#e81e4a"/>
+            <!-- Whole Candied Cherries Nestled in Compote -->
+            <circle cx="90" cy="108" r="8" fill="url(#ppCherryJam)" stroke="#5c0012" stroke-width="1.2"/>
+            <circle cx="88" cy="105" r="2.2" fill="#ffffff" opacity="0.85"/>
+            <circle cx="108" cy="107" r="8" fill="url(#ppCherryJam)" stroke="#5c0012" stroke-width="1.2"/>
+            <circle cx="106" cy="104" r="2.2" fill="#ffffff" opacity="0.85"/>
+            <circle cx="100" cy="114" r="8" fill="url(#ppCherryJam)" stroke="#5c0012" stroke-width="1.2"/>
+            <circle cx="98" cy="111" r="2.2" fill="#ffffff" opacity="0.85"/>
+            <!-- Sugar Glaze Drizzles Across Danish -->
+            <path d="M52,108 Q68,98 84,106 T116,104 T148,108" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+            <path d="M60,118 Q76,108 92,116 T124,114 T140,118" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+        </svg>`,
+            'BUTTER_CROISSANT': `<svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="ppShadow5" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.2"/>
+                </filter>
+                <linearGradient id="ppPlate5" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#d5dde8"/>
+                </linearGradient>
+                <linearGradient id="ppCroissant" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffe699"/>
+                    <stop offset="45%" stop-color="#e8a838"/>
+                    <stop offset="100%" stop-color="#995a12"/>
+                </linearGradient>
+            </defs>
+            <!-- Plate -->
+            <ellipse cx="100" cy="158" rx="76" ry="12" fill="url(#ppPlate5)" filter="url(#ppShadow5)" stroke="#a5b3c4" stroke-width="2"/>
+            <ellipse cx="100" cy="156" rx="68" ry="9" fill="#f0f4fa"/>
+            <!-- Purble Place Crescent Horns (Left & Right) -->
+            <path d="M42,130 C32,122 36,105 48,102 C60,98 68,114 62,128 Z" fill="url(#ppCroissant)" stroke="#754107" stroke-width="2"/>
+            <path d="M158,130 C168,122 164,105 152,102 C140,98 132,114 138,128 Z" fill="url(#ppCroissant)" stroke="#754107" stroke-width="2"/>
+            <!-- Intermediate Layer Shells -->
+            <path d="M52,128 C45,108 72,92 84,98 C96,104 90,132 64,136 Z" fill="url(#ppCroissant)" stroke="#754107" stroke-width="2"/>
+            <path d="M148,128 C155,108 128,92 116,98 C104,104 110,132 136,136 Z" fill="url(#ppCroissant)" stroke="#754107" stroke-width="2"/>
+            <!-- Plump Center Crescent Body -->
+            <ellipse cx="100" cy="112" rx="36" ry="26" fill="url(#ppCroissant)" stroke="#754107" stroke-width="2.5"/>
+            <!-- Golden Crisp Flake Ridges -->
+            <path d="M84,96 C94,90 106,90 116,96" stroke="#fff0ba" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M78,112 C92,104 108,104 122,112" stroke="#fff0ba" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <path d="M82,126 C94,120 106,120 118,126" stroke="#754107" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <!-- Steam Puffs Above Hot Fresh Croissant -->
+            <path d="M88,78 Q82,68 88,60 T86,46" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <path d="M102,74 Q98,64 104,54 T100,40" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+            <path d="M116,78 Q110,68 116,60 T114,46" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+        </svg>`,
+            'CHERRY_LATTE': `<svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="ppShadow6" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.2"/>
+                </filter>
+                <linearGradient id="ppPlate6" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#d5dde8"/>
+                </linearGradient>
+                <linearGradient id="ppGlass" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="rgba(255,255,255,0.7)"/>
+                    <stop offset="30%" stop-color="rgba(255,255,255,0.2)"/>
+                    <stop offset="70%" stop-color="rgba(255,255,255,0.1)"/>
+                    <stop offset="100%" stop-color="rgba(255,255,255,0.5)"/>
+                </linearGradient>
+                <linearGradient id="ppPinkMilk" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ff99b8"/>
+                    <stop offset="100%" stop-color="#f56e95"/>
+                </linearGradient>
+                <linearGradient id="ppCoffeeLayer" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#4a220d"/>
+                    <stop offset="100%" stop-color="#733917"/>
+                </linearGradient>
+                <linearGradient id="ppCherryRed6" x1="0.2" y1="0.2" x2="0.8" y2="0.8">
+                    <stop offset="0%" stop-color="#ff4a6e"/>
+                    <stop offset="40%" stop-color="#d60d37"/>
+                    <stop offset="100%" stop-color="#700015"/>
+                </linearGradient>
+            </defs>
+            <!-- Saucer -->
+            <ellipse cx="100" cy="162" rx="60" ry="10" fill="url(#ppPlate6)" filter="url(#ppShadow6)" stroke="#a5b3c4" stroke-width="2"/>
+            <ellipse cx="100" cy="160" rx="52" ry="7" fill="#f0f4fa"/>
+            <!-- Glass Handle -->
+            <path d="M136,104 C158,104 158,138 136,138" stroke="#cbd5e1" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M136,104 C156,104 156,138 136,138" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Glass Mug Body -->
+            <path d="M64,88 L72,152 C73,157 127,157 128,152 L136,88 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+            <!-- Layer 1: Dark Espresso Base -->
+            <path d="M71,136 L72,152 C73,157 127,157 128,152 L129,136 Z" fill="url(#ppCoffeeLayer)"/>
+            <!-- Layer 2: Pink Cherry Steamed Milk -->
+            <path d="M68,104 L71,136 C80,138 120,138 129,136 L132,104 Z" fill="url(#ppPinkMilk)"/>
+            <!-- Layer 3: Crema Foam Ring -->
+            <ellipse cx="100" cy="104" rx="32" ry="6" fill="#f7d4c1"/>
+            <!-- Glass Overlay Shimmer -->
+            <path d="M64,88 L72,152 C73,157 127,157 128,152 L136,88 Z" fill="url(#ppGlass)"/>
+            <path d="M72,96 L78,148" stroke="#ffffff" stroke-width="2.5" opacity="0.75" stroke-linecap="round"/>
+            <!-- Towering Purble Place Whipped Cream Swirl -->
+            <!-- Base Cream Mound -->
+            <path d="M66,88 C60,78 74,68 86,72 C94,62 108,62 116,70 C126,68 138,78 134,88 Z" fill="#ffffff" stroke="#e0e8f5" stroke-width="2"/>
+            <!-- Middle Swirl -->
+            <path d="M76,74 C72,64 84,54 96,58 C102,48 116,50 120,62 C126,66 122,74 116,74 Z" fill="#ffffff" stroke="#e0e8f5" stroke-width="2"/>
+            <!-- Top Peak Swirl -->
+            <path d="M86,58 C84,48 94,36 102,40 C108,36 114,44 112,54 Z" fill="#ffffff" stroke="#e0e8f5" stroke-width="2"/>
+            <!-- Spiral Cream Ridges -->
+            <path d="M82,78 Q100,68 118,78" stroke="#e0e8f5" stroke-width="2" fill="none"/>
+            <path d="M90,64 Q100,56 110,64" stroke="#e0e8f5" stroke-width="2" fill="none"/>
+            <!-- Cherry Syrup Drizzle & Sprinkles -->
+            <path d="M86,72 Q98,82 112,70" stroke="#ff2654" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="86" cy="62" r="1.8" fill="#00d2ff"/>
+            <circle cx="114" cy="60" r="1.8" fill="#ffeb3b"/>
+            <circle cx="98" cy="74" r="1.8" fill="#76ff03"/>
+            <!-- Purble Place Cherry on Top of Cream -->
+            <path d="M104,36 C102,22 106,14 114,10" stroke="#388e3c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="103" cy="37" r="9" fill="url(#ppCherryRed6)" stroke="#52000d" stroke-width="1.5"/>
+            <circle cx="100.5" cy="34" r="2.5" fill="#ffffff" opacity="0.85"/>
+        </svg>`,
+            'ESPRESSO_SPECIALTY': `<svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="ppShadow7" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.2"/>
+                </filter>
+                <linearGradient id="ppCupGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="70%" stop-color="#f1f5f9"/>
+                    <stop offset="100%" stop-color="#cbd5e1"/>
+                </linearGradient>
+                <linearGradient id="ppCrema" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#cf8438"/>
+                    <stop offset="40%" stop-color="#8a4b14"/>
+                    <stop offset="100%" stop-color="#3b1b04"/>
+                </linearGradient>
+                <linearGradient id="ppBean" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#542e18"/>
+                    <stop offset="100%" stop-color="#210e04"/>
+                </linearGradient>
+            </defs>
+            <!-- Saucer -->
+            <ellipse cx="100" cy="154" rx="74" ry="16" fill="url(#ppCupGrad)" filter="url(#ppShadow7)" stroke="#94a3b8" stroke-width="2"/>
+            <ellipse cx="100" cy="152" rx="64" ry="12" fill="#ffffff"/>
+            <ellipse cx="100" cy="150" rx="42" ry="7" fill="#e2e8f0"/>
+            <!-- Cup Handle -->
+            <path d="M136,108 C158,108 158,136 136,136" stroke="#cbd5e1" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M136,108 C156,108 156,136 136,136" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Porcelain Cup Body -->
+            <path d="M60,94 C60,144 140,144 140,94 Z" fill="url(#ppCupGrad)" stroke="#94a3b8" stroke-width="2.5"/>
+            <!-- Cup Rim -->
+            <ellipse cx="100" cy="94" rx="40" ry="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+            <!-- Rich Espresso Crema Surface -->
+            <ellipse cx="100" cy="95" rx="36" ry="10" fill="url(#ppCrema)"/>
+            <!-- Latte Art Heart Swirl in Crema (Purble Place Style) -->
+            <path d="M100,98 C96,93 88,93 88,97 C88,101 100,105 100,105 C100,105 112,101 112,97 C112,93 104,93 100,98 Z" fill="#ffe2b8" opacity="0.9"/>
+            <circle cx="100" cy="98" r="2" fill="#ffebd1"/>
+            <!-- Gloss Highlights on Cup -->
+            <path d="M68,104 C66,124 76,136 84,138" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.8" stroke-linecap="round"/>
+            <!-- Coffee Beans on Saucer -->
+            <ellipse cx="56" cy="150" rx="7" ry="5" fill="url(#ppBean)" transform="rotate(-20, 56, 150)"/>
+            <path d="M52,150 Q56,148 60,150" stroke="#100501" stroke-width="1.2" fill="none" transform="rotate(-20, 56, 150)"/>
+            <ellipse cx="144" cy="151" rx="6.5" ry="4.5" fill="url(#ppBean)" transform="rotate(35, 144, 151)"/>
+            <path d="M141,151 Q144,149 147,151" stroke="#100501" stroke-width="1.2" fill="none" transform="rotate(35, 144, 151)"/>
+            <!-- Rising Animated Steam -->
+            <path d="M92,78 Q86,66 92,54 T90,38" stroke="#e2e8f0" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <path d="M106,74 Q100,62 106,50 T104,34" stroke="#e2e8f0" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.75"/>
+            <path d="M118,78 Q112,66 118,54 T116,38" stroke="#e2e8f0" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.6"/>
+        </svg>`,
         };
+
 
         // App State
         const APP_STATE = {
@@ -3465,15 +3851,48 @@
             }
         }
 
+                const COUNTRY_FLAGS = {
+            'UZB': '🇺🇿',
+            'KAZ': '🇰🇿',
+            'GEO': '🇬🇪',
+            'UKR': '🇺🇦',
+            'CHN': '🇨🇳',
+            'BLR': '🇧🇾',
+            'LTU': '🇱🇹',
+            'LVA': '🇱🇻',
+            'EST': '🇪🇪',
+            'FIN': '🇫🇮',
+            'SWE': '🇸🇪',
+            'MDA': '🇲🇩',
+            'ROU': '🇷🇴',
+            'TUR': '🇹🇷',
+            'AZE': '🇦🇿',
+            'ARM': '🇦🇲'
+        };
+
         function renderRegionSelect(regions) {
             globalRegionSelect.innerHTML = '';
+            if (mobileRegionSelect) mobileRegionSelect.innerHTML = '';
+
             regions.forEach(r => {
+                const flag = COUNTRY_FLAGS[r.code] || '🌐';
+                const label = `${flag} ${r.code}`;
+
                 const opt = document.createElement('option');
                 opt.value = r.code;
-                opt.textContent = `${r.code} • ${r.name} (${r.currencySymbol}, ${r.vatRate}% VAT)`;
+                opt.textContent = label;
                 if (r.code === APP_STATE.region) opt.selected = true;
                 globalRegionSelect.appendChild(opt);
+
+                if (mobileRegionSelect) {
+                    const mOpt = document.createElement('option');
+                    mOpt.value = r.code;
+                    mOpt.textContent = label;
+                    if (r.code === APP_STATE.region) mOpt.selected = true;
+                    mobileRegionSelect.appendChild(mOpt);
+                }
             });
+        });
         }
 
         // -------------------------------------------------------------

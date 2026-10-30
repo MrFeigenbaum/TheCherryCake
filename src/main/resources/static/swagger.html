@@ -682,8 +682,8 @@
                     <span>{ }</span> OpenAPI JSON
                 </a>
                 <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Theme">
-                    <span id="themeToggleIcon">🍰</span>
-                    <span id="themeToggleLabel">Cheesecake</span>
+                    <span id="themeToggleIcon">☀️</span>
+                    <span id="themeToggleLabel">Light</span>
                 </button>
             </div>
         </div>
@@ -808,10 +808,10 @@
             if (!icon || !label) return;
             if (theme === 'light') {
                 icon.textContent = '🌙';
-                label.textContent = 'Dark Void';
+                label.textContent = 'Dark';
             } else {
-                icon.textContent = '🍰';
-                label.textContent = 'Cheesecake';
+                icon.textContent = '☀️';
+                label.textContent = 'Light';
             }
         }
     </script>
