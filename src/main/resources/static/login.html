@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cherry Cake - Customer &amp; Admin Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Parisienne&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png">
+
+    <style>
+        :root {
+            --cherry-void: #12060e;
+            --cherry-deep: #190814;
+            --cherry-panel: #230b1c;
+            --cherry-card: #2d0e24;
+            --cherry-border: rgba(255, 183, 197, 0.16);
+            --cherry-border-glow: rgba(230, 57, 96, 0.4);
+
+            --raspberry-coulis: #e63960;
+            --raspberry-bright: #ff3864;
+            --raspberry-dim: #a82040;
+
+            --sakura-pink: #ffb7c5;
+            --sakura-glow: #ffd5df;
+            --sakura-soft: #fff0f4;
+
+            --cheesecake-cream: #fff6ed;
+            --crust-gold: #e5b061;
+            --mint-fresh: #38c172;
+
+            --text-main: #fdf2f5;
+            --text-dim: #c7a3b3;
+            --text-faint: #805f6e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--cherry-void);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .display-font {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .script-font {
+            font-family: 'Parisienne', cursive;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        #sakura-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* HEADER NAVBAR */
+        .auth-header {
+            position: relative;
+            z-index: 10;
+            background: rgba(18, 6, 14, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--cherry-border);
+            padding: 14px 24px;
+        }
+
+        .auth-nav {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none !important;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(230, 57, 96, 0.4), rgba(45, 14, 36, 0.8));
+            border: 1px solid rgba(255, 183, 197, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 14px rgba(230, 57, 96, 0.35);
+        }
+
+        .brand-icon img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            animation: rotateLogo 20s linear infinite;
+        }
+
+        @keyframes rotateLogo {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .brand-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            color: var(--cheesecake-cream);
+            line-height: 1.1;
+        }
+
+        .brand-text span {
+            font-family: 'Parisienne', cursive;
+            font-size: 0.95rem;
+            color: var(--sakura-pink);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: rgba(45, 14, 36, 0.7);
+            border: 1px solid var(--cherry-border);
+            color: var(--cheesecake-cream);
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--sakura-pink);
+            background: rgba(56, 19, 45, 0.9);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        /* MAIN CONTAINER */
+        .auth-main {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .auth-card {
+            background: linear-gradient(160deg, rgba(45, 14, 36, 0.92), rgba(28, 8, 22, 0.95));
+            border: 1px solid var(--cherry-border-glow);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 480px;
+            padding: 36px 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(230, 57, 96, 0.25);
+            backdrop-filter: blur(14px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--raspberry-coulis), var(--crust-gold));
+        }
+
+        .auth-emblem-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .auth-emblem {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(230, 57, 96, 0.4), rgba(45, 14, 36, 0.9));
+            border: 2px solid rgba(255, 183, 197, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 24px rgba(230, 57, 96, 0.35);
+        }
+
+        .auth-emblem img {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+        }
+
+        .auth-heading {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .auth-title {
+            font-size: 1.8rem;
+            color: var(--cheesecake-cream);
+            margin-bottom: 6px;
+        }
+
+        .auth-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        /* TABS */
+        .auth-tabs {
+            display: flex;
+            background: rgba(18, 6, 14, 0.6);
+            border: 1px solid var(--cherry-border);
+            border-radius: 9999px;
+            padding: 4px;
+            margin-bottom: 26px;
+        }
+
+        .auth-tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            padding: 9px;
+            border-radius: 9999px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+        }
+
+        .auth-tab-btn.active {
+            background: linear-gradient(135deg, var(--raspberry-coulis), var(--raspberry-dim));
+            color: #fff;
+            box-shadow: 0 3px 12px rgba(230, 57, 96, 0.4);
+        }
+
+        /* FORMS */
+        .form-pane {
+            display: none;
+        }
+
+        .form-pane.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--sakura-pink);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            background: rgba(18, 6, 14, 0.7);
+            border: 1px solid var(--cherry-border);
+            color: var(--cheesecake-cream);
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--sakura-pink);
+            box-shadow: 0 0 14px rgba(230, 57, 96, 0.3);
+        }
+
+        .toggle-pwd-btn {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .toggle-pwd-btn:hover {
+            color: var(--sakura-pink);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--raspberry-coulis), var(--raspberry-bright));
+            border: none;
+            color: #fff;
+            padding: 13px;
+            border-radius: 10px;
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px rgba(230, 57, 96, 0.4);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 26px rgba(230, 57, 96, 0.65);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* QUICK TEST CREDENTIALS */
+        .demo-credentials-box {
+            margin-top: 24px;
+            background: rgba(18, 6, 14, 0.5);
+            border: 1px dashed var(--cherry-border);
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .demo-title {
+            font-weight: 700;
+            color: var(--sakura-pink);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .demo-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .demo-chip {
+            background: rgba(45, 14, 36, 0.8);
+            border: 1px solid var(--cherry-border);
+            color: var(--cheesecake-cream);
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-chip:hover {
+            border-color: var(--sakura-pink);
+            background: var(--raspberry-coulis);
+            color: #fff;
+        }
+
+        /* SIGNED IN PROFILE CARD */
+        .profile-card {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .profile-card.active {
+            display: block;
+        }
+
+        .profile-avatar {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--raspberry-coulis), var(--crust-gold));
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 0 24px rgba(230, 57, 96, 0.4);
+        }
+
+        .profile-name {
+            font-size: 1.4rem;
+            color: var(--cheesecake-cream);
+            margin-bottom: 4px;
+        }
+
+        .profile-email {
+            font-size: 0.88rem;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+        }
+
+        .profile-role-pill {
+            display: inline-block;
+            background: rgba(56, 193, 114, 0.2);
+            border: 1px solid var(--mint-fresh);
+            color: var(--mint-fresh);
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 9999px;
+            margin-bottom: 22px;
+            letter-spacing: 0.05em;
+        }
+
+        .profile-role-pill.admin {
+            background: rgba(230, 57, 96, 0.2);
+            border-color: var(--raspberry-coulis);
+            color: var(--sakura-pink);
+        }
+
+        .token-box {
+            background: rgba(18, 6, 14, 0.7);
+            border: 1px solid var(--cherry-border);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.76rem;
+            color: var(--text-dim);
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .token-label {
+            font-weight: 700;
+            color: var(--crust-gold);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .token-val {
+            word-break: break-all;
+            color: var(--sakura-soft);
+        }
+
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-signout {
+            background: rgba(45, 14, 36, 0.8);
+            border: 1px solid var(--cherry-border);
+            color: #ff6b81;
+            padding: 11px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-signout:hover {
+            background: rgba(230, 57, 96, 0.25);
+            border-color: #ff6b81;
+            color: #fff;
+        }
+
+        /* TOAST NOTIFICATIONS */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast-card {
+            background: rgba(30, 9, 23, 0.95);
+            border: 1px solid var(--cherry-border-glow);
+            color: var(--cheesecake-cream);
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: auto;
+            max-width: 360px;
+        }
+
+        @keyframes slideInToast {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="sakura-canvas"></canvas>
+
+    <!-- HEADER NAVBAR -->
+    <header class="auth-header">
+        <nav class="auth-nav">
+            <a href="/index.html" class="brand-link">
+                <div class="brand-icon">
+                    <img src="assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png" alt="Cherry Logo">
+                </div>
+                <div class="brand-text">
+                    <h1>Cherry Cake</h1>
+                    <span>Bakery &amp; Café</span>
+                </div>
+            </a>
+
+            <div class="nav-actions">
+                <a href="/index.html" class="nav-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Artisan Storefront
+                </a>
+                <a href="/swagger.html" class="nav-btn">
+                    API Docs
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- AUTH MAIN CONTENT -->
+    <main class="auth-main">
+        <div class="auth-card">
+            <!-- Emblem -->
+            <div class="auth-emblem-wrap">
+                <div class="auth-emblem">
+                    <img src="assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png" alt="Blossom Emblem">
+                </div>
+            </div>
+
+            <!-- Heading -->
+            <div class="auth-heading" id="authHeading">
+                <h2 class="auth-title display-font">Cherry Cake Portal</h2>
+                <p class="auth-subtitle">Sign in to your account or register to collect sweet rewards</p>
+            </div>
+
+            <!-- TABS -->
+            <div class="auth-tabs" id="authTabs">
+                <button class="auth-tab-btn active" id="tabLoginBtn">Sign In</button>
+                <button class="auth-tab-btn" id="tabRegisterBtn">Create Account</button>
+            </div>
+
+            <!-- 1. SIGN IN FORM -->
+            <div class="form-pane active" id="loginPane">
+                <form id="loginForm" onsubmit="return false;">
+                    <div class="input-group">
+                        <label for="loginEmail">Email Address</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="loginEmail" required placeholder="customer@cherrycake.com" autofocus>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="loginPassword">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="loginPassword" required placeholder="••••••••">
+                            <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('loginPassword')">Show</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="loginSubmitBtn">
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Quick Test Credentials -->
+                <div class="demo-credentials-box">
+                    <div class="demo-title">
+                        🌸 Quick Test Accounts:
+                    </div>
+                    <div class="demo-chips">
+                        <button class="demo-chip" onclick="fillCredentials('customer@cherrycake.com', 'password123')">
+                            Customer (ROLE_USER)
+                        </button>
+                        <button class="demo-chip" onclick="fillCredentials('admin@cherrycake.com', 'password123')">
+                            Administrator (ROLE_ADMIN)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. REGISTER FORM -->
+            <div class="form-pane" id="registerPane">
+                <form id="registerForm" onsubmit="return false;">
+                    <div class="input-group">
+                        <label for="regFullName">Full Name *</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="regFullName" required placeholder="e.g. Adrian Zakirov">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="regEmail">Email Address *</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="regEmail" required placeholder="guest@cherrycake.com">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="regPhone">Phone Number</label>
+                        <div class="input-wrapper">
+                            <input type="tel" id="regPhone" placeholder="+998901234567">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="regPassword">Password * (min 6 characters)</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="regPassword" required minlength="6" placeholder="Create strong password">
+                            <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('regPassword')">Show</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="registerSubmitBtn">
+                        Create Account
+                    </button>
+                </form>
+            </div>
+
+            <!-- 3. SIGNED IN PROFILE CARD -->
+            <div class="profile-card" id="profilePane">
+                <div class="profile-avatar" id="userInitial">C</div>
+                <h3 class="profile-name display-font" id="userFullName">Cherry Guest</h3>
+                <p class="profile-email" id="userEmail">customer@cherrycake.com</p>
+                <div class="profile-role-pill" id="userRole">ROLE_USER</div>
+
+                <div class="token-box">
+                    <span class="token-label mono">Active JWT Token:</span>
+                    <span class="token-val mono" id="userTokenPreview">eyJh...</span>
+                </div>
+
+                <div class="profile-actions">
+                    <a href="/index.html" class="submit-btn" style="text-decoration:none; text-align:center;">
+                        🌸 Return to Storefront
+                    </a>
+                    <a href="/swagger.html" class="nav-btn" style="justify-content:center;">
+                        📊 Explore REST API Documentation
+                    </a>
+                    <button class="btn-signout" onclick="handleSignOut()">
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- TOASTS -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Sakura Falling Canvas
+        const sCanvas = document.getElementById('sakura-canvas');
+        const sCtx = sCanvas.getContext('2d');
+        function resizeCanvas() {
+            sCanvas.width = window.innerWidth;
+            sCanvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const flowerImg = new Image();
+        flowerImg.src = 'assets/images/Partical%20Effects/flower-particle-soft.png';
+
+        const petals = [];
+        for (let i = 0; i < 24; i++) {
+            petals.push({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                size: 16 + Math.random() * 18,
+                speedY: 0.6 + Math.random() * 1.2,
+                speedX: -0.3 + Math.random() * 0.8,
+                angle: Math.random() * Math.PI * 2,
+                spinSpeed: (Math.random() - 0.5) * 0.03,
+                opacity: 0.4 + Math.random() * 0.4
+            });
+        }
+
+        function renderPetals() {
+            sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
+            for (const p of petals) {
+                p.y += p.speedY;
+                p.x += p.speedX;
+                p.angle += p.spinSpeed;
+                if (p.y > sCanvas.height + 30) p.y = -30;
+                if (p.x > sCanvas.width + 30) p.x = -30;
+                if (p.x < -30) p.x = sCanvas.width + 30;
+
+                if (flowerImg.complete && flowerImg.naturalWidth > 0) {
+                    sCtx.save();
+                    sCtx.translate(p.x, p.y);
+                    sCtx.rotate(p.angle);
+                    sCtx.globalAlpha = p.opacity;
+                    sCtx.drawImage(flowerImg, -p.size / 2, -p.size / 2, p.size, p.size);
+                    sCtx.restore();
+                }
+            }
+            requestAnimationFrame(renderPetals);
+        }
+        renderPetals();
+
+        // DOM elements
+        const tabLoginBtn = document.getElementById('tabLoginBtn');
+        const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+        const loginPane = document.getElementById('loginPane');
+        const registerPane = document.getElementById('registerPane');
+        const profilePane = document.getElementById('profilePane');
+        const authTabs = document.getElementById('authTabs');
+        const authHeading = document.getElementById('authHeading');
+
+        // Toast Helper
+        function showToast(message, icon = "🌸") {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast-card';
+            toast.innerHTML = `<span style="font-size:1.1rem">${icon}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.transition = 'opacity 0.4s, transform 0.4s';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(15px)';
+                setTimeout(() => toast.remove(), 400);
+            }, 3200);
+        }
+
+        // Toggle Password visibility
+        window.togglePasswordVisibility = function(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        };
+
+        // Quick fill demo credentials
+        window.fillCredentials = function(email, password) {
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPassword').value = password;
+            showToast(`Filled credentials for ${email}`, "🔑");
+        };
+
+        // Tab Switching
+        tabLoginBtn.addEventListener('click', () => {
+            tabLoginBtn.classList.add('active');
+            tabRegisterBtn.classList.remove('active');
+            loginPane.classList.add('active');
+            registerPane.classList.remove('active');
+        });
+
+        tabRegisterBtn.addEventListener('click', () => {
+            tabRegisterBtn.classList.add('active');
+            tabLoginBtn.classList.remove('active');
+            registerPane.classList.add('active');
+            loginPane.classList.remove('active');
+        });
+
+        // Check authentication state on page load
+        function checkAuthState() {
+            const token = localStorage.getItem('cherry_token');
+            const userJson = localStorage.getItem('cherry_user');
+
+            if (token && userJson) {
+                try {
+                    const user = JSON.parse(userJson);
+                    authTabs.style.display = 'none';
+                    loginPane.classList.remove('active');
+                    registerPane.classList.remove('active');
+                    authHeading.style.display = 'none';
+
+                    profilePane.classList.add('active');
+                    document.getElementById('userFullName').textContent = user.fullName || user.email;
+                    document.getElementById('userEmail').textContent = user.email;
+                    document.getElementById('userInitial').textContent = (user.fullName || user.email)[0].toUpperCase();
+
+                    const rolePill = document.getElementById('userRole');
+                    rolePill.textContent = user.role || 'ROLE_USER';
+                    if (user.role === 'ROLE_ADMIN') {
+                        rolePill.classList.add('admin');
+                    } else {
+                        rolePill.classList.remove('admin');
+                    }
+
+                    document.getElementById('userTokenPreview').textContent = token.slice(0, 24) + '...' + token.slice(-12);
+                    return;
+                } catch (e) {
+                    localStorage.removeItem('cherry_token');
+                    localStorage.removeItem('cherry_user');
+                }
+            }
+
+            // Unauthenticated state
+            authTabs.style.display = 'flex';
+            authHeading.style.display = 'block';
+            profilePane.classList.remove('active');
+            loginPane.classList.add('active');
+        }
+
+        // Login Handler (POST /api/v1/auth/login)
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('loginSubmitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Authenticating...';
+
+            const payload = {
+                email: document.getElementById('loginEmail').value.trim(),
+                password: document.getElementById('loginPassword').value
+            };
+
+            try {
+                const res = await fetch('/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (res.ok && data.data && data.data.token) {
+                    localStorage.setItem('cherry_token', data.data.token);
+                    localStorage.setItem('cherry_user', JSON.stringify(data.data));
+                    showToast(`Welcome back, ${data.data.fullName || data.data.email}!`, "🌸");
+                    setTimeout(checkAuthState, 600);
+                } else {
+                    alert(`Login failed: ${data.message || 'Invalid email or password'}`);
+                    btn.disabled = false;
+                    btn.textContent = 'Sign In';
+                }
+            } catch (err) {
+                console.error("Login error:", err);
+                alert("Network error connecting to backend server.");
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        });
+
+        // Register Handler (POST /api/v1/auth/register)
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('registerSubmitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Creating Account...';
+
+            const payload = {
+                fullName: document.getElementById('regFullName').value.trim(),
+                email: document.getElementById('regEmail').value.trim(),
+                phone: document.getElementById('regPhone').value.trim() || null,
+                password: document.getElementById('regPassword').value
+            };
+
+            try {
+                const res = await fetch('/api/v1/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (res.ok && data.data && data.data.token) {
+                    localStorage.setItem('cherry_token', data.data.token);
+                    localStorage.setItem('cherry_user', JSON.stringify(data.data));
+                    showToast(`Account created! Welcome, ${data.data.fullName}!`, "🎉");
+                    setTimeout(checkAuthState, 600);
+                } else {
+                    alert(`Registration failed: ${data.message || 'Email might already be in use'}`);
+                    btn.disabled = false;
+                    btn.textContent = 'Create Account';
+                }
+            } catch (err) {
+                console.error("Registration error:", err);
+                alert("Network error creating account.");
+                btn.disabled = false;
+                btn.textContent = 'Create Account';
+            }
+        });
+
+        // Sign Out Handler
+        window.handleSignOut = function() {
+            localStorage.removeItem('cherry_token');
+            localStorage.removeItem('cherry_user');
+            showToast("Signed out successfully", "👋");
+            checkAuthState();
+        };
+
+        checkAuthState();
+    </script>
+</body>
+
+</html>

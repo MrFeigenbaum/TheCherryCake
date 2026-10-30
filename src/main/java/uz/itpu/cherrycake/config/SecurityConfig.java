@@ -50,6 +50,10 @@ public class SecurityConfig
                 (
                     "/",
                     "/index.html",
+                    "/login",
+                    "/login.html",
+                    "/swagger",
+                    "/swagger.html",
                     "/favicon.ico",
                     "/api/v1/auth/**",
                     "/api/v1/catalog/**",
