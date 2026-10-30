@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 180" width="100%" height="180">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="pipeBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14040f" />
+      <stop offset="50%" stop-color="#24071b" />
+      <stop offset="100%" stop-color="#12030d" />
+    </linearGradient>
+
+    <!-- Border Gradient -->
+    <linearGradient id="pipeBorder" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e63960" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#ff758f" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#e63960" stop-opacity="0.8" />
+    </linearGradient>
+
+    <!-- Node Gradient Active -->
+    <linearGradient id="nodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3d122b" />
+      <stop offset="100%" stop-color="#1e0716" />
+    </linearGradient>
+
+    <!-- Final Gate Gradient -->
+    <linearGradient id="finalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="100%" stop-color="#022c22" />
+    </linearGradient>
+
+    <!-- Laser Track Gradient -->
+    <linearGradient id="pipeLaser" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e63960" stop-opacity="0" />
+      <stop offset="50%" stop-color="#ff758f" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#e63960" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="pGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes pulseAura {
+      0%, 100% { r: 46; opacity: 0.3; }
+      50% { r: 52; opacity: 0.8; }
+    }
+    @keyframes pulseGreenAura {
+      0%, 100% { r: 48; opacity: 0.4; }
+      50% { r: 55; opacity: 0.9; }
+    }
+    @keyframes flowChevron {
+      0% { transform: translateX(-15px); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateX(15px); opacity: 0; }
+    }
+    @keyframes pipeBeam {
+      0% { transform: translateX(-200px); }
+      100% { transform: translateX(1000px); }
+    }
+
+    .aura-circle { animation: pulseAura 3s ease-in-out infinite; }
+    .gate-aura { animation: pulseGreenAura 2.2s ease-in-out infinite; }
+    .flow-chv { animation: flowChevron 2s ease-in-out infinite; }
+    .pipe-runner { animation: pipeBeam 4s linear infinite; }
+
+    .node-title {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      fill: #ffffff;
+      text-anchor: middle;
+    }
+    .node-sub {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 9.5px;
+      font-weight: 500;
+      fill: #fda4af;
+      text-anchor: middle;
+    }
+  </style>
+
+  <!-- Container Box -->
+  <rect x="2" y="2" width="996" height="176" rx="16" fill="url(#pipeBg)" stroke="url(#pipeBorder)" stroke-width="1.5" />
+
+  <!-- Base Connection Track -->
+  <line x1="100" y1="90" x2="900" y2="90" stroke="#3d152c" stroke-width="2.5" />
+
+  <!-- Animated Laser Beam along Track -->
+  <g class="pipe-runner">
+    <line x1="0" y1="90" x2="220" y2="90" stroke="url(#pipeLaser)" stroke-width="3.5" filter="url(#pGlow)" />
+  </g>
+
+  <!-- Directional Chevrons between Nodes -->
+  <!-- Chevron 1: 100 -> 300 (Center at 200) -->
+  <g transform="translate(200, 90)">
+    <g class="flow-chv">
+      <path d="M -8 -8 L 0 0 L -8 8" fill="none" stroke="#ff758f" stroke-width="2" stroke-linecap="round" />
+      <path d="M 0 -8 L 8 0 L 0 8" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+    </g>
+  </g>
+
+  <!-- Chevron 2: 300 -> 500 (Center at 400) -->
+  <g transform="translate(400, 90)">
+    <g class="flow-chv">
+      <path d="M -8 -8 L 0 0 L -8 8" fill="none" stroke="#ff758f" stroke-width="2" stroke-linecap="round" />
+      <path d="M 0 -8 L 8 0 L 0 8" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+    </g>
+  </g>
+
+  <!-- Chevron 3: 500 -> 700 (Center at 600) -->
+  <g transform="translate(600, 90)">
+    <g class="flow-chv">
+      <path d="M -8 -8 L 0 0 L -8 8" fill="none" stroke="#ff758f" stroke-width="2" stroke-linecap="round" />
+      <path d="M 0 -8 L 8 0 L 0 8" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+    </g>
+  </g>
+
+  <!-- Chevron 4: 700 -> 900 (Center at 800) -->
+  <g transform="translate(800, 90)">
+    <g class="flow-chv">
+      <path d="M -8 -8 L 0 0 L -8 8" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+      <path d="M 0 -8 L 8 0 L 0 8" fill="none" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" />
+    </g>
+  </g>
+
+  <!-- NODE 1: API CONTRACT (X: 100, Y: 90) -->
+  <g transform="translate(100, 90)">
+    <circle cx="0" cy="0" r="46" fill="#e63960" class="aura-circle" />
+    <circle cx="0" cy="0" r="44" fill="url(#nodeGrad)" stroke="#e63960" stroke-width="1.8" />
+    <text x="0" y="-8" class="node-title">API CONTRACT</text>
+    <text x="0" y="8" class="node-sub">OpenAPI 3.0</text>
+    <text x="0" y="22" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#c7a3b3" text-anchor="middle">v1 Freeze</text>
+  </g>
+
+  <!-- NODE 2: POSTMAN SUITE (X: 300, Y: 90) -->
+  <g transform="translate(300, 90)">
+    <circle cx="0" cy="0" r="46" fill="#e63960" class="aura-circle" />
+    <circle cx="0" cy="0" r="44" fill="url(#nodeGrad)" stroke="#e63960" stroke-width="1.8" />
+    <text x="0" y="-8" class="node-title">POSTMAN SUITE</text>
+    <text x="0" y="8" class="node-sub">24 Endpoints</text>
+    <text x="0" y="22" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#c7a3b3" text-anchor="middle">7 Modules</text>
+  </g>
+
+  <!-- NODE 3: FORMULA TRACE (X: 500, Y: 90) -->
+  <g transform="translate(500, 90)">
+    <circle cx="0" cy="0" r="46" fill="#e63960" class="aura-circle" />
+    <circle cx="0" cy="0" r="44" fill="url(#nodeGrad)" stroke="#e63960" stroke-width="1.8" />
+    <text x="0" y="-8" class="node-title">FORMULA TRACE</text>
+    <text x="0" y="8" class="node-sub">16 Countries</text>
+    <text x="0" y="22" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#c7a3b3" text-anchor="middle">HALF_UP Math</text>
+  </g>
+
+  <!-- NODE 4: NEWMAN CLI (X: 700, Y: 90) -->
+  <g transform="translate(700, 90)">
+    <circle cx="0" cy="0" r="46" fill="#e63960" class="aura-circle" />
+    <circle cx="0" cy="0" r="44" fill="url(#nodeGrad)" stroke="#e63960" stroke-width="1.8" />
+    <text x="0" y="-8" class="node-title">NEWMAN CLI</text>
+    <text x="0" y="8" class="node-sub">CI Automation</text>
+    <text x="0" y="22" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#c7a3b3" text-anchor="middle">Headless Run</text>
+  </g>
+
+  <!-- NODE 5: QUALITY GATE (X: 900, Y: 90) -->
+  <g transform="translate(900, 90)">
+    <circle cx="0" cy="0" r="48" fill="#10b981" class="gate-aura" />
+    <circle cx="0" cy="0" r="46" fill="url(#finalGrad)" stroke="#10b981" stroke-width="2.2" />
+    <text x="0" y="-8" class="node-title" fill="#6ee7b7">QUALITY GATE</text>
+    <text x="0" y="8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#38c172" text-anchor="middle">100% GREEN</text>
+    <text x="0" y="22" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#a7f3d0" text-anchor="middle">All Passed</text>
+  </g>
+</svg>
