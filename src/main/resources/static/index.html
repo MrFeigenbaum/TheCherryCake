@@ -926,25 +926,30 @@
         .region-select {
             appearance: none;
             -webkit-appearance: none;
-            background: rgba(45, 14, 36, 0.85);
+            background: var(--cherry-card);
             border: 1px solid var(--cherry-border);
-            color: var(--cheesecake-cream);
+            color: var(--text-main);
             padding: 8px 32px 8px 34px;
             border-radius: 9999px;
             font-size: 0.85rem;
             font-weight: 600;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: inherit;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .region-select:hover,
         .region-select:focus {
             outline: none;
-            border-color: var(--sakura-pink);
-            background: rgba(56, 19, 45, 0.95);
-            box-shadow: 0 0 15px rgba(230, 57, 96, 0.3);
+            border-color: var(--raspberry-coulis);
+            background: var(--cherry-card-hover);
+            box-shadow: 0 0 14px var(--cherry-border-glow);
+        }
+
+        .region-select option {
+            background: var(--cherry-panel);
+            color: var(--text-main);
         }
 
         .region-select-arrow {
@@ -1952,6 +1957,405 @@
             transform: translateY(-1px);
         }
 
+    
+        /* REGION SELECTOR CLEAN THEMING */
+        .region-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background: var(--cherry-card) !important;
+            border: 1px solid var(--cherry-border) !important;
+            color: var(--text-main) !important;
+            padding: 8px 32px 8px 34px !important;
+            border-radius: 9999px !important;
+            font-size: 0.84rem !important;
+            font-weight: 600 !important;
+            font-family: inherit !important;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .region-select:hover,
+        .region-select:focus {
+            outline: none;
+            border-color: var(--raspberry-coulis) !important;
+            background: var(--cherry-card-hover) !important;
+            box-shadow: 0 0 14px var(--cherry-border-glow);
+        }
+
+        .region-select option {
+            background: var(--cherry-panel);
+            color: var(--text-main);
+        }
+
+        /* BURGER MENU & RESPONSIVE NAV */
+        .burger-menu-btn {
+            display: none;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 40px;
+            height: 40px;
+            background: var(--cherry-card);
+            border: 1px solid var(--cherry-border);
+            border-radius: 10px;
+            cursor: pointer;
+            padding: 10px 8px;
+            transition: all 0.25s ease;
+        }
+
+        .burger-menu-btn:hover {
+            border-color: var(--raspberry-coulis);
+            box-shadow: 0 0 12px var(--cherry-border-glow);
+        }
+
+        .burger-bar {
+            width: 100%;
+            height: 2px;
+            background: var(--text-main);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .burger-menu-btn.active .burger-bar:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .burger-menu-btn.active .burger-bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger-menu-btn.active .burger-bar:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            z-index: 1050;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-nav-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-nav-drawer {
+            position: fixed;
+            top: 0;
+            right: -340px;
+            width: 320px;
+            max-width: 85vw;
+            height: 100%;
+            background: var(--cherry-panel);
+            border-left: 1px solid var(--cherry-border);
+            z-index: 1060;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: -8px 0 32px rgba(0, 0, 0, 0.6);
+            transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+        }
+
+        .mobile-nav-drawer.open {
+            right: 0;
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--cherry-border);
+            margin-bottom: 24px;
+        }
+
+        .mobile-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mobile-brand img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+
+        .mobile-brand span {
+            font-size: 1.2rem;
+            color: var(--cheesecake-cream);
+            font-weight: 700;
+        }
+
+        .mobile-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.8rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .mobile-close-btn:hover {
+            color: var(--raspberry-coulis);
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .mobile-nav-links .mobile-link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 1.02rem;
+            font-weight: 600;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: var(--cherry-card);
+            border: 1px solid var(--cherry-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-nav-links .mobile-link:hover {
+            border-color: var(--raspberry-coulis);
+            background: var(--cherry-card-hover);
+            color: var(--raspberry-coulis);
+            transform: translateX(4px);
+        }
+
+        .mobile-nav-footer {
+            padding-top: 24px;
+            border-top: 1px solid var(--cherry-border);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        @media (max-width: 992px) {
+            .navbar-links {
+                display: none !important;
+            }
+            .burger-menu-btn {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-actions .region-select-wrap {
+                display: none !important;
+            }
+        }
+
+        /* STOREFRONT LUXURY FOOTER */
+        .storefront-footer {
+            background: var(--cherry-deep);
+            border-top: 1px solid var(--cherry-border);
+            padding: 64px 24px 32px;
+            margin-top: 80px;
+            position: relative;
+            z-index: 10;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr 1.3fr 1.2fr;
+            gap: 40px;
+            margin-bottom: 48px;
+        }
+
+        @media (max-width: 992px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 32px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .footer-logo-img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(230, 57, 96, 0.45));
+        }
+
+        .footer-brand-title h3 {
+            font-size: 1.45rem;
+            color: var(--cheesecake-cream);
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .footer-brand-title span {
+            font-size: 0.95rem;
+            color: var(--raspberry-coulis);
+        }
+
+        .footer-desc {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 18px;
+            max-width: 360px;
+        }
+
+        .footer-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .f-badge {
+            background: var(--cherry-card);
+            border: 1px solid var(--cherry-border);
+            color: var(--text-dim);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.76rem;
+            font-weight: 600;
+        }
+
+        .footer-heading {
+            color: var(--cheesecake-cream);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 28px;
+            height: 2px;
+            background: var(--raspberry-coulis);
+            border-radius: 2px;
+        }
+
+        .footer-nav-list,
+        .footer-hours-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-nav-list a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        .footer-nav-list a:hover {
+            color: var(--raspberry-coulis);
+            transform: translateX(3px);
+        }
+
+        .footer-hours-list li {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.86rem;
+            color: var(--text-dim);
+            border-bottom: 1px dashed var(--cherry-border);
+            padding-bottom: 6px;
+        }
+
+        .footer-hours-list strong {
+            color: var(--cheesecake-cream);
+        }
+
+        .footer-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--cherry-card);
+            border: 1px solid var(--cherry-border);
+            color: var(--text-main);
+            padding: 9px 16px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+        .footer-btn:hover {
+            border-color: var(--raspberry-coulis);
+            background: var(--cherry-card-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px var(--cherry-border-glow);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--cherry-border);
+            padding-top: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            font-size: 0.84rem;
+            color: var(--text-dim);
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-bottom-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-bottom-links a:hover {
+            color: var(--raspberry-coulis);
+        }
+
     </style>
 </head>
 
@@ -1973,7 +2377,7 @@
             <div class="navbar-links">
                 <a href="#storefront-section" class="nav-link">Artisan Menu</a>
                 <a href="#reservation-banner" class="nav-link">Table Reservation</a>
-                <a href="#metrics-section" class="nav-link">16-Country Matrix</a>
+                <a href="#about-section" class="nav-link">About &amp; Hours</a>
                 <a href="/login.html" class="nav-link">Sign In / Account</a>
                 <a href="/swagger.html" class="nav-link">API Reference</a>
             </div>
@@ -2003,9 +2407,60 @@
                     <span class="cart-btn-text">Bag</span>
                     <span class="cart-counter-badge" id="cartCountBadge">0</span>
                 </button>
-            </div>
+                            <!-- Responsive Burger Menu Button -->
+                <button class="burger-menu-btn" id="burgerMenuBtn" aria-label="Toggle navigation menu" onclick="toggleMobileNav()">
+                    <span class="burger-bar"></span>
+                    <span class="burger-bar"></span>
+                    <span class="burger-bar"></span>
+                </button>
+</div>
         </nav>
     </header>
+
+    <!-- MOBILE NAVIGATION OVERLAY & DRAWER -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
+    <aside class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile Navigation">
+        <div class="mobile-nav-header">
+            <div class="mobile-brand">
+                <img src="assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png" alt="Cherry Logo">
+                <span class="display-font">Cherry Cake</span>
+            </div>
+            <button class="mobile-close-btn" onclick="closeMobileNav()" aria-label="Close Menu">&times;</button>
+        </div>
+
+        <div class="mobile-nav-links">
+            <a href="#storefront-section" class="mobile-link" onclick="closeMobileNav()">
+                <span>🍰</span> Artisan Menu
+            </a>
+            <a href="#reservation-banner" class="mobile-link" onclick="closeMobileNav()">
+                <span>🍷</span> Table Reservation
+            </a>
+            <a href="#about-section" class="mobile-link" onclick="closeMobileNav()">
+                <span>🌸</span> About &amp; Hours
+            </a>
+            <a href="/login.html" class="mobile-link">
+                <span>👤</span> Sign In / Account
+            </a>
+            <a href="/swagger.html" class="mobile-link">
+                <span>📖</span> API Reference
+            </a>
+        </div>
+
+        <div class="mobile-nav-footer">
+            <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px;">TERRITORY &amp; CURRENCY</div>
+            <div class="region-select-wrap" style="width: 100%; margin-bottom: 14px;">
+                <select id="mobileRegionSelect" class="region-select" style="width: 100%;" onchange="syncRegionSelect(this.value)">
+                </select>
+                <span class="region-select-arrow">&#9662;</span>
+            </div>
+
+            <button class="theme-toggle-btn" style="width: 100%; justify-content: center;" onclick="toggleTheme()">
+                <span id="mobileThemeToggleIcon">🍰</span>
+                <span id="mobileThemeToggleLabel" style="margin-left:6px;">Cheesecake Theme</span>
+            </button>
+        </div>
+    </aside>
+
 
 
     <!-- HERO SECTION -->
@@ -2177,377 +2632,86 @@
             </button>
         </section>
 
-        <div class="section-header" id="metrics-section">
-            <span class="section-tag">Stage 1–5 Architecture</span>
-            <h2 class="section-heading display-font">Global Context &amp; Calculation Engine</h2>
-        </div>
-
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-value">16 <span style="font-size:1.1rem; color:var(--sakura-pink)">Branches</span>
-                </div>
-                <div class="metric-label">Operating countries across Europe &amp; Asia with regional tax &amp; currency
-                    policies</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value">100% <span style="font-size:1.1rem; color:var(--mint-fresh)">Exact</span>
-                </div>
-                <div class="metric-label">BigDecimal math with RoundingMode.HALF_UP (2 decimals)</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value">15+ <span style="font-size:1.1rem; color:var(--crust-gold)">APIs</span></div>
-                <div class="metric-label">Catalog, Cart Recalculation, Orders, Bookings &amp; Reports</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-value">JWT <span style="font-size:1.1rem; color:var(--raspberry-coulis)">RBAC</span>
-                </div>
-                <div class="metric-label">Stateless security with ROLE_USER and ROLE_ADMIN</div>
-            </div>
-        </div>
-
-        <!-- 16 Countries Reference Pill Row -->
-        <div class="countries-pill-row">
-            <div class="country-pill">
-                <span class="flag-code">UZB</span> Uzbekistan (soʻm)
-                <span class="vat-badge">15% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">KAZ</span> Kazakhstan (₸)
-                <span class="vat-badge">20% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">GEO</span> Georgia (₾)
-                <span class="vat-badge">12% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">UKR</span> Ukraine (₴)
-                <span class="vat-badge">8% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">CHN</span> China (¥)
-                <span class="vat-badge">18% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">BLR</span> Belarus (Br)
-                <span class="vat-badge">20% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">LTU</span> Lithuania (€)
-                <span class="vat-badge">21% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">LVA</span> Latvia (€)
-                <span class="vat-badge">21% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">EST</span> Estonia (€)
-                <span class="vat-badge">22% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">FIN</span> Finland (€)
-                <span class="vat-badge">25.5% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">SWE</span> Sweden (kr)
-                <span class="vat-badge">25% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">MDA</span> Moldova (L)
-                <span class="vat-badge">20% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">ROU</span> Romania (lei)
-                <span class="vat-badge">19% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">TUR</span> Turkey (₺)
-                <span class="vat-badge">20% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">AZE</span> Azerbaijan (₼)
-                <span class="vat-badge">18% VAT</span>
-            </div>
-            <div class="country-pill">
-                <span class="flag-code">ARM</span> Armenia (֏)
-                <span class="vat-badge">20% VAT</span>
-            </div>
-        </div>
-
         </main>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer-logo script-font">Cherry Cake Bakery &amp; Café</div>
-        <p class="footer-credits">
-            ITPU University Teamwork Project &bull; Scrum Team 9 (t09-cherry-cake) &bull; Spring Boot 3.3.4 &bull; Java
-            21 LTS
-        </p>
-        <div class="footer-team-pills">
-            <span class="team-pill"><strong>TL:</strong> Milana Ulubabyan</span>
-            <span class="team-pill"><strong>AS:</strong> Andrei Varnavskiy</span>
-            <span class="team-pill"><strong>BE1:</strong> Adrian Zakirov</span>
-            <span class="team-pill"><strong>BE2:</strong> Anvar Makhamatjonov</span>
-            <span class="team-pill"><strong>FE1:</strong> Shovkat Khabidullaev</span>
-            <span class="team-pill"><strong>FE2:</strong> Arjumandbonu Narzullaeva</span>
-            <span class="team-pill"><strong>FE3:</strong> Mukhammademin Emminov</span>
-            <span class="team-pill"><strong>QAJ:</strong> Muhammadyusuf Ismatov</span>
-            <span class="team-pill"><strong>QAF:</strong> Asadbek Yulchiev</span>
+    <!-- LUXURY ARTISANAL FOOTER -->
+    <footer class="storefront-footer" id="about-section">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col brand-col">
+                    <div class="footer-brand">
+                        <img src="assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png" alt="Cherry Cake Blossom" class="footer-logo-img">
+                        <div class="footer-brand-title">
+                            <h3 class="display-font">Cherry Cake</h3>
+                            <span class="script-font">Haute Pâtisserie &amp; Café</span>
+                        </div>
+                    </div>
+                    <p class="footer-desc">
+                        Celebrating the harmony between classic French viennoiserie and delicate Japanese cherry blossom botanicals. Handcrafted daily with single-origin butter and premium Belgian cocoa.
+                    </p>
+                    <div class="footer-badges">
+                        <span class="f-badge">🌸 Fresh Daily</span>
+                        <span class="f-badge">🍰 Artisanal Recipes</span>
+                        <span class="f-badge">☕ Specialty Roasts</span>
+                    </div>
+                </div>
+
+                <!-- Column 2: Artisan Menu -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Artisan Menu</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="#storefront-section">Cherry Blossom Mousse Cake</a></li>
+                        <li><a href="#storefront-section">Black Forest Royale</a></li>
+                        <li><a href="#storefront-section">Red Velvet Sakura Dome</a></li>
+                        <li><a href="#storefront-section">Parisian Cherry Danish</a></li>
+                        <li><a href="#storefront-section">Pure Butter Croissant</a></li>
+                        <li><a href="#storefront-section">Signature Cherry Latte</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Hospitality & Hours -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Café &amp; Hospitality</h4>
+                    <ul class="footer-hours-list">
+                        <li><span>Mon – Fri:</span> <strong>08:00 – 22:00</strong></li>
+                        <li><span>Sat – Sun:</span> <strong>09:00 – 23:00</strong></li>
+                        <li><span>Hub Pickup:</span> <strong>Daily 08:30 – 21:30</strong></li>
+                    </ul>
+                    <div style="margin-top: 14px;">
+                        <a href="#reservation-banner" class="footer-btn">
+                            <span>🍷</span> Book a Café Table
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Column 4: Client & API Portals -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Client &amp; API Portals</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="/login.html">👤 Customer Sign In / Account</a></li>
+                        <li><a href="/login.html">👑 Administrator Portal</a></li>
+                        <li><a href="/swagger.html">📖 REST API Swagger UI</a></li>
+                        <li><a href="/v3/api-docs" target="_blank">📄 OpenAPI Specification (JSON)</a></li>
+                        <li><a href="qa/README.md" target="_blank">🧪 Quality Assurance Portal</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Sub-Footer -->
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    &copy; 2026 Cherry Cake Bakery &amp; Café. All rights reserved. &bull; ITPU University Teamwork 2026 (Team 9).
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="#storefront-section">Menu</a>
+                    <a href="#reservation-banner">Reservations</a>
+                    <a href="/login.html">Account</a>
+                    <a href="/swagger.html">API Reference</a>
+                </div>
+            </div>
         </div>
     </footer>
-
-    
-
-        // -------------------------------------------------------------
-        // 2. JAPAN SAKURA FALLING PETALS CANVAS ANIMATION
-        // -------------------------------------------------------------
-        const sCanvas = document.getElementById('sakura-canvas');
-        const sCtx = sCanvas.getContext('2d');
-        const hero = document.getElementById('hero');
-
-        function resizeCanvas() {
-            sCanvas.width = hero.clientWidth;
-            sCanvas.height = hero.clientHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        // Preload transparent cherry blossom flower logo particles
-        const flowerImg1 = new Image();
-        flowerImg1.src = 'assets/images/Partical%20Effects/flower-particle.png';
-        const flowerImg2 = new Image();
-        flowerImg2.src = 'assets/images/Partical%20Effects/flower-particle-soft.png';
-        const flowerImgs = [flowerImg1, flowerImg2];
-
-        const petalsCount = Math.min(48, Math.max(22, Math.floor(hero.clientWidth / 28)));
-        const petals = [];
-
-        class SakuraPetal {
-            constructor() {
-                this.imgIndex = Math.random() > 0.45 ? 0 : 1;
-                this.reset(true);
-            }
-
-            reset(initial = false) {
-                this.x = Math.random() * sCanvas.width;
-                this.y = initial ? Math.random() * sCanvas.height : -35;
-                this.size = 16 + Math.random() * 20; // Crisp flower size (16px - 36px)
-                this.speedY = 0.8 + Math.random() * 1.5;
-                this.speedX = -0.4 + Math.random() * 1.0;
-                this.oscillationSpeed = 0.015 + Math.random() * 0.025;
-                this.oscillationPhase = Math.random() * Math.PI * 2;
-                this.angle = Math.random() * Math.PI * 2;
-                this.spinSpeed = (Math.random() - 0.5) * 0.035;
-                this.wobble = Math.random() * Math.PI * 2;
-                this.wobbleSpeed = 0.02 + Math.random() * 0.035;
-                this.opacity = 0.55 + Math.random() * 0.42;
-                this.depthScale = 0.65 + Math.random() * 0.55;
-                this.imgIndex = Math.random() > 0.45 ? 0 : 1;
-            }
-
-            update() {
-                this.y += this.speedY;
-                this.angle += this.spinSpeed;
-                this.wobble += this.wobbleSpeed;
-                this.x += this.speedX + Math.sin(this.y * this.oscillationSpeed + this.oscillationPhase) * 0.75;
-
-                if (this.y > sCanvas.height + 40 || this.x > sCanvas.width + 45 || this.x < -45) this.reset(false);
-            }
-
-            draw(ctx) {
-                const img = flowerImgs[this.imgIndex];
-                if (!img.complete || img.naturalWidth === 0) return;
-
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle);
-
-                // Realistic 3D fluttering in the breeze (gentle squish along X-axis as it tumbles)
-                const flutterScaleX = Math.cos(this.wobble) * 0.9;
-                ctx.scale(this.depthScale * flutterScaleX, this.depthScale);
-                ctx.globalAlpha = this.opacity;
-
-                const s = this.size;
-                ctx.drawImage(img, -s / 2, -s / 2, s, s);
-
-                ctx.restore();
-            }
-        }
-
-        for (let i = 0; i < petalsCount; i++) { petals.push(new SakuraPetal()); }
-
-        function renderSakura() {
-            sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
-            for (const p of petals) {
-                p.update();
-                p.draw(sCtx);
-            }
-            requestAnimationFrame(renderSakura);
-        }
-        renderSakura();
-
-        // -------------------------------------------------------------
-        // 3. AMBIENT GLOW ORBS CANVAS
-        // -------------------------------------------------------------
-        const aCanvas = document.getElementById('ambient-canvas');
-        const aCtx = aCanvas.getContext('2d');
-
-        function resizeAmbient() {
-            aCanvas.width = hero.clientWidth;
-            aCanvas.height = hero.clientHeight;
-        }
-        resizeAmbient();
-        window.addEventListener('resize', resizeAmbient);
-
-        const orbs =
-            [
-                { x: 0.2, y: 0.35, r: 240, color: 'rgba(230, 57, 96, 0.16)', dx: 0.0003, dy: 0.0004 },
-                { x: 0.8, y: 0.60, r: 280, color: 'rgba(255, 183, 197, 0.12)', dx: -0.0004, dy: 0.0002 },
-                { x: 0.45, y: 0.55, r: 240, color: 'rgba(229, 176, 97, 0.07)', dx: 0.0002, dy: -0.0003 }
-            ];
-
-        function renderAmbient() {
-            aCtx.clearRect(0, 0, aCanvas.width, aCanvas.height);
-            const w = aCanvas.width, h = aCanvas.height;
-
-            for (const orb of orbs) {
-                orb.x += orb.dx;
-                orb.y += orb.dy;
-                if (orb.x < 0.1 || orb.x > 0.9) orb.dx *= -1;
-                if (orb.y < 0.1 || orb.y > 0.9) orb.dy *= -1;
-
-                const grad = aCtx.createRadialGradient(orb.x * w, orb.y * h, 0, orb.x * w, orb.y * h, orb.r);
-                grad.addColorStop(0, orb.color);
-                grad.addColorStop(1, 'transparent');
-                aCtx.fillStyle = grad;
-                aCtx.beginPath();
-                aCtx.arc(orb.x * w, orb.y * h, orb.r, 0, Math.PI * 2);
-                aCtx.fill();
-            }
-            requestAnimationFrame(renderAmbient);
-        }
-        renderAmbient();
-
-        // -------------------------------------------------------------
-        // 4. SOFT AMBIENT AUDIO PLAYER & PLAYLIST CONTROLLER
-        // -------------------------------------------------------------
-        const bgAudio = document.getElementById('bgAudio');
-        const playBtn = document.getElementById('playBtn');
-        const prevTrackBtn = document.getElementById('prevTrackBtn');
-        const nextTrackBtn = document.getElementById('nextTrackBtn');
-        const playIcon = document.getElementById('playIcon');
-        const pauseIcon = document.getElementById('pauseIcon');
-        const audioDisc = document.getElementById('audioDisc');
-        const audioEq = document.getElementById('audioEq');
-        const audioStatusText = document.getElementById('audioStatusText');
-        const audioTrackName = document.getElementById('audioTrackName');
-        const volumeSlider = document.getElementById('volumeSlider');
-
-        // Initial default playlist
-        let playlist =
-            [
-                { title: "Rio - Fly Love", url: "assets/audio/Rio%20-%20Fly%20Love.m4a", filename: "Rio - Fly Love.m4a" },
-                { title: "Mellow Fox - Backyard", url: "assets/audio/Mellow%20Fox%20-%20Backyard.m4a", filename: "Mellow Fox - Backyard.m4a" }
-            ];
-        let currentTrackIndex = 0;
-
-        bgAudio.volume = volumeSlider.value / 100;
-
-        function updatePlayState(isPlaying) {
-            if (isPlaying) {
-                playIcon.style.display = 'none';
-                pauseIcon.style.display = 'block';
-                audioDisc.classList.add('playing');
-                audioEq.classList.add('active');
-                audioStatusText.textContent = 'Now playing';
-            }
-            else {
-                playIcon.style.display = 'block';
-                pauseIcon.style.display = 'none';
-                audioDisc.classList.remove('playing');
-                audioEq.classList.remove('active');
-                audioStatusText.textContent = 'Paused';
-            }
-        }
-
-        function loadTrack(index, autoPlay = true) {
-            if (!playlist || playlist.length === 0) return;
-            currentTrackIndex = (index + playlist.length) % playlist.length;
-            const track = playlist[currentTrackIndex];
-
-            // Strip extension cleanly (e.g. .m4a, .mp3)
-            const rawName = track.title || track.filename || "Track";
-            const cleanTitle = rawName.replace(/\.[^/.]+$/, "");
-            audioTrackName.textContent = cleanTitle;
-            audioTrackName.title = cleanTitle;
-
-            // Resolve track URL reliably
-            let trackUrl = track.url;
-            if (!trackUrl) {
-                const fname = track.filename || (cleanTitle + ".mp3");
-                trackUrl = "assets/audio/" + encodeURIComponent(fname);
-            }
-
-            // Set audio source if changed
-            if (!bgAudio.src.endsWith(trackUrl)) {
-                bgAudio.src = trackUrl;
-                bgAudio.load();
-            }
-
-            if (autoPlay) bgAudio.play().then(() => { updatePlayState(true); }).catch(err => { console.log("Playback pending user interaction:", err); updatePlayState(false); });
-            else updatePlayState(!bgAudio.paused);
-        }
-
-        function nextTrack() { loadTrack(currentTrackIndex + 1, true); }
-
-        function prevTrack() { loadTrack(currentTrackIndex - 1, true); }
-
-        // When current track finishes, automatically advance to the next song!
-        bgAudio.addEventListener('ended', () => { nextTrack(); });
-
-        // Error handling fallback: if audio file fails, advance to next
-        bgAudio.addEventListener('error', (e) => {
-            console.warn("Audio error on track, skipping to next...", e);
-            if (playlist && playlist.length > 1) setTimeout(nextTrack, 600);
-        });
-
-        playBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (bgAudio.paused) bgAudio.play().then(() => updatePlayState(true)).catch(err => { audioStatusText.textContent = 'Click again to play'; });
-            else {
-                bgAudio.pause();
-                updatePlayState(false);
-            }
-        });
-
-        if (nextTrackBtn) nextTrackBtn.addEventListener('click', (e) => { e.stopPropagation(); nextTrack(); });
-        if (prevTrackBtn) prevTrackBtn.addEventListener('click', (e) => { e.stopPropagation(); prevTrack(); });
-
-        volumeSlider.addEventListener('input', (e) => { bgAudio.volume = e.target.value / 100; });
-
-        // Load playlist from static assets/audio/playlist.json
-        async function fetchPlaylist() {
-            try {
-                const res = await fetch('assets/audio/playlist.json');
-                if (res.ok) {
-                    const tracks = await res.json();
-                    if (Array.isArray(tracks) && tracks.length > 0) {
-                        playlist = tracks;
-                        loadTrack(0, !bgAudio.paused);
-                    }
-                }
-            } catch (err) { console.log("Using static playlist fallback:", err); }
-        }
-        fetchPlaylist();
-
-        // Autoplay on first click anywhere (browser media policy compliance)
-        let hasInteracted = false;
-        document.addEventListener('click', () => {
-            if (!hasInteracted && bgAudio.paused) {
-                hasInteracted = true;
-                bgAudio.play().then(() => updatePlayState(true)).catch(() => { });
-            }
-        }, { once: true });
-    </script>
 
     <!-- SLIDE-OUT CART DRAWER & BACKDROP -->
     <div class="cart-overlay" id="cartOverlay"></div>
@@ -2743,6 +2907,50 @@
     <!-- SCRIPTS -->
     <script>
         // =============================================================
+        
+        // =============================================================
+        // BURGER MENU & MOBILE NAVIGATION
+        // =============================================================
+        const burgerBtn = document.getElementById('burgerMenuBtn');
+        const mobileDrawer = document.getElementById('mobileNavDrawer');
+        const mobileOverlay = document.getElementById('mobileNavOverlay');
+        const mobileRegionSelect = document.getElementById('mobileRegionSelect');
+
+        function toggleMobileNav() {
+            if (!mobileDrawer) return;
+            const isOpen = mobileDrawer.classList.contains('open');
+            if (isOpen) closeMobileNav();
+            else openMobileNav();
+        }
+
+        function openMobileNav() {
+            if (!burgerBtn || !mobileDrawer) return;
+            burgerBtn.classList.add('active');
+            mobileDrawer.classList.add('open');
+            mobileOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            if (mobileRegionSelect && globalRegionSelect) {
+                mobileRegionSelect.innerHTML = globalRegionSelect.innerHTML;
+                mobileRegionSelect.value = globalRegionSelect.value;
+            }
+        }
+
+        function closeMobileNav() {
+            if (!burgerBtn || !mobileDrawer) return;
+            burgerBtn.classList.remove('active');
+            mobileDrawer.classList.remove('open');
+            mobileOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function syncRegionSelect(val) {
+            if (globalRegionSelect) {
+                globalRegionSelect.value = val;
+                globalRegionSelect.dispatchEvent(new Event('change'));
+            }
+            closeMobileNav();
+        }
+
         // 1. THEME SWITCHER
         // =============================================================
         function toggleTheme() {
