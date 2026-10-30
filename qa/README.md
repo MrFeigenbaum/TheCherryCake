@@ -178,5 +178,5 @@ mvn test -Dtest=PriceCalculatorServiceTest,CartControllerTest
 <p align="center"><img src="assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
 
 <p align="center">
-  🌸 <em>Cherry Cake Quality Assurance Suite &bull; Scrum Team 9 &bull; ITPU / EPAM University Teamwork 2026</em> 🌸
+  🌸 <em>Cherry Cake Quality Assurance Suite &bull; Scrum Team 9 &bull; ITPU University Teamwork 2026</em> 🌸
 </p>
