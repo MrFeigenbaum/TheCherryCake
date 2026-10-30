@@ -791,7 +791,7 @@
             left: 0;
             width: 100%;
             z-index: 1000;
-            background: rgba(18, 6, 14, 0.88);
+            background: var(--nav-bg) !important;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--cherry-border);
@@ -799,7 +799,7 @@
         }
 
         .site-header.scrolled {
-            background: rgba(18, 6, 14, 0.96);
+            background: var(--nav-bg) !important;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
             border-bottom-color: var(--cherry-border-glow);
         }
@@ -2165,13 +2165,45 @@
 
         /* STOREFRONT LUXURY FOOTER */
         .storefront-footer {
-            background: var(--cherry-deep);
-            border-top: 1px solid var(--cherry-border);
+            background: linear-gradient(180deg, #190814 0%, #0a0308 100%) !important;
+            border-top: 1px solid rgba(255, 183, 197, 0.18) !important;
+            color: #fdf2f5 !important;
             padding: 64px 24px 32px;
             margin-top: 80px;
             position: relative;
             z-index: 10;
             transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .storefront-footer .footer-brand-title {
+            color: #fff6ed !important;
+        }
+        .storefront-footer .footer-brand-tagline {
+            color: #ffb7c5 !important;
+        }
+        .storefront-footer .footer-desc {
+            color: #c7a3b3 !important;
+        }
+        .storefront-footer .footer-heading {
+            color: #ffb7c5 !important;
+        }
+        .storefront-footer .footer-nav-list a {
+            color: #e8d0db !important;
+        }
+        .storefront-footer .footer-nav-list a:hover {
+            color: #ff3864 !important;
+        }
+        .storefront-footer .footer-hours-list {
+            color: #e8d0db !important;
+        }
+        .storefront-footer .footer-bottom {
+            border-top: 1px solid rgba(255, 183, 197, 0.12) !important;
+            color: #a17c8e !important;
+        }
+        .storefront-footer .footer-badges span {
+            background: rgba(255, 183, 197, 0.08) !important;
+            color: #ffb7c5 !important;
+            border: 1px solid rgba(255, 183, 197, 0.16) !important;
         }
 
         .footer-container {
@@ -2358,15 +2390,22 @@
 
     
         /* LIGHT THEME OVERRIDES: NO SHADOW TRANSITION & CRISP CONTRAST */
-        [data-theme="light"] .hero::after {
-            display: none !important;
+        /* HIDE TRANSITION OVERLAY BAR ONLY (KEEP TOP BACKGROUND SHADOW & LIGHTING) */
+        /* HERO LUMINOSITY (Crisp contrast against dark upper hero shadow in both themes) */
+        .hero .hero-title {
+            color: #fff6ed !important;
+            text-shadow: 0 4px 24px rgba(230, 57, 96, 0.45);
+        }
+        .hero .hero-description {
+            color: #e8d0db !important;
+        }
+        .hero .hero-pretitle,
+        .hero .hero-script {
+            color: #ffb7c5 !important;
         }
 
-        [data-theme="light"] .hero {
-            background:
-                radial-gradient(circle at 50% 25%, rgba(200, 35, 72, 0.08) 0%, transparent 60%),
-                radial-gradient(circle at 80% 70%, rgba(255, 183, 197, 0.15) 0%, transparent 50%),
-                #fcf6f3 !important;
+        [data-theme="light"] .hero::after {
+            display: none !important;
         }
 
         /* FIX ALL FONT COLOURS (ELIMINATE BLACK-ON-BLACK IN LIGHT & DARK MODES) */
@@ -2587,8 +2626,23 @@
                 <!-- 16-Country Dynamic Switcher -->
                 <div class="region-select-wrap">
                     <select id="globalRegionSelect" class="region-select" title="Switch Operating Country &amp; Currency">
-                        <option value="UZB" selected>🇺🇿 UZB</option>
-                    </select>
+                    <option value="UZB" selected>🇺🇿 UZB</option>
+                    <option value="KAZ">🇰🇿 KAZ</option>
+                    <option value="GEO">🇬🇪 GEO</option>
+                    <option value="UKR">🇺🇦 UKR</option>
+                    <option value="CHN">🇨🇳 CHN</option>
+                    <option value="BLR">🇧🇾 BLR</option>
+                    <option value="LTU">🇱🇹 LTU</option>
+                    <option value="LVA">🇱🇻 LVA</option>
+                    <option value="EST">🇪🇪 EST</option>
+                    <option value="FIN">🇫🇮 FIN</option>
+                    <option value="SWE">🇸🇪 SWE</option>
+                    <option value="MDA">🇲🇩 MDA</option>
+                    <option value="ROU">🇷🇴 ROU</option>
+                    <option value="TUR">🇹🇷 TUR</option>
+                    <option value="AZE">🇦🇿 AZE</option>
+                    <option value="ARM">🇦🇲 ARM</option>
+                </select>
                     <span class="region-select-arrow">&#9662;</span>
                 </div>
 
@@ -2645,6 +2699,22 @@
             <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px;">TERRITORY &amp; CURRENCY</div>
             <div class="region-select-wrap" style="width: 100%; margin-bottom: 14px;">
                 <select id="mobileRegionSelect" class="region-select" style="width: 100%;" onchange="syncRegionSelect(this.value)">
+                    <option value="UZB" selected>🇺🇿 UZB</option>
+                    <option value="KAZ">🇰🇿 KAZ</option>
+                    <option value="GEO">🇬🇪 GEO</option>
+                    <option value="UKR">🇺🇦 UKR</option>
+                    <option value="CHN">🇨🇳 CHN</option>
+                    <option value="BLR">🇧🇾 BLR</option>
+                    <option value="LTU">🇱🇹 LTU</option>
+                    <option value="LVA">🇱🇻 LVA</option>
+                    <option value="EST">🇪🇪 EST</option>
+                    <option value="FIN">🇫🇮 FIN</option>
+                    <option value="SWE">🇸🇪 SWE</option>
+                    <option value="MDA">🇲🇩 MDA</option>
+                    <option value="ROU">🇷🇴 ROU</option>
+                    <option value="TUR">🇹🇷 TUR</option>
+                    <option value="AZE">🇦🇿 AZE</option>
+                    <option value="ARM">🇦🇲 ARM</option>
                 </select>
                 <span class="region-select-arrow">&#9662;</span>
             </div>
@@ -3173,11 +3243,14 @@
                 if (mobIcon) mobIcon.textContent = '☀️';
                 if (mobLabel) mobLabel.textContent = 'Light';
             }
-        } else {
-                icon.textContent = '🍰';
-                label.textContent = 'Cheesecake';
-            }
         }
+
+        // Initialize Theme Toggle UI immediately
+        (function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || localStorage.getItem('cherry_theme') || 'dark';
+            updateThemeToggleUI(currentTheme);
+        })();
+
 
         // =============================================================
         // 2. AUDIO PLAYER (assets/audio/playlist.json)
@@ -3892,7 +3965,6 @@
                     mobileRegionSelect.appendChild(mOpt);
                 }
             });
-        });
         }
 
         // -------------------------------------------------------------
