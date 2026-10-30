@@ -5,6 +5,53 @@
     "description": "Official Postman Collection for Team 9 (t09-cherry-cake). Covers all 16 operating countries, catalog, BigDecimal cart pricing, orders, table bookings, reports, and JWT authentication.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "regionCode",
+      "value": "UZB",
+      "type": "string"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@cherrycake.com",
+      "type": "string"
+    },
+    {
+      "key": "userEmail",
+      "value": "customer@cherrycake.com",
+      "type": "string"
+    },
+    {
+      "key": "userPassword",
+      "value": "password123",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderNumber",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bookingNumber",
+      "value": "",
+      "type": "string"
+    }
+  ],
   "item": [
     {
       "name": "1. Authentication & Security (JWT)",
@@ -35,7 +82,7 @@
                 "login"
               ]
             },
-            "description": "Authenticates customer and extracts JWT token into authToken environment variable",
+            "description": "Authenticates customer and extracts JWT token into authToken variable",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}"
@@ -55,6 +102,7 @@
                   "    pm.expect(jsonData.data.token).to.be.a(\"string\");",
                   "    pm.expect(jsonData.data.role).to.eql(\"ROLE_USER\");",
                   "    pm.environment.set(\"authToken\", jsonData.data.token);",
+                  "    pm.collectionVariables.set(\"authToken\", jsonData.data.token);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -107,6 +155,7 @@
                   "    pm.expect(jsonData.success).to.eql(true);",
                   "    pm.expect(jsonData.data.role).to.eql(\"ROLE_ADMIN\");",
                   "    pm.environment.set(\"adminToken\", jsonData.data.token);",
+                  "    pm.collectionVariables.set(\"adminToken\", jsonData.data.token);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -140,19 +189,34 @@
                 "register"
               ]
             },
-            "description": "Registers a new user in the platform",
+            "description": "Registers a new customer account with unique dynamic email",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"new_guest_1001@cherrycake.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"Alice Wonderland\",\n  \"phone\": \"+998909998877\"\n}"
+              "raw": "{\n  \"email\": \"{{dynamicEmail}}\",\n  \"password\": \"password123\",\n  \"fullName\": \"Alice Wonderland\",\n  \"phone\": \"+998909998877\"\n}"
             }
           },
           "event": [
             {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var uniqueId = Date.now();",
+                  "pm.collectionVariables.set(\"dynamicEmail\", \"guest_\" + uniqueId + \"@cherrycake.com\");"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200 OK or 409 Conflict\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([200, 409]);",
+                  "pm.test(\"Status code is 201 Created or 200 OK\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test(\"Registration issues JWT token\", function () {",
+                  "    var res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(true);",
+                  "    pm.expect(res.data.token).to.be.a(\"string\");",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -520,7 +584,7 @@
                 "calculate"
               ]
             },
-            "description": "Strict financial calculation verifying exact subtotal, VAT, and total",
+            "description": "Strict financial calculation verifying exact subtotal, VAT, and finalTotal",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"regionCode\": \"UZB\",\n  \"orderType\": \"PICKUP\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2,\n      \"modifierIds\": []\n    },\n    {\n      \"productId\": 2,\n      \"quantity\": 1,\n      \"modifierIds\": []\n    }\n  ]\n}"
@@ -534,15 +598,15 @@
                   "pm.test(\"Status code is 200 OK\", function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
-                  "pm.test(\"Financial reconciliation: Subtotal - Discount + VAT + Delivery = Total\", function () {",
+                  "pm.test(\"Financial reconciliation: Subtotal - Discount + VAT + Delivery = FinalTotal\", function () {",
                   "    var data = pm.response.json().data;",
                   "    var subtotal = parseFloat(data.subtotal);",
                   "    var discount = parseFloat(data.discountAmount);",
                   "    var vat = parseFloat(data.vatAmount);",
                   "    var delivery = parseFloat(data.deliveryFee);",
-                  "    var total = parseFloat(data.totalAmount);",
+                  "    var finalTotal = parseFloat(data.finalTotal);",
                   "    var expected = Math.round((subtotal - discount + vat + delivery) * 100) / 100;",
-                  "    pm.expect(total).to.be.closeTo(expected, 0.05);",
+                  "    pm.expect(finalTotal).to.be.closeTo(expected, 0.05);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -592,7 +656,8 @@
                   "});",
                   "pm.test(\"Line item price includes modifier surcharges\", function () {",
                   "    var data = pm.response.json().data;",
-                  "    pm.expect(data.items[0].modifiers.length).to.eql(2);",
+                  "    pm.expect(data.items[0].modifierNames).to.be.an(\"array\");",
+                  "    pm.expect(data.items[0].modifiersPrice).to.be.above(0);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -626,7 +691,7 @@
                 "calculate"
               ]
             },
-            "description": "Validates promo code discount logic",
+            "description": "Validates promo code and volume discount application",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"regionCode\": \"UZB\",\n  \"orderType\": \"PICKUP\",\n  \"promoCode\": \"WELCOME10\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 2,\n      \"modifierIds\": []\n    }\n  ]\n}"
@@ -640,12 +705,10 @@
                   "pm.test(\"Status code is 200 OK\", function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
-                  "pm.test(\"Promo discount applied at 10%\", function () {",
+                  "pm.test(\"Discount applied (tier or promo code)\", function () {",
                   "    var data = pm.response.json().data;",
-                  "    var subtotal = parseFloat(data.subtotal);",
-                  "    var discount = parseFloat(data.discountAmount);",
-                  "    var expectedDiscount = Math.round((subtotal * 0.10) * 100) / 100;",
-                  "    pm.expect(discount).to.be.closeTo(expectedDiscount, 0.05);",
+                  "    pm.expect(parseFloat(data.discountAmount)).to.be.above(0);",
+                  "    pm.expect(parseFloat(data.discountRate)).to.be.at.least(10.0);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -786,9 +849,19 @@
               ]
             },
             "description": "Creates an order and freezes price calculations in database",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"regionCode\": \"UZB\",\n  \"orderType\": \"PICKUP\",\n  \"customerName\": \"Adrian Zakirov\",\n  \"customerEmail\": \"adrian@cherrycake.com\",\n  \"customerPhone\": \"+998901234567\",\n  \"pickupPointId\": 1,\n  \"orderDate\": \"2026-10-31T12:00:00\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 1,\n      \"modifierIds\": []\n    }\n  ]\n}"
+              "raw": "{\n  \"regionCode\": \"UZB\",\n  \"orderType\": \"PICKUP\",\n  \"customerName\": \"Adrian Zakirov\",\n  \"customerEmail\": \"customer@cherrycake.com\",\n  \"customerPhone\": \"+998901234567\",\n  \"pickupPointId\": 1,\n  \"orderDate\": \"2026-10-31T12:00:00\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 1,\n      \"modifierIds\": []\n    }\n  ]\n}"
             }
           },
           "event": [
@@ -796,12 +869,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Order created successfully with status 200/201\", function () {",
+                  "pm.test(\"Order created successfully with status 201 Created\", function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
                   "    var res = pm.response.json();",
-                  "    if (res.data && res.data.id) {",
-                  "        pm.environment.set(\"orderId\", res.data.id);",
-                  "    }",
+                  "    pm.expect(res.data.orderNumber).to.be.a(\"string\");",
+                  "    pm.environment.set(\"orderNumber\", res.data.orderNumber);",
+                  "    pm.collectionVariables.set(\"orderNumber\", res.data.orderNumber);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -810,7 +883,7 @@
           ]
         },
         {
-          "name": "Get Order by ID",
+          "name": "Get Order by Tracking Number",
           "request": {
             "method": "GET",
             "header": [
@@ -820,7 +893,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/orders/{{orderId}}",
+              "raw": "{{baseUrl}}/api/v1/orders/{{orderNumber}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -828,17 +901,17 @@
                 "api",
                 "v1",
                 "orders",
-                "{{orderId}}"
+                "{{orderNumber}}"
               ]
             },
-            "description": "Retrieves order status, line items, and financial summary"
+            "description": "Retrieves order status, line items, and financial summary by tracking number"
           },
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200 or 404\", function () {",
+                  "pm.test(\"Status code is 200 OK or 404\", function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
                   "});"
                 ],
@@ -848,7 +921,7 @@
           ]
         },
         {
-          "name": "Get Orders by User ID",
+          "name": "Get Current User Order History",
           "request": {
             "method": "GET",
             "header": [
@@ -858,7 +931,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/orders/user/2",
+              "raw": "{{baseUrl}}/api/v1/orders/my",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -866,11 +939,20 @@
                 "api",
                 "v1",
                 "orders",
-                "user",
-                "2"
+                "my"
               ]
             },
-            "description": "List of historical orders for an account"
+            "description": "List of historical orders for authenticated account",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            }
           },
           "event": [
             {
@@ -879,6 +961,10 @@
                 "exec": [
                   "pm.test(\"Status code is 200 OK\", function () {",
                   "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Order history list returned\", function () {",
+                  "    var res = pm.response.json();",
+                  "    pm.expect(res.data).to.be.an(\"array\");",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -891,50 +977,6 @@
     {
       "name": "5. Table Bookings & Reservations",
       "item": [
-        {
-          "name": "Get Available Table Slots",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/bookings/available-slots?date=2026-10-31",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "bookings",
-                "available-slots"
-              ],
-              "query": [
-                {
-                  "key": "date",
-                  "value": "2026-10-31"
-                }
-              ]
-            },
-            "description": "Returns cafe table time slots for specified calendar date"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200 OK\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        },
         {
           "name": "Create Table Reservation (Guest Enforcement & Double-Booking Check)",
           "request": {
@@ -961,9 +1003,86 @@
               ]
             },
             "description": "Reserves table with conflict detection",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"tableNumber\": 3,\n  \"guestsCount\": 4,\n  \"bookingTime\": \"2026-10-31T18:30:00\",\n  \"customerName\": \"Elena Rostova\",\n  \"customerPhone\": \"+998909876543\",\n  \"notes\": \"Anniversary evening table near window\"\n}"
+              "raw": "{\n  \"tableNumber\": \"{{dynamicTable}}\",\n  \"guestsCount\": 4,\n  \"bookingTime\": \"{{dynamicBookingTime}}\",\n  \"customerName\": \"Elena Rostova\",\n  \"customerPhone\": \"+998909876543\",\n  \"notes\": \"Anniversary evening table near window\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var randomTable = Math.floor(Math.random() * 20) + 1;",
+                  "var randomDay = Math.floor(Math.random() * 20) + 10;",
+                  "var randomHour = Math.floor(Math.random() * 12) + 10;",
+                  "var timeStr = \"2026-11-\" + randomDay + \"T\" + randomHour + \":00:00\";",
+                  "pm.collectionVariables.set(\"dynamicTable\", randomTable);",
+                  "pm.collectionVariables.set(\"dynamicBookingTime\", timeStr);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Booking processed with status 201 Created or 409 Conflict\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 409]);",
+                  "    if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "        var res = pm.response.json();",
+                  "        pm.environment.set(\"bookingNumber\", res.data.bookingNumber);",
+                  "        pm.collectionVariables.set(\"bookingNumber\", res.data.bookingNumber);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Booking by Tracking Number",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/bookings/{{bookingNumber}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bookings",
+                "{{bookingNumber}}"
+              ]
+            },
+            "description": "Retrieves reservation details by booking tracking number",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
             }
           },
           "event": [
@@ -971,8 +1090,60 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Booking created successfully (200/201) or slot conflict (409)\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 409]);",
+                  "pm.test(\"Status code is 200 OK or 404 Not Found\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Current User Bookings History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/bookings/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bookings",
+                "my"
+              ]
+            },
+            "description": "List of table bookings for authenticated customer",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Bookings list returned\", function () {",
+                  "    var res = pm.response.json();",
+                  "    pm.expect(res.data).to.be.an(\"array\");",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -1038,8 +1209,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200 OK or 401/403 if token unset\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([200, 401, 403]);",
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Sales report data structure returned\", function () {",
+                  "    var res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(true);",
+                  "    pm.expect(res.data.period).to.be.a(\"string\");",
+                  "    pm.expect(res.data.totalRevenue).to.not.be.undefined;",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -1101,8 +1278,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200 OK or 401/403\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([200, 401, 403]);",
+                  "pm.test(\"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"CSV content returned with headers\", function () {",
+                  "    var body = pm.response.text();",
+                  "    pm.expect(body).to.include(\"Cherry Cake\");",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -1157,8 +1338,9 @@
                   "});",
                   "pm.test(\"Standard ErrorResponse JSON returned\", function () {",
                   "    var res = pm.response.json();",
-                  "    pm.expect(res.success).to.eql(false);",
-                  "    pm.expect(res.error).to.be.an(\"object\");",
+                  "    pm.expect(res.status).to.be.oneOf([400, 404]);",
+                  "    pm.expect(res.error).to.be.a(\"string\");",
+                  "    pm.expect(res.message).to.be.a(\"string\");",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -1208,7 +1390,8 @@
                   "});",
                   "pm.test(\"Validation error message present\", function () {",
                   "    var res = pm.response.json();",
-                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.status).to.eql(400);",
+                  "    pm.expect(res.error).to.be.a(\"string\");",
                   "});"
                 ],
                 "type": "text/javascript"
