@@ -41,11 +41,11 @@ public class SecurityConfig
             .authorizeHttpRequests
             (
                 auth -> auth
-                // Permit internal forwards & errors (e.g. forward to /index.html or /error)
+                // Permit internal forwards & errors
                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                 // Spring Boot standard static resources
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                // Public Endpoints & Static UI
+                // Public UI static pages & assets
                 .requestMatchers
                 (
                     "/",
@@ -55,22 +55,53 @@ public class SecurityConfig
                     "/swagger",
                     "/swagger.html",
                     "/favicon.ico",
-                    "/api/v1/auth/**",
-                    "/api/v1/catalog/**",
-                    "/api/v1/cart/**",
-                    "/v3/api-docs/**",
-                    "/swagger-ui/**",
-                    "/swagger-ui.html",
                     "/assets/**",
                     "/error",
                     "/error/**",
                     "/error.html"
                 ).permitAll()
-                // Public creation of orders & bookings (allows guest order & table booking)
-                .requestMatchers(HttpMethod.POST, "/api/v1/orders", "/api/v1/bookings").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/orders/{orderNumber}", "/api/v1/bookings/{bookingNumber}").permitAll()
-                // Admin / Reporting Endpoints
-                .requestMatchers("/api/v1/admin/**", "/api/v1/reports/**").hasRole("ADMIN")
+                // Public Swagger & OpenAPI docs
+                .requestMatchers
+                (
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html"
+                ).permitAll()
+                // Public Auth API
+                .requestMatchers
+                (
+                    "/api/auth/**",
+                    "/api/v1/auth/**"
+                ).permitAll()
+                // Public Catalog, Regions, Categories, Products, Prices, Logistics
+                .requestMatchers
+                (
+                    "/api/regions",
+                    "/api/v1/catalog/regions",
+                    "/api/categories",
+                    "/api/v1/catalog/categories",
+                    "/api/products/**",
+                    "/api/v1/catalog/products/**",
+                    "/api/cart/**",
+                    "/api/v1/cart/**",
+                    "/api/pickup-points",
+                    "/api/v1/catalog/pickup-points",
+                    "/api/delivery-zones",
+                    "/api/v1/catalog/delivery-zones",
+                    "/api/time-slots",
+                    "/api/v1/time-slots"
+                ).permitAll()
+                // Public creation of orders & table bookings (guest orders permitted)
+                .requestMatchers(HttpMethod.POST, "/api/orders", "/api/v1/orders", "/api/bookings", "/api/v1/bookings").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/orders/{orderNumber}", "/api/v1/orders/{orderNumber}", "/api/bookings/{bookingNumber}", "/api/v1/bookings/{bookingNumber}").permitAll()
+                // Customer personal cabinet endpoints
+                .requestMatchers("/api/orders/my", "/api/v1/orders/my", "/api/bookings/my", "/api/v1/bookings/my").authenticated()
+                // Reports & Analytics: accessible by VIEWER, STAFF, ADMIN
+                .requestMatchers("/api/reports/**", "/api/v1/reports/**").hasAnyRole("VIEWER", "STAFF", "ADMIN")
+                // Admin orders management: accessible by STAFF, ADMIN
+                .requestMatchers("/api/admin/orders/**", "/api/v1/admin/orders/**").hasAnyRole("STAFF", "ADMIN")
+                // Full Admin operations: accessible by ADMIN only
+                .requestMatchers("/api/admin/**", "/api/v1/admin/**").hasRole("ADMIN")
                 // Any other request must be authenticated
                 .anyRequest().authenticated()
             )
@@ -90,8 +121,14 @@ public class SecurityConfig
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception { return config.getAuthenticationManager(); }
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception
+    {
+        return config.getAuthenticationManager();
+    }
 
     @Bean
-    public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+    public PasswordEncoder passwordEncoder()
+    {
+        return new BCryptPasswordEncoder();
+    }
 }

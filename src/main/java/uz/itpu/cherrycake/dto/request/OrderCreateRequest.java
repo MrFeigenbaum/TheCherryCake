@@ -1,7 +1,13 @@
 package uz.itpu.cherrycake.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +25,7 @@ import java.util.List;
 public class OrderCreateRequest
 {
     @NotBlank(message = "Region code is required")
+    @JsonAlias({"region", "regionCode"})
     private String regionCode;
 
     @NotNull(message = "Order type is required (PICKUP or DELIVERY)")
@@ -47,7 +54,7 @@ public class OrderCreateRequest
     private String promoCode;
 
     @NotNull(message = "Order date is required")
-    @FutureOrPresent(message = "Order date cannot be in the past")
+    @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = uz.itpu.cherrycake.common.util.FlexibleLocalDateTimeDeserializer.class)
     private LocalDateTime orderDate;
 
     @Valid

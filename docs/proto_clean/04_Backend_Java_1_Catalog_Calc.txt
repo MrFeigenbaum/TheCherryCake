@@ -1,0 +1,383 @@
+Backend Java #1
+Каталог · Регионы · Цены · Модификаторы · Калькулятор · Ошибки
+Для Backend-разработчика #1
+Содержание
+TOC \h \o "1-2"
+(Если содержание пустое — в Word: правая кнопка → «Обновить поле».)
+1. Твоя зона
+Ты отвечаешь за «витрину и калькулятор»: всё, что гость видит в меню, и всё, что превращает корзину в цифры. Это самый оцениваемый кусок проекта (60 + 45 баллов). Если смена страны неправильно пересчитывает НДС — проект теряет треть базовых баллов.
+Входит
+Не входит (это BE2)
+Регионы, валюты, ставки НДС
+Заказы, слоты, бронь
+Категории, товары, региональные цены, наличие
+Пользователи, JWT, RBAC
+Модификаторы (SINGLE/MULTI, priceDelta)
+Отчёты, CSV/PDF
+PriceCalculatorService — единственное место расчёта
+Админ-API заказов
+Скидки по порогам, промокоды
+GlobalExceptionHandler, Swagger, CORS, CI backend
+Админ-API каталога/цен/регионов/скидок/промокодов
+Кто от тебя зависит
+FE2 (меню, корзина) — ждёт /regions, /products, /cart/calculate к среде недели 2.
+BE2 — вызывает твой PriceCalculatorService при создании заказа.
+QAJ — проверяет калькулятор по своей таблице тест-кейсов; дай им Swagger в пятницу недели 1.
+FE1 (админка) — ждёт /admin/products, /admin/prices к среде недели 3.
+2. Твой план по дням
+ID
+Задача
+Нед.
+Дни
+Ч
+Готово =
+CC-3
+CI backend: Maven/Gradle сборка, Checkstyle, тесты на H2
+1
+Вт
+3
+PR с падающим тестом не мержится
+CC-5
+ER-схема + Flyway V1__catalog.sql: regions, categories, products, regional_prices, modifier_groups, modifiers, modifier_regional_prices, discount_rules, promo_codes
+1
+Пн–Ср
+6
+TL утвердил; flyway migrate проходит
+CC-7
+Сид-данные V3__seed.sql: 3 региона, 3 категории, 12 товаров, модификаторы, скидки
+1
+Ср–Чт
+4
+После старта меню непустое
+CC-8
+GlobalExceptionHandler + ErrorResponse; springdoc Swagger; CORS
+1
+Чт
+3
+Любая ошибка → единый JSON
+CC-10
+Контракт API v1: все твои эндпоинты с DTO в Swagger (заглушки допустимы)
+1
+Пт
+4
+API freeze
+CC-21
+GET /regions, /categories, /products?region&categoryId, /products/{id}?region
+2
+Пн–Ср
+8
+Реальные данные, региональная цена и isAvailable
+CC-22
+PriceCalculatorService + 15 unit-тестов
+2
+Ср–Чт
+8
+Все кейсы QAJ зелёные
+CC-23
+POST /cart/calculate с валидацией
+2
+Чт–Пт
+4
+Postman QAJ проходит
+CC-36
+Промокоды и пороги скидок в калькуляторе; /admin/discounts, /admin/promo-codes
+3
+Пн–Ср
+8
+Порог ≥ работает, промокод по сроку
+CC-37
+/admin/products, /admin/categories, /admin/prices, /admin/regions
+3
+Ср–Пт
+8
+FE1 редактирует цену — меню меняется
+CC-52
+Админ-API заказов (с BE2), индексы, JaCoCo ≥ 70 % для service
+4
+Пн–Чт
+8
+Отчёт покрытия в CI
+CC-61
+Багфикс
+5
+Пн–Ср
+10
+0 критичных
+3. Детальные требования
+3.1. Схема данных (твои таблицы)
+Таблица
+Колонки
+Ограничения
+regions
+id BIGSERIAL PK, code VARCHAR(2) UNIQUE, name, currency_code VARCHAR(3), currency_symbol, vat_rate NUMERIC(5,4), is_active BOOL
+vat_rate — доля (0.1200)
+categories
+id, name, sort_order INT
+products
+id, category_id FK, name, description TEXT, image_url, is_active BOOL, created_at
+Цены здесь НЕТ
+regional_prices
+product_id FK, region_id FK, price NUMERIC(12,2), is_available BOOL
+PK (product_id, region_id)
+modifier_groups
+id, product_id FK, name, type (SINGLE|MULTI), is_required BOOL, sort_order
+modifiers
+id, group_id FK, name, sort_order
+modifier_regional_prices
+modifier_id FK, region_id FK, price_delta NUMERIC(12,2)
+PK (modifier_id, region_id); может быть 0
+discount_rules
+id, region_id FK NULL (NULL = все), threshold_amount NUMERIC(12,2), discount_rate NUMERIC(5,4)
+Берётся правило с max threshold ≤ amountInclVat
+promo_codes
+id, code VARCHAR UNIQUE, discount_rate NUMERIC(5,4), valid_from DATE, valid_to DATE, is_active BOOL
+Промокод заменяет пороговую скидку, если больше (решение: берём max)
+3.2. PriceCalculatorService — сердце проекта
+Один публичный метод. Его вызывают и /cart/calculate, и BE2 при создании заказа. Никто другой НДС и скидки не считает.
+public CalculateCartResponse calculate(CalculateCartRequest req) {
+Region region = regionRepository.findByCode(req.region()).orElseThrow(NotFound);
+List<CartItemResult> items = buildItems(req.items(), region);  // unitPrice = regionalPrice + Σ priceDelta
+BigDecimal subtotal   = sum(items, lineTotal).setScale(2, HALF_UP);
+BigDecimal vatAmount  = subtotal.multiply(region.getVatRate()).setScale(2, HALF_UP);
+BigDecimal amountInclVat = subtotal.add(vatAmount);
+BigDecimal discountRate  = discountService.resolveRate(amountInclVat, region, req.promoCode());
+BigDecimal discountAmount = amountInclVat.multiply(discountRate).setScale(2, HALF_UP);
+BigDecimal deliveryFee = req.orderType() == OrderType.DELIVERY
+? deliveryZoneRepository.findById(req.deliveryZoneId()).orElseThrow(NotFound).getFee()
+: BigDecimal.ZERO;
+BigDecimal total = amountInclVat.subtract(discountAmount).add(deliveryFee).setScale(2, HALF_UP);
+return new CalculateCartResponse(region.getCurrencyCode(), items, subtotal, region.getVatRate(),
+vatAmount, amountInclVat, discountRate, discountAmount, deliveryFee, total);
+}
+Ловушки
+Порог скидки сравнивается с amountInclVat (с НДС), а не с subtotal. И строго ≥, не >.
+Доставка добавляется ПОСЛЕ скидки — на неё скидка не действует.
+Округляй после каждого шага, а не только в конце. Иначе фронт и PDF разойдутся на копейку.
+Товар с isAvailable=false в регионе → 400 с errors {"items[2].productId": "not available in region UZ"}.
+Обязательная группа модификаторов (isRequired) без выбора → 400.
+Промокод просрочен/неактивен → 400 с понятным message, а не молчаливое игнорирование.
+3.3. Эндпоинты, которые ты делаешь
+Метод
+Путь
+Запрос
+Ответ
+Ошибки
+GET
+/api/regions
+—
+RegionResponse[]
+GET
+/api/categories
+—
+CategoryResponse[]
+GET
+/api/products
+?region=UZ&categoryId=1
+ProductResponse[] (без модификаторов)
+400 если нет region
+GET
+/api/products/{id}
+?region=UZ
+ProductResponse с modifierGroups
+404
+POST
+/api/cart/calculate
+CalculateCartRequest
+CalculateCartResponse
+400 валидация
+GET/POST/PUT/DELETE
+/api/admin/categories, /products
+DTO
+DTO
+401/403, 404
+GET/PUT
+/api/admin/prices?productId
+RegionalPriceRequest[] {regionId, price, isAvailable}
+GET/PUT
+/api/admin/regions/{id}
+{vatRate, isActive}
+RegionResponse
+CRUD
+/api/admin/discounts, /promo-codes
+3.4. GlobalExceptionHandler
+Исключение
+HTTP
+message
+MethodArgumentNotValidException
+400
+«Проверьте заполнение полей» + errors по полям
+NotFoundException
+404
+«<Сущность> с id <n> не найдена»
+ProductUnavailableException
+400
+«Товар недоступен в выбранном регионе»
+PromoCodeInvalidException
+400
+«Промокод недействителен»
+SlotUnavailableException / BookingConflictException (BE2 бросает, ты ловишь)
+409
+«Слот заполнен» / «Нет свободного столика»
+AccessDeniedException
+403
+«Недостаточно прав»
+AuthenticationException
+401
+«Требуется вход»
+Exception (всё остальное)
+500
+«Внутренняя ошибка», без stack trace наружу
+4. Переменные и соглашения, которые ты используешь
+Денежные поля (единые на всех слоях)
+Имя
+Как считается
+Описание
+subtotal
+Σ(unitPrice × quantity)
+Сумма без НДС и скидок
+vatRate
+0.12
+Ставка НДС страны как десятичная доля (12 % = 0.12), НЕ 12
+vatAmount
+subtotal × vatRate
+Сумма НДС
+amountInclVat
+subtotal + vatAmount
+Сумма с НДС. От неё считается порог скидки
+discountRate
+0.05
+Доля скидки (5 % = 0.05)
+discountAmount
+amountInclVat × discountRate
+Сумма скидки
+deliveryFee
+fee зоны или 0
+Только при type = DELIVERY, иначе 0
+total
+amountInclVat − discountAmount + deliveryFee
+Итог к оплате
+unitPrice
+regionalPrice + Σ modifierPriceDelta
+Цена единицы с модификаторами
+lineTotal
+unitPrice × quantity
+Сумма строки
+currencyCode
+UZS
+Валюта всех сумм в ответе
+Enum
+Enum
+Значения
+Описание
+RegionCode
+UZ, KZ, RU, (добавить по таблице курса)
+Код страны, ISO 3166-1 alpha-2. Единственный способ передать страну: query ?region=UZ
+CurrencyCode
+UZS, KZT, RUB
+ISO 4217. Берётся из regions, фронт не хранит свои
+OrderType
+PICKUP, DELIVERY
+Способ получения заказа
+OrderStatus
+NEW, CONFIRMED, DONE, CANCELLED
+Жизненный цикл заказа. Переходы: NEW→CONFIRMED→DONE; любой→CANCELLED
+BookingStatus
+CONFIRMED, CANCELLED
+Статус брони столика
+Role
+CUSTOMER, VIEWER, STAFF, ADMIN
+Роли RBAC. Иерархия доступа: ADMIN ⊃ STAFF ⊃ VIEWER; CUSTOMER — обычный гость
+ModifierType
+SINGLE, MULTI
+SINGLE — радио (выбрать один), MULTI — чекбоксы
+GroupBy
+REGION, MONTH
+Группировка отчёта
+ExportFormat
+CSV, PDF
+Формат экспорта отчёта
+ErrorResponse
+Поле
+Тип
+Описание
+status
+number
+HTTP-код: 400 валидация, 401 не авторизован, 403 нет прав, 404 не найдено, 409 конфликт (слот/столик занят), 500
+message
+string
+Человеческое сообщение для тоста
+errors
+object | null
+{ "items[0].quantity": "must be >= 1" } — ключ = путь к полю
+timestamp
+string
+ISO UTC
+path
+string
+Путь запроса
+Переменные окружения (backend)
+Где
+Переменная
+Пример
+Backend
+DB_URL
+jdbc:postgresql://localhost:5432/cherrycake
+Backend
+DB_USER / DB_PASSWORD
+cherry / (секрет)
+Backend
+JWT_SECRET
+≥ 32 символа, не коммитить
+Backend
+JWT_EXPIRATION_MS
+86400000 (24 ч)
+Backend
+SERVER_PORT
+8080
+Backend
+CORS_ALLOWED_ORIGINS
+http://localhost:5173
+CI
+SPRING_PROFILES_ACTIVE
+test (H2) в CI, dev локально, prod на стенде
+Правила именования Java
+Что
+Правило
+Пример
+Пакеты
+lowercase, по сущности
+com.cherrycake.order, com.cherrycake.catalog, com.cherrycake.pricing
+Классы
+PascalCase + роль
+OrderController, OrderService, OrderRepository, Order (entity), OrderDto
+DTO
+Суффикс Request / Response
+CalculateCartRequest, CalculateCartResponse, CreateOrderRequest, OrderResponse
+Методы
+camelCase, глагол
+calculateTotals(), findByRegionCode(), createOrder()
+Поля
+camelCase
+vatAmount, pickupPointId
+Константы
+UPPER_SNAKE_CASE
+MONEY_SCALE = 2, DEFAULT_REGION = "UZ"
+Enum
+PascalCase тип, UPPER значения
+OrderStatus.CONFIRMED
+Таблицы БД
+snake_case, множественное
+orders, order_items, regional_prices
+Колонки БД
+snake_case
+vat_amount, pickup_point_id, created_at
+Исключения
+Суффикс Exception
+SlotUnavailableException → 409, NotFoundException → 404
+Тесты
+<Класс>Test, метод: should_<ожидание>_when_<условие>
+PriceCalculatorServiceTest.should_applyDiscount_when_amountReachesThreshold
+5. Что показываешь на демо
+Неделя 2: в Swagger меняешь region в /cart/calculate — показываешь, как меняются vatAmount и total на одном и том же наборе товаров.
+Неделя 3: применяешь промокод и порог; показываешь 400 на quantity=0 с errors.
+Презентация: 2 минуты — модель данных (regional_prices) и калькулятор; живое демо смены страны вместе с FE2.

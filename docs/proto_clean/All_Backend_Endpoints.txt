@@ -1,0 +1,46 @@
+Зона ответственности разработчика Backend Java #1 (Каталог и Расчеты)
+Публичные эндпоинты (permitAll)
+GET /api/regions
+Что возвращает: Массив объектов RegionResponse (список стран, валют и ставок НДС).
+GET /api/categories
+Что возвращает: Массив объектов CategoryResponse (список категорий для вкладок меню).
+GET /api/products
+Query-параметры: ?region=UZ (обязательный), &categoryId=1 (опциональный).
+Что возвращает: Массив плоских карточек ProductResponse[] (без модификаторов).
+GET /api/products/{id}
+Path/Query-параметры: ID товара в пути и ?region=UZ в query.
+Что возвращает: Детальную карточку ProductResponse со всеми группами модификаторов (SINGLE/MULTI).
+POST /api/cart/calculate
+Тело запроса: CalculateCartRequest (выбранная страна, массив товаров с количеством и ID модификаторов, промокод, тип заказа и ID зоны доставки).
+Что возвращает: CalculateCartResponse (серверный расчет корзины и все 11 денежных полей строго по глоссарию).
+Админские эндпоинты (Доступ только для роли ADMIN)
+GET /api/admin/categories и POST/PUT/DELETE /api/admin/categories — CRUD категорий блюд.
+GET /api/admin/products и POST/PUT/DELETE /api/admin/products — CRUD карточек товаров (без цен).
+GET /api/admin/prices и PUT /api/admin/prices?productId=... — Матрица цен. Принимает массив региональных настроек (regionId, price, isAvailable).
+GET/PUT /api/admin/regions/{id} — Изменение ставки НДС или отключение страны.
+GET/POST/PUT/DELETE /api/admin/discounts — CRUD пороговых скидок кафе.
+GET/POST/PUT/DELETE /api/admin/promo-codes — CRUD промокодов системы.
+Зона ответственности разработчика Backend Java #2 (Заказы, Логистика, Бронь, Auth и Отчеты)
+Публичные логистические эндпоинты (permitAll)
+GET /api/pickup-points?region=UZ — Список адресов кафе для самовывоза.
+GET /api/delivery-zones?region=UZ — Список зон доставки и стоимость курьера (deliveryFee).
+GET /api/time-slots?date=2026-11-03 — Список тайм-слотов на дату с флагом доступности isAvailable.
+Аутентификация (permitAll)
+POST /api/auth/register — Регистрация гостя (принимает email, пароль, имя, телефон).
+POST /api/auth/login — Вход (принимает email и пароль, возвращает JWT-токен в поле token и объект user).
+Оформление и Бронирование (permitAll, но при наличии токена привязывает к user_id)
+POST /api/orders — Создать заказ (принимает CreateOrderRequest со всеми контактами, временем, слотом и составом корзины. Возвращает объект заказа со статусом NEW и маской orderNumber вида CC-2026-000123).
+POST /api/bookings — Забронировать столик (принимает дату, время, количество гостей 1–12 и контакты. Возвращает номер брони BK-... и назначенный tableNumber).
+Личный кабинет клиента (Доступ: authenticated по токену)
+GET /api/orders/my — Список всех прошлых и текущих заказов пользователя.
+GET /api/bookings/my — Список всех бронирований столов пользователя.
+Модуль аналитики и экспорта (Доступ: VIEWER, STAFF, ADMIN)
+GET /api/reports/sales
+Query-параметры: ?from=...&to=...&region=...&groupBy=REGION|MONTH
+Что возвращает: Объект SalesReportResponse (блок общих KPI-карточек и массив строк rows для гистограмм Chart.js).
+GET /api/reports/export
+Query-параметры: Фильтры те же + &format=CSV|PDF
+Что возвращает: Скачиваемый файл (MIME-типы text/csv или application/pdf).
+Управление заказами в админке (Доступ: STAFF, ADMIN)
+GET /api/admin/orders — Пагинированный список всех заказов в системе с фильтрацией по статусам.
+PATCH /api/admin/orders/{id}/status — Смена статуса заказа (NEW -> CONFIRMED -> DONE или CANCELLED).

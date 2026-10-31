@@ -5,25 +5,27 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import uz.itpu.cherrycake.common.response.ApiResponse;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import uz.itpu.cherrycake.dto.request.CartCalculateRequest;
 import uz.itpu.cherrycake.dto.response.CartCalculateResponse;
 import uz.itpu.cherrycake.service.PriceCalculatorService;
 
 @RestController
-@RequestMapping("/api/v1/cart")
+@RequestMapping
 @RequiredArgsConstructor
-@Tag(name = "Cart", description = "Cart calculation and recalculation endpoints")
+@Tag(name = "Cart & Pricing", description = "Dynamic cart recalculation and multi-region pricing engine")
 public class CartController
 {
     private final PriceCalculatorService priceCalculatorService;
 
-    @PostMapping("/calculate")
-    @Operation(summary = "Calculate order subtotal, regional VAT, discounts, delivery fee, and final total")
-    public ResponseEntity<ApiResponse<CartCalculateResponse>> calculateCart(@Valid @RequestBody CartCalculateRequest request)
+    @PostMapping({"/api/cart/calculate", "/api/v1/cart/calculate"})
+    @Operation(summary = "Calculate cart totals", description = "Recalculates cart items, regional unit prices, VAT, discounts, and delivery fee.")
+    public ResponseEntity<CartCalculateResponse> calculateCart(@Valid @RequestBody CartCalculateRequest request)
     {
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
-        return ResponseEntity.ok(ApiResponse.ok("Cart successfully calculated", response));
+        return ResponseEntity.ok(response);
     }
 }

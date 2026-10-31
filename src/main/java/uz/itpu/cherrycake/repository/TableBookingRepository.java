@@ -13,6 +13,8 @@ public interface TableBookingRepository extends JpaRepository<TableBooking, Long
 {
     Optional<TableBooking> findByBookingNumber(String bookingNumber);
 
+    boolean existsByBookingNumber(String bookingNumber);
+
     boolean existsByTableNumberAndBookingTimeBetween(Integer tableNumber, LocalDateTime start, LocalDateTime end);
 
     List<TableBooking> findByUserIdOrderByBookingTimeDesc(Long userId);

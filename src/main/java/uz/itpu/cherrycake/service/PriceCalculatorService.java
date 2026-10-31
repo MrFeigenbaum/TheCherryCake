@@ -3,32 +3,40 @@ package uz.itpu.cherrycake.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.itpu.cherrycake.common.exception.BadRequestException;
+import uz.itpu.cherrycake.common.exception.ProductUnavailableException;
+import uz.itpu.cherrycake.common.exception.PromoCodeInvalidException;
 import uz.itpu.cherrycake.common.exception.ResourceNotFoundException;
 import uz.itpu.cherrycake.dto.request.CartCalculateRequest;
 import uz.itpu.cherrycake.dto.request.CartItemDto;
 import uz.itpu.cherrycake.dto.response.CartCalculateResponse;
 import uz.itpu.cherrycake.dto.response.CartCalculateResponse.CalculatedItemDto;
-import uz.itpu.cherrycake.model.entity.*;
+import uz.itpu.cherrycake.model.entity.DeliveryZone;
+import uz.itpu.cherrycake.model.entity.Discount;
+import uz.itpu.cherrycake.model.entity.Product;
+import uz.itpu.cherrycake.model.entity.ProductModifier;
+import uz.itpu.cherrycake.model.entity.ProductPrice;
+import uz.itpu.cherrycake.model.entity.Region;
 import uz.itpu.cherrycake.model.enums.DiscountType;
 import uz.itpu.cherrycake.model.enums.OrderType;
-import uz.itpu.cherrycake.repository.*;
+import uz.itpu.cherrycake.repository.DeliveryZoneRepository;
+import uz.itpu.cherrycake.repository.DiscountRepository;
+import uz.itpu.cherrycake.repository.ProductModifierRepository;
+import uz.itpu.cherrycake.repository.ProductPriceRepository;
+import uz.itpu.cherrycake.repository.ProductRepository;
+import uz.itpu.cherrycake.repository.RegionRepository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
-/**
- * Well ... it is a core pricing calculation engine for Cherry Cake Bakery & Café.
- * Strictly adheres to the project calculation specification:
- * 1. Subtotal = Σ(Price_i * Quantity_i) + Σ(Modifier_j * Quantity_i)
- * 2. VAT = Subtotal * (VAT_rate / 100)
- * 3. Amount_incl_VAT = Subtotal + VAT
- * 4. Discount = Amount_incl_VAT * (Discount_rate / 100) (threshold based on Amount_incl_VAT or promo code)
- * 5. Total = Amount_incl_VAT - Discount + Delivery fee (applied last)
- * All operations use BigDecimal with RoundingMode.HALF_UP to 2 decimal places.
- */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -45,142 +53,207 @@ public class PriceCalculatorService
     private final DiscountRepository discountRepository;
     private final DeliveryZoneRepository deliveryZoneRepository;
 
+    public CartCalculateResponse calculate(CartCalculateRequest request)
+    {
+        return calculateCart(request);
+    }
+
     public CartCalculateResponse calculateCart(CartCalculateRequest request)
     {
-        // 1. Resolve the Region & VAT
-        Region region = regionRepository.findByCodeIgnoreCase(request.getRegionCode())
-            .orElseThrow(() -> new ResourceNotFoundException("Region not found for code: " + request.getRegionCode()));
+        if (request == null)
+        {
+            throw new BadRequestException("Calculate request cannot be null");
+        }
 
-        BigDecimal vatRate = region.getVatRate().setScale(SCALE, ROUNDING);
+        // 1. Resolve Region
+        String regionCode = request.getRegionCode();
+        if (regionCode == null || regionCode.trim().isEmpty())
+        {
+            throw new BadRequestException("Region code is required");
+        }
 
-        // 2. Calculate the Line Items and Subtotal
+        Region region = regionRepository.findByCodeIgnoreCase(regionCode.trim())
+            .orElseThrow(() -> new ResourceNotFoundException("Region not found: " + regionCode));
+
+        BigDecimal vatRate = region.getVatRateFraction(); // e.g. 0.12
+
+        // 2. Validate Items
+        if (request.getItems() == null || request.getItems().isEmpty())
+        {
+            throw new BadRequestException("Cart items cannot be empty");
+        }
+
         BigDecimal subtotal = BigDecimal.ZERO.setScale(SCALE, ROUNDING);
         List<CalculatedItemDto> calculatedItems = new ArrayList<>();
 
-        for (CartItemDto item : request.getItems())
+        for (int i = 0; i < request.getItems().size(); i++)
         {
+            CartItemDto item = request.getItems().get(i);
+            if (item.getQuantity() == null || item.getQuantity() <= 0)
+            {
+                Map<String, String> errors = new HashMap<>();
+                errors.put("items[" + i + "].quantity", "must be >= 1");
+                throw new BadRequestException("Item quantity must be at least 1: " + errors);
+            }
+
             Product product = productRepository.findById(item.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + item.getProductId()));
 
-            // Find the regional price
             ProductPrice productPrice = productPriceRepository
                 .findByProductIdAndRegionId(product.getId(), region.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Price not configured for product '%s' in region '%s'", product.getName(), region.getCode())));
 
-            BigDecimal baseUnitPrice = productPrice.getPrice().setScale(SCALE, ROUNDING);
-            BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
+            if (!productPrice.isAvailable())
+            {
+                Map<String, String> errors = Collections.singletonMap("items[" + i + "].productId", "not available in region " + region.getCode());
+                throw new ProductUnavailableException("Товар недоступен в выбранном регионе: " + product.getName(), errors);
+            }
 
-            // Calculate the modifiers cost
+            BigDecimal baseUnitPrice = productPrice.getPrice().setScale(SCALE, ROUNDING);
+
+            // Modifiers validation & calculation
+            List<ProductModifier> productModifiers = productModifierRepository.findByProductId(product.getId());
+            Set<Long> selectedModifierIds = item.getModifierIds() != null ? new HashSet<>(item.getModifierIds()) : Collections.emptySet();
+
+            // Group validation (Required groups and SINGLE groups)
+            Map<String, List<ProductModifier>> groups = new HashMap<>();
+            for (ProductModifier pm : productModifiers)
+            {
+                String gName = pm.getGroupName() != null ? pm.getGroupName() : "Default";
+                groups.computeIfAbsent(gName, k -> new ArrayList<>()).add(pm);
+            }
+
+            for (Map.Entry<String, List<ProductModifier>> entry : groups.entrySet())
+            {
+                List<ProductModifier> groupMods = entry.getValue();
+                boolean isRequired = groupMods.stream().anyMatch(ProductModifier::isRequired);
+                boolean isSingle = groupMods.stream().anyMatch(m -> "SINGLE".equalsIgnoreCase(m.getGroupType()));
+
+                long countSelectedInGroup = groupMods.stream().filter(m -> selectedModifierIds.contains(m.getId())).count();
+
+                if (isRequired && countSelectedInGroup == 0)
+                {
+                    throw new BadRequestException("Required modifier group '" + entry.getKey() + "' has no selected option");
+                }
+                if (isSingle && countSelectedInGroup > 1)
+                {
+                    throw new BadRequestException("Single-choice modifier group '" + entry.getKey() + "' cannot have multiple selections");
+                }
+            }
+
             BigDecimal modifiersPerUnit = BigDecimal.ZERO.setScale(SCALE, ROUNDING);
             List<String> modifierNames = new ArrayList<>();
 
-            if (item.getModifierIds() != null && !item.getModifierIds().isEmpty())
+            if (!selectedModifierIds.isEmpty())
             {
-                List<ProductModifier> modifiers = productModifierRepository.findAllById(item.getModifierIds());
-                for (ProductModifier modifier : modifiers)
+                List<ProductModifier> selected = productModifierRepository.findAllById(selectedModifierIds);
+                for (ProductModifier m : selected)
                 {
-                    modifiersPerUnit = modifiersPerUnit.add(modifier.getPriceDelta());
-                    modifierNames.add(modifier.getName());
+                    modifiersPerUnit = modifiersPerUnit.add(m.getPriceDelta());
+                    modifierNames.add(m.getName());
                 }
             }
             modifiersPerUnit = modifiersPerUnit.setScale(SCALE, ROUNDING);
 
             BigDecimal effectiveUnitPrice = baseUnitPrice.add(modifiersPerUnit).setScale(SCALE, ROUNDING);
-            BigDecimal itemTotal = effectiveUnitPrice.multiply(quantity).setScale(SCALE, ROUNDING);
-
-            subtotal = subtotal.add(itemTotal).setScale(SCALE, ROUNDING);
+            BigDecimal lineTotal = effectiveUnitPrice.multiply(BigDecimal.valueOf(item.getQuantity())).setScale(SCALE, ROUNDING);
+            subtotal = subtotal.add(lineTotal).setScale(SCALE, ROUNDING);
 
             calculatedItems.add(CalculatedItemDto.builder()
                 .productId(product.getId())
-                .productName(product.getName())
+                .name(product.getName())
                 .quantity(item.getQuantity())
-                .unitPrice(baseUnitPrice)
+                .unitPrice(effectiveUnitPrice)
                 .modifiersPrice(modifiersPerUnit)
-                .lineTotal(itemTotal)
-                .modifierNames(modifierNames)
+                .lineTotal(lineTotal)
+                .modifiers(modifierNames)
                 .build());
         }
 
-        // 3. VAT Computation: VAT = Subtotal * (vatRate / 100)
-        BigDecimal vatAmount = subtotal.multiply(vatRate).divide(ONE_HUNDRED, SCALE, ROUNDING);
-
-        // 4. Amount_incl_VAT = Subtotal + VAT
+        // 3. VAT Computation
+        BigDecimal vatAmount = subtotal.multiply(vatRate).setScale(SCALE, ROUNDING);
         BigDecimal amountInclVat = subtotal.add(vatAmount).setScale(SCALE, ROUNDING);
 
-        // 5. Discount calculation (Threshold by Amount_incl_VAT or Promo code)
-        BigDecimal discountRate = BigDecimal.ZERO.setScale(SCALE, ROUNDING);
-        BigDecimal discountAmount = BigDecimal.ZERO.setScale(SCALE, ROUNDING);
+        // 4. Promo Code Validation & Discount Rate Resolution
+        BigDecimal promoRate = BigDecimal.ZERO;
         String discountDescription = "No discount applied";
 
-        // Check promo code first if provided
         if (request.getPromoCode() != null && !request.getPromoCode().trim().isEmpty())
         {
-            Optional<Discount> promoOpt = discountRepository.findByCodeIgnoreCaseAndActiveTrue(request.getPromoCode().trim());
-            if (promoOpt.isPresent())
+            String promoCode = request.getPromoCode().trim();
+            Optional<Discount> promoOpt = discountRepository.findByCodeIgnoreCaseAndActiveTrue(promoCode);
+            if (promoOpt.isEmpty() || promoOpt.get().isExpired())
             {
-                Discount promo = promoOpt.get();
-                if (promo.getDiscountType() == DiscountType.PROMO_CODE)
-                {
-                    if (promo.getPercentage().compareTo(BigDecimal.ZERO) > 0)
-                    {
-                        discountRate = promo.getPercentage().setScale(SCALE, ROUNDING);
-                        discountAmount = amountInclVat.multiply(discountRate).divide(ONE_HUNDRED, SCALE, ROUNDING);
-                        discountDescription = promo.getName() + " (" + discountRate + "%)";
-                    }
-                    else if (promo.getFixedAmount().compareTo(BigDecimal.ZERO) > 0)
-                    {
-                        discountAmount = promo.getFixedAmount().min(amountInclVat).setScale(SCALE, ROUNDING);
-                        discountDescription = promo.getName() + " (Fixed " + discountAmount + " " + region.getCurrencyCode() + ")";
-                    }
-                }
+                throw new PromoCodeInvalidException("Промокод недействителен: " + promoCode);
+            }
+            Discount promo = promoOpt.get();
+            if (promo.getPercentage().compareTo(BigDecimal.ZERO) > 0)
+            {
+                promoRate = promo.getPercentage().divide(ONE_HUNDRED, 4, ROUNDING);
+                discountDescription = promo.getName() + " (" + promo.getPercentage().setScale(0, ROUNDING) + "%)";
             }
         }
 
-        // If no promo discount applied, we check threshold discounts based on Amount_incl_VAT
-        if (discountAmount.compareTo(BigDecimal.ZERO) == 0)
+        // Threshold Discount Resolution (checked against amountInclVat strictly >=)
+        BigDecimal thresholdRate = BigDecimal.ZERO;
+        List<Discount> thresholdDiscounts = discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD);
+        for (Discount threshold : thresholdDiscounts)
         {
-            List<Discount> thresholdDiscounts = discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD);
-            for (Discount threshold : thresholdDiscounts)
+            if (amountInclVat.compareTo(threshold.getMinSubtotal()) >= 0)
             {
-                if (amountInclVat.compareTo(threshold.getMinSubtotal()) >= 0)
+                BigDecimal rate = threshold.getPercentage().divide(ONE_HUNDRED, 4, ROUNDING);
+                if (rate.compareTo(thresholdRate) > 0)
                 {
-                    if (threshold.getPercentage().compareTo(discountRate) > 0)
+                    thresholdRate = rate;
+                    if (promoRate.compareTo(thresholdRate) < 0)
                     {
-                        discountRate = threshold.getPercentage().setScale(SCALE, ROUNDING);
-                        discountAmount = amountInclVat.multiply(discountRate).divide(ONE_HUNDRED, SCALE, ROUNDING);
-                        discountDescription = threshold.getName() + " (" + discountRate + "%)";
+                        discountDescription = threshold.getName() + " (" + threshold.getPercentage().setScale(0, ROUNDING) + "%)";
                     }
                 }
             }
         }
 
-        // 6. Delivery Fee (applied last, if delivery)
+        // Take max of promoRate and thresholdRate
+        BigDecimal effectiveDiscountRate = promoRate.max(thresholdRate).setScale(4, ROUNDING);
+        BigDecimal discountAmount = amountInclVat.multiply(effectiveDiscountRate).setScale(SCALE, ROUNDING);
+
+        // 5. Delivery Fee
         BigDecimal deliveryFee = BigDecimal.ZERO.setScale(SCALE, ROUNDING);
-        if (request.getOrderType() == OrderType.DELIVERY && request.getDeliveryZoneId() != null)
+        if (request.getOrderType() == OrderType.DELIVERY)
         {
+            if (request.getDeliveryZoneId() == null)
+            {
+                throw new BadRequestException("deliveryZoneId is required for DELIVERY");
+            }
             DeliveryZone zone = deliveryZoneRepository.findById(request.getDeliveryZoneId())
                 .orElseThrow(() -> new ResourceNotFoundException("Delivery zone not found with id: " + request.getDeliveryZoneId()));
             deliveryFee = zone.getDeliveryFee().setScale(SCALE, ROUNDING);
         }
 
-        // 7. Total = Amount_incl_VAT - Discount + Delivery Fee
-        BigDecimal finalTotal = amountInclVat.subtract(discountAmount).add(deliveryFee).setScale(SCALE, ROUNDING);
+        // 6. Total = amountInclVat - discountAmount + deliveryFee
+        BigDecimal total = amountInclVat.subtract(discountAmount).add(deliveryFee).setScale(SCALE, ROUNDING);
+        if (total.compareTo(BigDecimal.ZERO) < 0)
+        {
+            total = BigDecimal.ZERO.setScale(SCALE, ROUNDING);
+        }
 
-        if (finalTotal.compareTo(BigDecimal.ZERO) < 0) finalTotal = BigDecimal.ZERO.setScale(SCALE, ROUNDING);
+        // Display rate as 2-decimal fraction e.g. 0.05 or 0.12
+        BigDecimal displayDiscountRate = effectiveDiscountRate.setScale(2, ROUNDING);
+        BigDecimal displayVatRate = vatRate.setScale(2, ROUNDING);
 
         return CartCalculateResponse.builder()
             .regionCode(region.getCode())
-            .currency(region.getCurrencyCode())
+            .currencyCode(region.getCurrencyCode())
             .currencySymbol(region.getCurrencySymbol())
             .subtotal(subtotal)
-            .vatRate(vatRate)
+            .vatRate(displayVatRate)
             .vatAmount(vatAmount)
             .amountInclVat(amountInclVat)
-            .discountRate(discountRate)
+            .discountRate(displayDiscountRate)
             .discountAmount(discountAmount)
             .discountDescription(discountDescription)
             .deliveryFee(deliveryFee)
-            .finalTotal(finalTotal)
+            .total(total)
             .items(calculatedItems)
             .build();
     }

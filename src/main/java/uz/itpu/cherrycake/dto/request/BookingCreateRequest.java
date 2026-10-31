@@ -1,12 +1,19 @@
 package uz.itpu.cherrycake.dto.request;
 
-import jakarta.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @Builder
@@ -14,17 +21,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BookingCreateRequest
 {
-    @NotNull(message = "Table number is required")
-    @Min(value = 1, message = "Table number must be at least 1")
     private Integer tableNumber;
 
     @NotNull(message = "Guests count is required")
-    @Min(value = 1, message = "Guests count must be at least 1")
-    @Max(value = 20, message = "Maximum 20 guests per table booking")
+    @Min(value = 1, message = "Guests count must be between 1 and 12")
+    @Max(value = 12, message = "Guests count must be between 1 and 12")
+    @JsonAlias({"guests", "guestsCount"})
     private Integer guestsCount;
 
-    @NotNull(message = "Booking time is required")
-    @Future(message = "Booking time must be in the future")
+    private LocalDate date;
+
+    private LocalTime time;
+
+    @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = uz.itpu.cherrycake.common.util.FlexibleLocalDateTimeDeserializer.class)
     private LocalDateTime bookingTime;
 
     @NotBlank(message = "Customer name is required")
@@ -35,4 +44,7 @@ public class BookingCreateRequest
     private String customerPhone;
 
     private String notes;
+
+    public Integer getGuests() { return guestsCount; }
+    public void setGuests(Integer g) { this.guestsCount = g; }
 }

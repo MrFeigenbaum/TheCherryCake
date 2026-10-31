@@ -1,7 +1,23 @@
 package uz.itpu.cherrycake.model.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import uz.itpu.cherrycake.model.enums.OrderStatus;
 import uz.itpu.cherrycake.model.enums.OrderType;
 
@@ -42,6 +58,10 @@ public class Order
     @JoinColumn(name = "pickup_point_id")
     private PickupPoint pickupPoint;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_zone_id")
+    private DeliveryZone deliveryZone;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "order_type", nullable = false, length = 20)
     private OrderType orderType;
@@ -49,12 +69,12 @@ public class Order
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     @Builder.Default
-    private OrderStatus status = OrderStatus.PENDING;
+    private OrderStatus status = OrderStatus.NEW;
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal subtotal;
 
-    @Column(name = "vat_rate", nullable = false, precision = 5, scale = 2)
+    @Column(name = "vat_rate", nullable = false, precision = 5, scale = 4)
     private BigDecimal vatRate;
 
     @Column(name = "vat_amount", nullable = false, precision = 15, scale = 2)
@@ -62,6 +82,10 @@ public class Order
 
     @Column(name = "amount_incl_vat", nullable = false, precision = 15, scale = 2)
     private BigDecimal amountInclVat;
+
+    @Column(name = "discount_rate", precision = 5, scale = 4)
+    @Builder.Default
+    private BigDecimal discountRate = BigDecimal.ZERO;
 
     @Column(name = "discount_amount", nullable = false, precision = 15, scale = 2)
     @Builder.Default
@@ -76,6 +100,9 @@ public class Order
 
     @Column(nullable = false, length = 10)
     private String currency;
+
+    @Column(name = "promo_code", length = 50)
+    private String promoCode;
 
     @Column(name = "customer_name", nullable = false, length = 150)
     private String customerName;
@@ -100,4 +127,8 @@ public class Order
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
+
+    public BigDecimal getTotal() { return totalAmount; }
+
+    public String getCurrencyCode() { return currency; }
 }

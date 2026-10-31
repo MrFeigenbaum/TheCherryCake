@@ -1,9 +1,20 @@
 package uz.itpu.cherrycake.model.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "time_slots")
@@ -30,4 +41,12 @@ public class TimeSlot
     private Integer reservedCount = 0;
 
     public boolean isFull() { return reservedCount >= capacity; }
+
+    public boolean isAvailable() { return reservedCount < capacity; }
+
+    public LocalDate getSlotDate() { return slotTime != null ? slotTime.toLocalDate() : null; }
+
+    public LocalTime getStartTime() { return slotTime != null ? slotTime.toLocalTime() : null; }
+
+    public LocalTime getEndTime() { return slotTime != null ? slotTime.toLocalTime().plusMinutes(30) : null; }
 }

@@ -68,9 +68,13 @@ class CartControllerTest
 
         mockMvc.perform(post("/api/v1/cart/calculate").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.success").value(true))
-            .andExpect(jsonPath("$.data.regionCode").value("UZB"))
-            .andExpect(jsonPath("$.data.finalTotal").value(230000.00));
+            .andExpect(jsonPath("$.regionCode").value("UZB"))
+            .andExpect(jsonPath("$.total").value(230000.00));
+
+        mockMvc.perform(post("/api/cart/calculate").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.regionCode").value("UZB"))
+            .andExpect(jsonPath("$.total").value(230000.00));
     }
 
     @Test
@@ -84,6 +88,7 @@ class CartControllerTest
 
         mockMvc.perform(post("/api/v1/cart/calculate").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(invalidRequest)))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value("Validation Error"));
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.message").value("Validation failed"));
     }
 }

@@ -1,0 +1,340 @@
+ЗАДАНИЕ ДЛЯ РАЗРАБОТЧИКА
+Backend Java #2
+Auth · Заказы · Слоты · Бронь · Отчёты · Экспорт
+Для Backend-разработчика #2
+Содержание
+TOC \h \o "1-2"
+(Если содержание пустое — в Word: правая кнопка → «Обновить поле».)
+1. Твоя зона
+Ты отвечаешь за всё, что происходит ПОСЛЕ корзины: заказ, способ получения, слоты, бронь столика, пользователи и роли, а также отчёты и экспорт. Это почти все бонусные баллы (самовывоз 15, доставка 25, слоты 20, бронь 25, кабинет 5, админка 5) и отчёты (15).
+Входит
+Не входит (это BE1)
+Spring Security, JWT, /auth/*, роли и @PreAuthorize
+Каталог, цены, модификаторы
+Заказы: создание с серверным пересчётом, статусы, история
+PriceCalculatorService (ты его вызываешь)
+Точки самовывоза, зоны доставки, тайм-слоты с вместимостью
+GlobalExceptionHandler (ты бросаешь свои исключения, BE1 их ловит)
+Бронирование столиков с проверкой конфликтов
+Скидки, промокоды
+Отчёты: агрегаты, KPI, CSV, PDF
+Админ-API заказов (с BE1)
+Кто от тебя зависит
+FE3 (чекаут, бронь, кабинет) — ждёт /auth к среде недели 2, /orders, /time-slots, /bookings к среде недели 3.
+FE2 (отчёты) — ждёт /reports/sales к вторнику недели 4, /reports/export к пятнице.
+QAJ — проверяет E2E сценарии заказа и сверяет PDF/CSV с SQL.
+BE1 — ты используешь его PriceCalculatorService и его ErrorResponse.
+2. Твой план по дням
+ID
+Задача
+Нед.
+Дни
+Ч
+Готово =
+CC-6
+Flyway V2__orders.sql: users, orders, order_items, bookings, tables, time_slots, pickup_points, delivery_zones
+1
+Пн–Ср
+6
+migrate проходит
+CC-9
+Spring Security + JWT: /auth/register, /auth/login; роли; SecurityFilterChain
+1
+Чт–Пт
+6
+Логин даёт токен; /admin без токена → 401
+CC-10
+Контракт API v1: твои эндпоинты с DTO в Swagger
+1
+Пт
+4
+API freeze
+CC-24
+POST /orders (вызов PriceCalculator, сохранение всех сумм), GET /orders/my, GET /orders/{id}
+2
+Пн–Ср
+8
+Суммы в orders = ответу калькулятора
+CC-25
+GET /time-slots?date (capacity, bookedCount, isAvailable); GET /pickup-points?region; GET /delivery-zones?region
+2
+Чт–Пт
+6
+Занятый слот isAvailable=false
+CC-38
+Заказ с PICKUP/DELIVERY, pickupPointId / deliveryZoneId, timeSlotId; проверка capacity → 409; транзакция
+3
+Пн–Ср
+8
+Параллельные заказы не переполняют слот
+CC-39
+POST /bookings: подбор столика capacity ≥ guests, свободного на date+time (±2 ч), 409, bookingNumber
+3
+Ср–Чт
+6
+Двойная бронь невозможна
+CC-40
+@PreAuthorize на всех защищённых эндпоинтах; GET /bookings/my
+3
+Пт
+4
+VIEWER → 403 на POST /admin
+CC-50
+GET /reports/sales?from&to&region&groupBy=REGION|MONTH: KPI + rows
+4
+Пн–Вт
+8
+Цифры = SQL QAJ
+CC-51
+GET /reports/export?format=CSV|PDF + те же фильтры
+4
+Ср–Пт
+10
+CSV и PDF одного датасета совпадают
+CC-52
+Админ-API заказов: GET /admin/orders (пагинация, фильтр статуса), PATCH /admin/orders/{id}/status
+4
+Пн–Чт
+4
+Статусы переключаются по правилам
+CC-61
+Багфикс
+5
+Пн–Ср
+10
+0 критичных
+3. Детальные требования
+3.1. Схема данных (твои таблицы)
+Таблица
+Колонки
+Ограничения
+users
+id, email UNIQUE, password_hash, full_name, phone, role (CUSTOMER|VIEWER|STAFF|ADMIN), created_at
+bcrypt, strength 10
+pickup_points
+id, region_id FK, name, address, is_active
+delivery_zones
+id, region_id FK, name, fee NUMERIC(12,2), is_active
+time_slots
+id, slot_date DATE, start_time TIME, end_time TIME, capacity INT, booked_count INT
+UNIQUE (slot_date, start_time); booked_count ≤ capacity — проверять в транзакции с SELECT … FOR UPDATE
+orders
+id, order_number VARCHAR UNIQUE (CC-2026-000123), user_id FK NULL, region_id FK, order_type, status, order_date DATE, time_slot_id FK, pickup_point_id FK NULL, delivery_zone_id FK NULL, customer_name, customer_phone, customer_email, promo_code, currency_code, subtotal, vat_rate, vat_amount, amount_incl_vat, discount_rate, discount_amount, delivery_fee, total, created_at
+Все суммы NUMERIC(12,2), ставки NUMERIC(5,4). Снимок на момент заказа
+order_items
+id, order_id FK, product_id FK, product_name, quantity INT, unit_price, line_total, modifiers_json JSONB
+product_name — снимок (товар могут переименовать)
+tables
+id, table_number INT UNIQUE, capacity INT, is_active
+bookings
+id, booking_number VARCHAR UNIQUE (BK-2026-000042), user_id FK NULL, table_id FK, booking_date DATE, booking_time TIME, guests INT, customer_name, customer_phone, status, created_at
+Один столик = одна бронь в окне ±2 ч
+3.2. Создание заказа — алгоритм
+Валидация DTO (@Valid): items не пуст, quantity ≥ 1, orderDate ≥ сегодня, телефон/email по regex, при DELIVERY обязателен deliveryZoneId, при PICKUP — pickupPointId.
+Вызвать priceCalculatorService.calculate(...) — цифры с фронта игнорируются полностью.
+В транзакции: SELECT time_slot FOR UPDATE; если booked_count ≥ capacity → SlotUnavailableException (409).
+booked_count + 1; сохранить orders + order_items со всеми суммами и снимками названий.
+Сгенерировать order_number: CC-<год>-<id с ведущими нулями до 6>.
+Вернуть OrderResponse. Статус NEW.
+3.3. Бронирование — алгоритм
+Валидация: date ≥ сегодня, time в часах работы (10:00–22:00), guests 1–12.
+Найти столики с capacity ≥ guests, активные, отсортировать по capacity ASC (чтобы не отдавать 6-местный паре).
+Для каждого проверить, нет ли брони со status=CONFIRMED на эту дату в окне [time−2ч, time+2ч). Первый свободный — берём.
+Нет свободных → BookingConflictException (409, «Нет свободного столика на это время, попробуйте другое»).
+Сохранить, сгенерировать BK-<год>-<id>, вернуть BookingResponse.
+3.4. Отчёты
+Один SQL с группировкой; никаких циклов по заказам в Java. Учитываются только заказы со status IN (CONFIRMED, DONE).
+SELECT r.code AS label, COUNT(*) AS orders_count,
+SUM(o.subtotal) AS subtotal, SUM(o.vat_amount) AS vat_amount,
+SUM(o.discount_amount) AS discount_amount, SUM(o.delivery_fee) AS delivery_fee, SUM(o.total) AS total
+FROM orders o JOIN regions r ON r.id = o.region_id
+WHERE o.status IN ('CONFIRMED','DONE') AND o.order_date BETWEEN :from AND :to
+AND (:region IS NULL OR r.code = :region)
+GROUP BY r.code ORDER BY r.code;
+-- groupBy=MONTH: label = to_char(o.order_date, 'YYYY-MM')
+Поле ответа
+Содержимое
+kpi
+subtotal, vatAmount, discountAmount, total — суммы по всем rows; averageCheck = total / ordersCount (2 знака); ordersCount
+rows[]
+label, ordersCount, subtotal, vatAmount, discountAmount, deliveryFee, total
+filters
+from, to, region (или null), groupBy — эхо запроса, чтобы PDF печатал их в шапке
+generatedAt
+ISO UTC — для шапки PDF
+3.5. Экспорт
+CSV: OpenCSV, UTF-8 с BOM, запятая, заголовок — ровно колонки из глоссария §9. Content-Disposition: attachment; filename=sales_<from>_<to>.csv.
+PDF: OpenPDF. Шапка: «Cherry Cake — Отчёт о продажах», фильтры (период, регион, группировка), generatedAt. Блок KPI (5 чисел). График: гистограмма — рисуй через JFreeChart в PNG и вставляй картинкой (просто и надёжно). Таблица rows. Все числа — 2 знака, те же, что в JSON.
+Оба экспорта берут данные из ТОГО ЖЕ метода сервиса, что и JSON. Не дублируй запрос.
+3.6. Security
+Путь
+Доступ
+/api/auth/**, /api/regions, /api/categories, /api/products/**, /api/cart/**, /api/pickup-points, /api/delivery-zones, /api/time-slots, /swagger-ui/**
+permitAll
+POST /api/orders, POST /api/bookings
+permitAll (гость может заказать); если токен есть — привязать user_id
+/api/orders/my, /api/bookings/my
+authenticated
+/api/reports/**
+hasAnyRole(VIEWER, STAFF, ADMIN)
+/api/admin/orders/**
+hasAnyRole(STAFF, ADMIN)
+/api/admin/**
+hasRole(ADMIN)
+4. Переменные и соглашения, которые ты используешь
+Денежные поля (единые на всех слоях)
+Имя
+Как считается
+Описание
+subtotal
+Σ(unitPrice × quantity)
+Сумма без НДС и скидок
+vatRate
+0.12
+Ставка НДС страны как десятичная доля (12 % = 0.12), НЕ 12
+vatAmount
+subtotal × vatRate
+Сумма НДС
+amountInclVat
+subtotal + vatAmount
+Сумма с НДС. От неё считается порог скидки
+discountRate
+0.05
+Доля скидки (5 % = 0.05)
+discountAmount
+amountInclVat × discountRate
+Сумма скидки
+deliveryFee
+fee зоны или 0
+Только при type = DELIVERY, иначе 0
+total
+amountInclVat − discountAmount + deliveryFee
+Итог к оплате
+unitPrice
+regionalPrice + Σ modifierPriceDelta
+Цена единицы с модификаторами
+lineTotal
+unitPrice × quantity
+Сумма строки
+currencyCode
+UZS
+Валюта всех сумм в ответе
+Enum
+Enum
+Значения
+Описание
+RegionCode
+UZ, KZ, RU, (добавить по таблице курса)
+Код страны, ISO 3166-1 alpha-2. Единственный способ передать страну: query ?region=UZ
+CurrencyCode
+UZS, KZT, RUB
+ISO 4217. Берётся из regions, фронт не хранит свои
+OrderType
+PICKUP, DELIVERY
+Способ получения заказа
+OrderStatus
+NEW, CONFIRMED, DONE, CANCELLED
+Жизненный цикл заказа. Переходы: NEW→CONFIRMED→DONE; любой→CANCELLED
+BookingStatus
+CONFIRMED, CANCELLED
+Статус брони столика
+Role
+CUSTOMER, VIEWER, STAFF, ADMIN
+Роли RBAC. Иерархия доступа: ADMIN ⊃ STAFF ⊃ VIEWER; CUSTOMER — обычный гость
+ModifierType
+SINGLE, MULTI
+SINGLE — радио (выбрать один), MULTI — чекбоксы
+GroupBy
+REGION, MONTH
+Группировка отчёта
+ExportFormat
+CSV, PDF
+Формат экспорта отчёта
+ErrorResponse
+Поле
+Тип
+Описание
+status
+number
+HTTP-код: 400 валидация, 401 не авторизован, 403 нет прав, 404 не найдено, 409 конфликт (слот/столик занят), 500
+message
+string
+Человеческое сообщение для тоста
+errors
+object | null
+{ "items[0].quantity": "must be >= 1" } — ключ = путь к полю
+timestamp
+string
+ISO UTC
+path
+string
+Путь запроса
+Переменные окружения (backend)
+Где
+Переменная
+Пример
+Backend
+DB_URL
+jdbc:postgresql://localhost:5432/cherrycake
+Backend
+DB_USER / DB_PASSWORD
+cherry / (секрет)
+Backend
+JWT_SECRET
+≥ 32 символа, не коммитить
+Backend
+JWT_EXPIRATION_MS
+86400000 (24 ч)
+Backend
+SERVER_PORT
+8080
+Backend
+CORS_ALLOWED_ORIGINS
+http://localhost:5173
+CI
+SPRING_PROFILES_ACTIVE
+test (H2) в CI, dev локально, prod на стенде
+Правила именования Java
+Что
+Правило
+Пример
+Пакеты
+lowercase, по сущности
+com.cherrycake.order, com.cherrycake.catalog, com.cherrycake.pricing
+Классы
+PascalCase + роль
+OrderController, OrderService, OrderRepository, Order (entity), OrderDto
+DTO
+Суффикс Request / Response
+CalculateCartRequest, CalculateCartResponse, CreateOrderRequest, OrderResponse
+Методы
+camelCase, глагол
+calculateTotals(), findByRegionCode(), createOrder()
+Поля
+camelCase
+vatAmount, pickupPointId
+Константы
+UPPER_SNAKE_CASE
+MONEY_SCALE = 2, DEFAULT_REGION = "UZ"
+Enum
+PascalCase тип, UPPER значения
+OrderStatus.CONFIRMED
+Таблицы БД
+snake_case, множественное
+orders, order_items, regional_prices
+Колонки БД
+snake_case
+vat_amount, pickup_point_id, created_at
+Исключения
+Суффикс Exception
+SlotUnavailableException → 409, NotFoundException → 404
+Тесты
+<Класс>Test, метод: should_<ожидание>_when_<условие>
+PriceCalculatorServiceTest.should_applyDiscount_when_amountReachesThreshold
+Колонки CSV (фиксированы)
+label,ordersCount,subtotal,vatAmount,discountAmount,deliveryFee,total,currencyCode
+5. Что показываешь на демо
+Неделя 2: регистрация → логин → токен → /orders/my.
+Неделя 3: в Swagger два заказа в один слот с capacity=1 → второй получает 409; бронь столика → номер.
+Неделя 4: /reports/sales по регионам, затем скачать PDF — цифры совпадают.
+Презентация: 1-2 минуты вместе с FE3 — живое оформление заказа с доставкой и бронь.

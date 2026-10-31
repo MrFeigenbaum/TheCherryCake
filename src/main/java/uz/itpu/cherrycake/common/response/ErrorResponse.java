@@ -1,27 +1,32 @@
 package uz.itpu.cherrycake.common.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse
 {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @Builder.Default
-    private LocalDateTime timestamp = LocalDateTime.now();
-
     private int status;
-    private String error;
     private String message;
+    private Map<String, String> errors;
+    
+    @Builder.Default
+    private String timestamp = Instant.now().toString();
+    
     private String path;
+
+    // Backward compatibility fields
+    private String error;
     private List<String> details;
 }

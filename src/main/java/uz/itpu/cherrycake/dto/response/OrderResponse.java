@@ -1,5 +1,7 @@
 package uz.itpu.cherrycake.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,15 +26,25 @@ public class OrderResponse
     private OrderStatus status;
 
     private String regionCode;
-    private String currency;
+
+    @JsonProperty("currencyCode")
+    @JsonAlias({"currency", "currencyCode"})
+    private String currencyCode;
 
     private BigDecimal subtotal;
     private BigDecimal vatRate;
     private BigDecimal vatAmount;
     private BigDecimal amountInclVat;
+
+    @Builder.Default
+    private BigDecimal discountRate = BigDecimal.ZERO;
+
     private BigDecimal discountAmount;
     private BigDecimal deliveryFee;
-    private BigDecimal totalAmount;
+
+    @JsonProperty("total")
+    @JsonAlias({"totalAmount", "total"})
+    private BigDecimal total;
 
     private String customerName;
     private String customerEmail;
@@ -40,10 +52,21 @@ public class OrderResponse
     private String deliveryAddress;
 
     private String pickupPointName;
+    private PickupPointDto pickupPoint;
+    private DeliveryZoneDto deliveryZone;
     private LocalDateTime timeSlot;
     private LocalDateTime orderDate;
     private LocalDateTime createdAt;
 
     @Builder.Default
     private List<OrderItemResponse> items = new ArrayList<>();
+
+    // Backward compatibility
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public String getCurrency() { return currencyCode; }
+    public void setCurrency(String c) { this.currencyCode = c; }
+
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public BigDecimal getTotalAmount() { return total; }
+    public void setTotalAmount(BigDecimal t) { this.total = t; }
 }

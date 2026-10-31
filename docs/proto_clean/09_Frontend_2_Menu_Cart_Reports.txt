@@ -1,0 +1,309 @@
+ЗАДАНИЕ ДЛЯ РАЗРАБОТЧИКА
+Frontend #2
+Главная · Меню · Модификаторы · Корзина · Отчёты и экспорт
+Для Frontend-разработчика #2
+Содержание
+TOC \h \o "1-2"
+(Если содержание пустое — в Word: правая кнопка → «Обновить поле».)
+1. Твоя зона
+Ты делаешь то, что гость видит первым и что оценивается больше всего: главную, меню, карточки с модификаторами и корзину (60 баллов). Со второй половины проекта — отчёты с графиками и экспорт (15 баллов + бонус).
+Входит
+Не входит
+Главная: баннер вишнёвого торта, популярное, CTA «В меню»
+UI-кит и шапка (FE1) — ты их используешь
+Меню: категории, сетка ProductCard, бейдж «нет в наличии»
+Чекаут и всё после кнопки «Оформить» (FE3)
+ProductModal: модификаторы SINGLE/MULTI, цена на лету, количество
+Админка (FE1)
+cartSlice и страница корзины: позиции, количество, удаление, итоги с API, промокод, пустое состояние
+Отчёты: фильтры, KPI, 2 гистограммы (Chart.js), таблица, кнопки CSV/PDF
+Кто от тебя зависит
+FE3 — забирает cartSlice.totals и items в чекаут; договоритесь о форме к пятнице недели 2.
+QAJ — сверяет цифры корзины с API; дай им data-testid на каждую сумму.
+QAF — проверяет меню и корзину на 320/768/1200 в неделю 2.
+2. Твой план по дням
+ID
+Задача
+Нед.
+Дни
+Ч
+Готово =
+CC-15
+Каркас Home, Menu, Cart, Reports на моках (mock-данные в src/mocks/)
+1
+Ср–Пт
+6
+Страницы открываются, ESLint чисто
+CC-27
+Главная; Меню: вкладки категорий, ProductCard, бейдж, цены в валюте региона; перезапрос при смене страны
+2
+Пн–Ср
+8
+Смена страны → новые цены
+CC-28
+ProductModal: группы модификаторов, валидация isRequired, цена на лету, количество, «Добавить»
+2
+Ср–Чт
+6
+Модификатор меняет цену
+CC-29
+cartSlice + страница корзины: позиции, +/−/ввод с валидацией, удалить, итоги с POST /cart/calculate, пустое состояние, CartBadge
+2
+Чт–Пт
+6
+Цифры = ответ API
+CC-44
+Промокод в корзине (поле + «Применить» + ошибка); полировка по багам QAF
+3
+Пн–Вт
+5
+—
+CC-45
+Отчёты на моках: фильтры (период, регион, группировка), KPI-карточки, 2 гистограммы, таблица
+3
+Ср–Пт
+8
+Графики рендерятся
+CC-53
+Отчёты на реальном API; «Скачать CSV», «Сформировать PDF» → превью/«Скачать PDF»; состояния loading/empty
+4
+Пн–Ср
+8
+Цифры графика = таблице
+CC-61
+Багфикс
+5
+Пн–Ср
+10
+0 критичных
+3. Детальные требования
+3.1. Меню
+Подписка на store.region.code: при изменении — getProducts({region, categoryId}). Показать Loader на время запроса, не мигать старыми ценами.
+Вкладки категорий — role=tablist; активная категория в URL (?category=2), чтобы ссылка работала.
+ProductCard: фото (object-fit: cover, фиксированная высота), название, цена formatMoney(price, currencyCode), кнопка «В корзину» (disabled + бейдж «Нет в наличии» при !isAvailable). Вся карточка — тач-цель ≥ 44 px.
+Сетка: 1 колонка на 320, 2 на 768, 3–4 на 1200 (CSS grid + auto-fill, minmax(260px, 1fr)).
+3.2. ProductModal
+Открывается по клику на карточку; getProduct(id, region) → modifierGroups.
+SINGLE → Radio-группа (если isRequired — без значения кнопка «Добавить» disabled и подсказка); MULTI → Checkbox.
+Цена на лету: unitPrice = price + Σ priceDelta выбранных; total = unitPrice × quantity. Это единственное место, где фронт считает сам — для превью. В корзине всё берётся с API.
+Quantity: Input type=number, inputMode=numeric, min=1, step=1; при вводе 0, отрицательного, дробного или текста — error и disabled «Добавить».
+«Добавить» → dispatch(cart/addItem({productId, quantity, modifierIds})) → recalculate → тост «Добавлено» → закрыть.
+3.3. cartSlice
+state.cart = {
+items: [{ productId, quantity, modifierIds: [] }],   // источник истины, пишется в cc_cart
+totals: null | { currencyCode, items[], subtotal, vatRate, vatAmount, amountInclVat,
+discountRate, discountAmount, deliveryFee, total },  // только с API
+promoCode: null, orderType: 'PICKUP', deliveryZoneId: null,
+status: 'idle' | 'loading' | 'error'
+}
+// thunks: addItem, updateQuantity, removeItem, applyPromoCode, setOrderType, setDeliveryZone → каждый вызывает recalculate()
+// recalculate(): POST /cart/calculate { region: store.region.code, items, orderType, deliveryZoneId, promoCode }
+3.4. Страница корзины
+Таблица позиций (на 320 — карточки в столбик): название, список модификаторов, unitPrice, quantity (кнопки − / + и поле), lineTotal, удалить (aria-label=«Удалить <название>»).
+Валидация quantity как в модалке; невалидное значение не отправляется на recalculate, подсвечивается, кнопка «Оформить» disabled.
+Блок итогов CartSummary — строки строго в порядке: Subtotal, VAT (<vatRate·100> %), С НДС, Скидка (<rate> %) — показывать только если > 0, Доставка — только если orderType=DELIVERY, TOTAL. Каждая сумма с data-testid: cart-subtotal, cart-vat, cart-amount-incl-vat, cart-discount, cart-delivery-fee, cart-total.
+Промокод: поле + «Применить»; ошибка 400 → текст под полем; успех → строка скидки.
+Пустая корзина → EmptyState с кнопкой «Перейти в меню».
+Кнопка «Оформить заказ» → /checkout (FE3).
+3.5. Отчёты
+Доступ: RequireRole VIEWER/STAFF/ADMIN.
+Фильтры: DateRange (from, to — по умолчанию последние 30 дней), Select регион (все / список), Radio groupBy REGION|MONTH. Кнопка «Применить» → getSalesReport(filters).
+KPI-карточки: subtotal, vatAmount, discountAmount, total, averageCheck — formatMoney.
+Гистограмма 1: Chart.js bar, x = label (регионы или месяцы в зависимости от groupBy), y = total; второй dataset — ordersCount на второй оси (опционально). aria-label с кратким описанием; под графиком — таблица rows (та же data — это требование «график = агрегатам»).
+Гистограмма 2: при groupBy=REGION показать дополнительно по месяцам с фильтром региона (две вкладки «По регионам» / «По месяцам»).
+«Скачать CSV» → getReportExport({...filters, format:'CSV'}) → blob → ссылка download. «Сформировать PDF» → запрос PDF, показать «Готово» и кнопку «Скачать PDF» (блоб уже в памяти).
+Состояния: loading (скелетон KPI), empty («Нет продаж за период»), error.
+4. Переменные и соглашения, которые ты используешь
+Redux store
+Слайс
+Форма
+Правило
+region
+{ code, currencyCode, currencySymbol, vatRate }
+Текущая страна. Единый источник: store.region.code
+cart
+{ items[], totals: {subtotal, vatAmount, amountInclVat, discountAmount, deliveryFee, total, currencyCode}, promoCode, deliveryZoneId, status }
+totals — всегда с API (POST /cart/calculate), фронт не считает сам
+auth
+{ token, user: {id, email, role}, status }
+Авторизация
+ui
+{ toasts[], globalLoading }
+Тосты и глобальный лоадер
+localStorage
+Ключ
+Значение
+Описание
+cc_region
+"UZ"
+Выбранная страна. Читается при старте приложения; default — первая из /api/regions
+cc_cart
+JSON { items: [{productId, quantity, modifierIds[]}] }
+Корзина гостя. После входа отправляется на сервер
+cc_token
+JWT-строка
+Токен авторизации
+cc_user
+JSON { id, email, role }
+Текущий пользователь для UI (не источник истины для прав)
+Денежные поля (приходят с API — не пересчитывать)
+Имя
+Как считается
+Описание
+subtotal
+Σ(unitPrice × quantity)
+Сумма без НДС и скидок
+vatRate
+0.12
+Ставка НДС страны как десятичная доля (12 % = 0.12), НЕ 12
+vatAmount
+subtotal × vatRate
+Сумма НДС
+amountInclVat
+subtotal + vatAmount
+Сумма с НДС. От неё считается порог скидки
+discountRate
+0.05
+Доля скидки (5 % = 0.05)
+discountAmount
+amountInclVat × discountRate
+Сумма скидки
+deliveryFee
+fee зоны или 0
+Только при type = DELIVERY, иначе 0
+total
+amountInclVat − discountAmount + deliveryFee
+Итог к оплате
+unitPrice
+regionalPrice + Σ modifierPriceDelta
+Цена единицы с модификаторами
+lineTotal
+unitPrice × quantity
+Сумма строки
+currencyCode
+UZS
+Валюта всех сумм в ответе
+Enum (константы в src/constants/enums.js)
+Enum
+Значения
+Описание
+RegionCode
+UZ, KZ, RU, (добавить по таблице курса)
+Код страны, ISO 3166-1 alpha-2. Единственный способ передать страну: query ?region=UZ
+CurrencyCode
+UZS, KZT, RUB
+ISO 4217. Берётся из regions, фронт не хранит свои
+OrderType
+PICKUP, DELIVERY
+Способ получения заказа
+OrderStatus
+NEW, CONFIRMED, DONE, CANCELLED
+Жизненный цикл заказа. Переходы: NEW→CONFIRMED→DONE; любой→CANCELLED
+BookingStatus
+CONFIRMED, CANCELLED
+Статус брони столика
+Role
+CUSTOMER, VIEWER, STAFF, ADMIN
+Роли RBAC. Иерархия доступа: ADMIN ⊃ STAFF ⊃ VIEWER; CUSTOMER — обычный гость
+ModifierType
+SINGLE, MULTI
+SINGLE — радио (выбрать один), MULTI — чекбоксы
+GroupBy
+REGION, MONTH
+Группировка отчёта
+ExportFormat
+CSV, PDF
+Формат экспорта отчёта
+Токены дизайн-системы
+Токен
+Значение
+Назначение
+--color-primary
+#7B1E3C
+Вишнёвый — кнопки, акценты
+--color-primary-hover
+#5E1530
+--color-accent
+#F5E6D3
+Кремовый фон блоков
+--color-text
+#222222
+Основной текст
+--color-text-muted
+#666666
+Вторичный текст (контраст ≥ 4.5:1 на белом)
+--color-success / --color-error / --color-warning
+#1E8449 / #C0392B / #B9770E
+Состояния
+--color-border
+#DDDDDD
+--space-1 … --space-8
+4, 8, 12, 16, 24, 32, 48, 64 px
+Все отступы только из шкалы
+--font-size-xs … --font-size-2xl
+12, 14, 16, 20, 24, 32 px
+--radius-sm / --radius-md
+4 / 8 px
+--bp-mobile / --bp-tablet / --bp-desktop
+320 / 768 / 1200 px
+Брейкпоинты (в JS константах, т.к. CSS-переменные в media не работают)
+--touch-target
+44px
+Минимальный размер кликабельного элемента
+Правила именования JS
+Что
+Правило
+Пример
+Компоненты
+PascalCase, файл = имя
+ProductCard.jsx, CountrySwitcher.jsx, CartSummary.jsx
+Хуки
+use-префикс
+useCart(), useRegion(), useAuth()
+Store-слайсы
+camelCase
+regionSlice, cartSlice, authSlice, uiSlice
+Функции / переменные
+camelCase, глагол для функций
+formatMoney(amount, currencyCode), fetchProducts()
+Константы
+UPPER_SNAKE_CASE
+STORAGE_KEY_REGION = "cc_region", BREAKPOINT_TABLET = 768
+Файлы утилит
+kebab-case
+format-money.js, validators.js
+CSS-переменные
+--<группа>-<имя>
+--color-primary, --space-4, --font-size-md, --radius-md
+CSS-классы
+BEM или модули
+product-card__price, product-card--unavailable
+API-функции
+<глагол><Сущность>
+getRegions(), getProducts({region, categoryId}), calculateCart(payload), createOrder(payload)
+Тесты
+<Компонент>.test.jsx; describe/it на английском
+CartSummary.test.jsx: it("shows delivery fee only for DELIVERY")
+data-testid
+kebab-case, стабильные
+data-testid="cart-total", "country-switcher", "slot-14-30"
+Env
+Где
+Переменная
+Пример
+Frontend
+VITE_API_BASE_URL
+http://localhost:8080/api
+Frontend
+VITE_DEFAULT_REGION
+UZ
+data-testid, которые ждёт QA
+country-switcher, cart-badge, product-card-<id>, product-add-<id>, modal-quantity, modal-add,
+cart-item-<productId>, cart-qty-<productId>, cart-remove-<productId>, cart-promo-input, cart-promo-apply,
+cart-subtotal, cart-vat, cart-amount-incl-vat, cart-discount, cart-delivery-fee, cart-total, cart-checkout,
+report-from, report-to, report-region, report-groupby, report-apply, kpi-total, report-chart, report-table, report-csv, report-pdf
+5. Что показываешь на демо
+Неделя 2: меню → модификатор меняет цену → в корзину → смена страны → всё пересчиталось.
+Неделя 3: промокод и порог скидки в корзине.
+Неделя 4: отчёты — график, таблица, CSV, PDF.
+Презентация: 2 минуты — демо меню и корзины; 1 минута — отчёты (с BE2).

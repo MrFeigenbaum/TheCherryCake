@@ -1,7 +1,19 @@
 package uz.itpu.cherrycake.model.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
@@ -32,4 +44,16 @@ public class ProductModifier
     @Column(name = "is_default", nullable = false)
     @Builder.Default
     private boolean isDefault = false;
+
+    @Column(name = "group_name", length = 100)
+    @Builder.Default
+    private String groupName = "Options";
+
+    @Column(name = "group_type", length = 20)
+    @Builder.Default
+    private String groupType = "MULTI"; // SINGLE or MULTI
+
+    @Column(name = "is_required")
+    @Builder.Default
+    private boolean required = false;
 }

@@ -15,14 +15,15 @@
 
     <!-- Anti-flash script -->
     <script>
-        (function() {
+        (function () {
             const savedTheme = localStorage.getItem('cherry_theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
 
     <style>
-        :root, [data-theme="dark"] {
+        :root,
+        [data-theme="dark"] {
             --cherry-void: #12060e;
             --cherry-deep: #190814;
             --cherry-panel: #230b1c;
@@ -116,11 +117,11 @@
         }
 
         .display-font {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Parisienne';
         }
 
         .script-font {
-            font-family: 'Parisienne', cursive;
+            font-family: 'Montserrat', medium;
         }
 
         .mono {
@@ -373,9 +374,17 @@
             border-radius: 50%;
         }
 
-        .dot-red { background: #ff5f56; }
-        .dot-yellow { background: #ffbd2e; }
-        .dot-green { background: #27c93f; }
+        .dot-red {
+            background: #ff5f56;
+        }
+
+        .dot-yellow {
+            background: #ffbd2e;
+        }
+
+        .dot-green {
+            background: #27c93f;
+        }
 
         .swagger-spec-pill {
             font-size: 0.8rem;
@@ -657,6 +666,30 @@
         .role-pill strong {
             color: var(--raspberry-coulis);
         }
+
+        /* THEME-ADAPTIVE OUTLINED SVG EMOJIS / ICONS */
+        .inline-svg-icon {
+            display: inline-block;
+            vertical-align: -0.18em;
+            width: 1.15em;
+            height: 1.15em;
+            stroke: #ffffff;
+            fill: none !important;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+            transition: stroke 0.25s ease;
+        }
+
+        [data-theme="light"] .inline-svg-icon {
+            stroke: #111111;
+        }
+
+        [data-theme="dark"] .inline-svg-icon {
+            stroke: #ffffff;
+        }
+
     </style>
 </head>
 
@@ -673,16 +706,16 @@
 
             <div class="nav-actions">
                 <a href="/index.html" class="nav-btn">
-                    <span>🌸</span> Storefront
+                    <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 0 1 4 4c0 2-2 3-4 3-2 0-4-1-4-3a4 4 0 0 1 4-4z"/><path d="M22 12a4 4 0 0 1-4 4c-2 0-3-2-3-4 0-2 1-4 3-4a4 4 0 0 1 4 4z"/><path d="M12 22a4 4 0 0 1-4-4c0-2 2-3 4-3 2 0 4 1 4 3a4 4 0 0 1-4 4z"/><path d="M2 12a4 4 0 0 1 4-4c2 0 3 2 3 4 0 2-1 4-3 4a4 4 0 0 1-4-4z"/></svg></span> Storefront
                 </a>
                 <a href="/login.html" class="nav-btn">
-                    <span>👤</span> Auth Portal
+                    <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> Auth Portal
                 </a>
                 <a href="/v3/api-docs" target="_blank" class="nav-btn mono">
                     <span>{ }</span> OpenAPI JSON
                 </a>
                 <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Theme">
-                    <span id="themeToggleIcon">☀️</span>
+                    <span id="themeToggleIcon"><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
                     <span id="themeToggleLabel">Light</span>
                 </button>
             </div>
@@ -694,7 +727,8 @@
         <div class="api-banner-card">
             <div class="api-banner-left">
                 <h2 class="display-font">Artisanal Bakery &amp; Regional Hubs API</h2>
-                <p>Enterprise RESTful endpoints for 16 sovereign Eurasian operating regions with server-side BigDecimal pricing.</p>
+                <p>Enterprise RESTful endpoints for 16 sovereign Eurasian operating regions with server-side BigDecimal
+                    pricing.</p>
             </div>
             <div class="api-banner-badges">
                 <div class="meta-pill"><strong>Runtime:</strong> Java 21 LTS</div>
@@ -748,7 +782,8 @@
     <footer class="swagger-footer">
         <div class="footer-brand script-font">Cherry Cake Bakery &amp; Café</div>
         <p class="footer-meta">
-            ITPU University Teamwork 2026 &bull; Scrum Team 9 (t09-cherry-cake) &bull; Spring Boot 3.3.4 &bull; Java 21 LTS &bull; PostgreSQL
+            ITPU University Teamwork 2026 &bull; Scrum Team 9 (t09-cherry-cake) &bull; Spring Boot 3.3.4 &bull; Java 21
+            LTS &bull; PostgreSQL
         </p>
         <div class="footer-roles">
             <span class="role-pill"><strong>TL:</strong> Milana Ulubabyan</span>
@@ -807,10 +842,10 @@
             const label = document.getElementById('themeToggleLabel');
             if (!icon || !label) return;
             if (theme === 'light') {
-                icon.textContent = '🌙';
+                icon.innerHTML = `<svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
                 label.textContent = 'Dark';
             } else {
-                icon.textContent = '☀️';
+                icon.innerHTML = `<svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
                 label.textContent = 'Light';
             }
         }

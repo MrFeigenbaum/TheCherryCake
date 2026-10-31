@@ -1,5 +1,6 @@
 package uz.itpu.cherrycake.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -19,6 +20,7 @@ import java.util.List;
 public class CartCalculateRequest
 {
     @NotBlank(message = "Country/Region code is required")
+    @JsonAlias({"region", "regionCode"})
     private String regionCode;
 
     @Valid
@@ -32,4 +34,14 @@ public class CartCalculateRequest
     private OrderType orderType = OrderType.PICKUP;
 
     private Long deliveryZoneId;
+
+    public String region() { return regionCode; }
+
+    public List<CartItemDto> items() { return items; }
+
+    public String promoCode() { return promoCode; }
+
+    public OrderType orderType() { return orderType; }
+
+    public Long deliveryZoneId() { return deliveryZoneId; }
 }

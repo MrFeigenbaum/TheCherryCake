@@ -1,10 +1,22 @@
 package uz.itpu.cherrycake.model.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import uz.itpu.cherrycake.model.enums.DiscountType;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "discounts")
@@ -44,4 +56,18 @@ public class Discount
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private boolean active = true;
+
+    @Column(name = "valid_from")
+    private LocalDate validFrom;
+
+    @Column(name = "valid_to")
+    private LocalDate validTo;
+
+    public boolean isExpired()
+    {
+        LocalDate now = LocalDate.now();
+        if (validFrom != null && now.isBefore(validFrom)) return true;
+        if (validTo != null && now.isAfter(validTo)) return true;
+        return false;
+    }
 }

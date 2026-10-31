@@ -1,0 +1,385 @@
+ОБЩИЙ ДОКУМЕНТ КОМАНДЫ
+Глоссарий и соглашения о переменных
+Имена, enum, денежные поля, DTO, store, env, токены — единый словарь
+Для всех участников. Обязателен к прочтению перед первым коммитом
+Содержание
+TOC \h \o "1-2"
+(Если содержание пустое — в Word: правая кнопка → «Обновить поле».)
+1. Зачем этот документ
+Десять человек пишут один продукт на двух языках. Если бэкенд назовёт сумму НДС vat_total, фронт — taxAmount, а в PDF будет «НДС, сумма» — на сверке цифр все потеряют время. Этот документ — единый словарь. Имя, которое здесь записано, используется везде: в БД, в Java, в JSON, в JS, в CSV/PDF и в тестах. Добавить новое имя можно только с записью сюда.
+Главное правило
+Одна сущность — одно имя на всех слоях. Меняется только стиль написания: snake_case в БД, camelCase в Java/JSON/JS. vat_amount ↔ vatAmount — это одно имя.
+2. Принципы именования
+2.1. Общие
+Имя описывает смысл, не тип: не priceNum, а unitPrice; не dataList, а products.
+Никаких сокращений кроме общепринятых: id, url, dto, api, vat, jwt. Не: qty (пиши quantity), amt, cnt, usr.
+Булевы — с is/has/can: isAvailable, hasDiscount, canCancel.
+Коллекции — во множественном числе: items, slots, regions.
+Деньги — всегда с суффиксом Amount или Fee или Price или Total: vatAmount, deliveryFee, unitPrice, lineTotal. Ставки — с суффиксом Rate и хранятся как доля (0.12), не процент.
+Идентификаторы внешних сущностей — <сущность>Id: productId, regionId, timeSlotId.
+Даты: <что>Date (дата), <что>Time (время), <что>At (timestamp): orderDate, startTime, createdAt.
+2.2. Java / Spring
+Что
+Правило
+Пример
+Пакеты
+lowercase, по сущности
+com.cherrycake.order, com.cherrycake.catalog, com.cherrycake.pricing
+Классы
+PascalCase + роль
+OrderController, OrderService, OrderRepository, Order (entity), OrderDto
+DTO
+Суффикс Request / Response
+CalculateCartRequest, CalculateCartResponse, CreateOrderRequest, OrderResponse
+Методы
+camelCase, глагол
+calculateTotals(), findByRegionCode(), createOrder()
+Поля
+camelCase
+vatAmount, pickupPointId
+Константы
+UPPER_SNAKE_CASE
+MONEY_SCALE = 2, DEFAULT_REGION = "UZ"
+Enum
+PascalCase тип, UPPER значения
+OrderStatus.CONFIRMED
+Таблицы БД
+snake_case, множественное
+orders, order_items, regional_prices
+Колонки БД
+snake_case
+vat_amount, pickup_point_id, created_at
+Исключения
+Суффикс Exception
+SlotUnavailableException → 409, NotFoundException → 404
+Тесты
+<Класс>Test, метод: should_<ожидание>_when_<условие>
+PriceCalculatorServiceTest.should_applyDiscount_when_amountReachesThreshold
+2.3. JavaScript / React
+Что
+Правило
+Пример
+Компоненты
+PascalCase, файл = имя
+ProductCard.jsx, CountrySwitcher.jsx, CartSummary.jsx
+Хуки
+use-префикс
+useCart(), useRegion(), useAuth()
+Store-слайсы
+camelCase
+regionSlice, cartSlice, authSlice, uiSlice
+Функции / переменные
+camelCase, глагол для функций
+formatMoney(amount, currencyCode), fetchProducts()
+Константы
+UPPER_SNAKE_CASE
+STORAGE_KEY_REGION = "cc_region", BREAKPOINT_TABLET = 768
+Файлы утилит
+kebab-case
+format-money.js, validators.js
+CSS-переменные
+--<группа>-<имя>
+--color-primary, --space-4, --font-size-md, --radius-md
+CSS-классы
+BEM или модули
+product-card__price, product-card--unavailable
+API-функции
+<глагол><Сущность>
+getRegions(), getProducts({region, categoryId}), calculateCart(payload), createOrder(payload)
+Тесты
+<Компонент>.test.jsx; describe/it на английском
+CartSummary.test.jsx: it("shows delivery fee only for DELIVERY")
+data-testid
+kebab-case, стабильные
+data-testid="cart-total", "country-switcher", "slot-14-30"
+2.4. Git и трекер
+Что
+Правило
+Пример
+Ветки
+feature/CC-<номер>-<кратко>, fix/CC-<номер>-<кратко>
+feature/CC-12-cart-calculation
+Коммиты
+<тип>: <что>  (feat, fix, test, docs, refactor, chore)
+feat: add VAT calculation per region
+PR
+CC-<номер>: <название задачи>
+CC-12: Cart totals calculation
+Задачи в трекере
+CC-<номер>
+Префикс CC = Cherry Cake
+3. Глобальные перечисления (enum)
+Значения — заглавными, одинаковые в Java-enum, в JSON и в JS-константах. Фронт не придумывает свои: const OrderStatus = { NEW: "NEW", … }.
+Enum
+Значения
+Описание
+RegionCode
+UZ, KZ, RU, (добавить по таблице курса)
+Код страны, ISO 3166-1 alpha-2. Единственный способ передать страну: query ?region=UZ
+CurrencyCode
+UZS, KZT, RUB
+ISO 4217. Берётся из regions, фронт не хранит свои
+OrderType
+PICKUP, DELIVERY
+Способ получения заказа
+OrderStatus
+NEW, CONFIRMED, DONE, CANCELLED
+Жизненный цикл заказа. Переходы: NEW→CONFIRMED→DONE; любой→CANCELLED
+BookingStatus
+CONFIRMED, CANCELLED
+Статус брони столика
+Role
+CUSTOMER, VIEWER, STAFF, ADMIN
+Роли RBAC. Иерархия доступа: ADMIN ⊃ STAFF ⊃ VIEWER; CUSTOMER — обычный гость
+ModifierType
+SINGLE, MULTI
+SINGLE — радио (выбрать один), MULTI — чекбоксы
+GroupBy
+REGION, MONTH
+Группировка отчёта
+ExportFormat
+CSV, PDF
+Формат экспорта отчёта
+4. Денежные поля — единые имена
+Эти 11 имён используются в таблице orders, в DTO CalculateCartResponse и OrderResponse, в cartSlice.totals, в колонках CSV, в KPI PDF и в тест-кейсах QA. Порядок строк = порядок расчёта.
+Имя
+Как считается
+Описание
+subtotal
+Σ(unitPrice × quantity)
+Сумма без НДС и скидок
+vatRate
+0.12
+Ставка НДС страны как десятичная доля (12 % = 0.12), НЕ 12
+vatAmount
+subtotal × vatRate
+Сумма НДС
+amountInclVat
+subtotal + vatAmount
+Сумма с НДС. От неё считается порог скидки
+discountRate
+0.05
+Доля скидки (5 % = 0.05)
+discountAmount
+amountInclVat × discountRate
+Сумма скидки
+deliveryFee
+fee зоны или 0
+Только при type = DELIVERY, иначе 0
+total
+amountInclVat − discountAmount + deliveryFee
+Итог к оплате
+unitPrice
+regionalPrice + Σ modifierPriceDelta
+Цена единицы с модификаторами
+lineTotal
+unitPrice × quantity
+Сумма строки
+currencyCode
+UZS
+Валюта всех сумм в ответе
+Правила для денег
+Java: только BigDecimal, scale 2, RoundingMode.HALF_UP после каждого шага.
+JSON: number с двумя знаками (255.04). Не строка, не копейки, не float-мусор вида 255.0400000001.
+JS: суммы с API показываем через formatMoney(amount, currencyCode); сами не пересчитываем. Для мгновенного превью в карточке можно считать unitPrice на фронте, но корзинные totals — только с API.
+БД: NUMERIC(12,2) для сумм, NUMERIC(5,4) для ставок.
+5. Соглашения API
+Тема
+Правило
+Пример / пояснение
+Формат JSON-полей
+camelCase
+subtotal, vatAmount, pickupPointId. Никакого snake_case в JSON
+Деньги в JSON
+number с 2 знаками
+255.04 (не строка, не копейки). На бэке — BigDecimal scale 2, HALF_UP
+Даты
+ISO 8601
+дата: "2026-11-03"; время: "14:30"; timestamp: "2026-11-03T10:15:30Z" (UTC)
+Идентификаторы
+id: number (Long)
+productId, orderId, regionId — суффикс Id
+Булевы поля
+is/has-префикс
+isAvailable, isActive, isRequired
+Списки
+множественное число
+items, modifiers, slots
+Страна в запросе
+query ?region=UZ
+Во всех каталожных и расчётных запросах. Без region → 400
+Авторизация
+Authorization: Bearer <jwt>
+JWT в заголовке; срок жизни — JWT_EXPIRATION_MS
+Пагинация
+?page=0&size=20&sort=createdAt,desc
+Spring-стиль; ответ: content[], totalElements, totalPages
+Базовый путь
+/api/...
+Админ-эндпоинты: /api/admin/...
+Версия
+без версии в пути
+В учебном проекте не версионируем
+5.1. Единый формат ошибки (ErrorResponse)
+Поле
+Тип
+Описание
+status
+number
+HTTP-код: 400 валидация, 401 не авторизован, 403 нет прав, 404 не найдено, 409 конфликт (слот/столик занят), 500
+message
+string
+Человеческое сообщение для тоста
+errors
+object | null
+{ "items[0].quantity": "must be >= 1" } — ключ = путь к полю
+timestamp
+string
+ISO UTC
+path
+string
+Путь запроса
+{
+"status": 409,
+"message": "Выбранный слот уже заполнен, выберите другое время",
+"errors": null,
+"timestamp": "2026-11-12T10:15:30Z",
+"path": "/api/orders"
+}
+5.2. Ключевые DTO (имена полей)
+DTO
+Поля
+RegionResponse
+id, code, name, currencyCode, currencySymbol, vatRate
+CategoryResponse
+id, name, sortOrder
+ProductResponse
+id, categoryId, name, description, imageUrl, price, currencyCode, isAvailable, modifierGroups[]
+ModifierGroupResponse
+id, name, type (SINGLE|MULTI), isRequired, modifiers[]: {id, name, priceDelta}
+CalculateCartRequest
+region, items[]: {productId, quantity, modifierIds[]}, orderType, deliveryZoneId?, promoCode?
+CalculateCartResponse
+currencyCode, items[]: {productId, name, quantity, unitPrice, lineTotal, modifiers[]}, subtotal, vatRate, vatAmount, amountInclVat, discountRate, discountAmount, deliveryFee, total
+CreateOrderRequest
+region, items[], orderType, pickupPointId?, deliveryZoneId?, timeSlotId, orderDate, customerName, customerPhone, customerEmail, promoCode?
+OrderResponse
+id, orderNumber, status, orderType, orderDate, timeSlot: {startTime, endTime}, pickupPoint?, deliveryZone?, items[], + все денежные поля, createdAt
+TimeSlotResponse
+id, date, startTime, endTime, capacity, bookedCount, isAvailable
+CreateBookingRequest
+date, time, guests, customerName, customerPhone
+BookingResponse
+id, bookingNumber, date, time, guests, tableNumber, status
+AuthRequest / AuthResponse
+email, password → token, user: {id, email, role}
+SalesReportResponse
+groupBy, filters: {from, to, region}, kpi: {subtotal, vatAmount, discountAmount, total, averageCheck, ordersCount}, rows[]: {label, subtotal, vatAmount, discountAmount, total, ordersCount}
+6. Состояние фронтенда (Redux store)
+Слайс
+Форма
+Правило
+region
+{ code, currencyCode, currencySymbol, vatRate }
+Текущая страна. Единый источник: store.region.code
+cart
+{ items[], totals: {subtotal, vatAmount, amountInclVat, discountAmount, deliveryFee, total, currencyCode}, promoCode, deliveryZoneId, status }
+totals — всегда с API (POST /cart/calculate), фронт не считает сам
+auth
+{ token, user: {id, email, role}, status }
+Авторизация
+ui
+{ toasts[], globalLoading }
+Тосты и глобальный лоадер
+6.1. Ключи localStorage
+Ключ
+Значение
+Описание
+cc_region
+"UZ"
+Выбранная страна. Читается при старте приложения; default — первая из /api/regions
+cc_cart
+JSON { items: [{productId, quantity, modifierIds[]}] }
+Корзина гостя. После входа отправляется на сервер
+cc_token
+JWT-строка
+Токен авторизации
+cc_user
+JSON { id, email, role }
+Текущий пользователь для UI (не источник истины для прав)
+7. Переменные окружения
+Файлы .env не коммитятся; в репо лежит .env.example с этими именами и безопасными значениями.
+Где
+Переменная
+Пример / default
+Backend
+DB_URL
+jdbc:postgresql://localhost:5432/cherrycake
+Backend
+DB_USER / DB_PASSWORD
+cherry / (секрет)
+Backend
+JWT_SECRET
+≥ 32 символа, не коммитить
+Backend
+JWT_EXPIRATION_MS
+86400000 (24 ч)
+Backend
+SERVER_PORT
+8080
+Backend
+CORS_ALLOWED_ORIGINS
+http://localhost:5173
+Frontend
+VITE_API_BASE_URL
+http://localhost:8080/api
+Frontend
+VITE_DEFAULT_REGION
+UZ
+CI
+SPRING_PROFILES_ACTIVE
+test (H2) в CI, dev локально, prod на стенде
+8. Токены дизайн-системы (CSS)
+Токен
+Значение
+Назначение
+--color-primary
+#7B1E3C
+Вишнёвый — кнопки, акценты
+--color-primary-hover
+#5E1530
+--color-accent
+#F5E6D3
+Кремовый фон блоков
+--color-text
+#222222
+Основной текст
+--color-text-muted
+#666666
+Вторичный текст (контраст ≥ 4.5:1 на белом)
+--color-success / --color-error / --color-warning
+#1E8449 / #C0392B / #B9770E
+Состояния
+--color-border
+#DDDDDD
+--space-1 … --space-8
+4, 8, 12, 16, 24, 32, 48, 64 px
+Все отступы только из шкалы
+--font-size-xs … --font-size-2xl
+12, 14, 16, 20, 24, 32 px
+--radius-sm / --radius-md
+4 / 8 px
+--bp-mobile / --bp-tablet / --bp-desktop
+320 / 768 / 1200 px
+Брейкпоинты (в JS константах, т.к. CSS-переменные в media не работают)
+--touch-target
+44px
+Минимальный размер кликабельного элемента
+9. Колонки экспорта CSV
+Порядок и имена фиксированы — по ним QA сверяет PDF и БД. Разделитель — запятая, кодировка UTF-8 с BOM, первая строка — заголовок.
+label,ordersCount,subtotal,vatAmount,discountAmount,deliveryFee,total,currencyCode
+UZ,42,12500.00,1500.00,700.00,210.00,13510.00,UZS
+KZ,17,8100.00,972.00,0.00,85.00,9157.00,KZT
+10. Как добавить новое имя
+Проверь, нет ли уже подходящего имени в этом документе.
+Предложи имя в чате

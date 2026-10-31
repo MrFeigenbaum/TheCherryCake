@@ -1,0 +1,352 @@
+ЗАДАНИЕ ДЛЯ РАЗРАБОТЧИКА
+Frontend #1
+Каркас · Дизайн-система · UI-кит · Header и страна · Админ-панель
+Для Frontend-разработчика #1
+Содержание
+TOC \h \o "1-2"
+(Если содержание пустое — в Word: правая кнопка → «Обновить поле».)
+1. Твоя зона
+Ты — фундамент фронтенда. Первые три дня ты делаешь то, на чём потом работают FE2 и FE3: каркас, store, api-слой, дизайн-система и UI-кит. Потом — шапка с переключателем страны (это механизм, от которого зависят 60 баллов) и админ-панель.
+Входит
+Не входит
+Vite + React + Router + Redux Toolkit каркас
+Меню, карточки, корзина (FE2)
+styles/tokens.css — дизайн-система; ESLint/Prettier/Vitest + CI
+Чекаут, бронь, кабинет (FE3)
+UI-кит: Button, Input, Select, Checkbox, Radio, Card, Modal, Toast, Loader, Table, EmptyState, ErrorState
+Отчёты (FE2)
+api/ слой: клиент, интерцептор токена, единая обработка ErrorResponse → тост
+Header: логотип, навигация, CountrySwitcher, CartBadge; Footer
+regionSlice, uiSlice; каркас authSlice/cartSlice (FE3/FE2 наполняют)
+Админ-панель целиком: каталог, цены × регионы, наличие, регионы/НДС, скидки, промокоды, заказы
+Доступность базовых компонентов: фокус, aria, клавиатура
+Кто от тебя зависит
+FE2 и FE3 — не могут начать свои страницы без UI-кита и store. Дедлайн: UI-кит к четвергу недели 1, иначе никто не сможет приступить к своей работе
+QAF — проверяет состояния компонентов по твоей странице-витрине.
+BE1 — ты потребитель его /admin/* с недели 3.
+2. Твой план по дням
+ID
+Задача
+Нед.
+Дни
+Ч
+Готово =
+CC-4
+ESLint (airbnb или react-recommended), Prettier, Vitest, GitHub Actions
+1
+Вт
+3
+PR с ошибкой линтера красный
+CC-11
+Vite-проект, структура папок, React Router (все роуты), Redux store со слайсами, api/client.js с обработкой ошибок
+1
+Пн–Вт
+6
+Пустые страницы по роутам; ошибка API → тост
+CC-12
+styles/tokens.css + UI-кит со всеми состояниями + страница /ui-kit (витрина)
+1
+Ср–Пт
+8
+QAF прошёлся по витрине
+CC-14
+Header + CountrySwitcher (пока моки) + CartBadge; Footer
+1
+Пт
+3
+Выбор пишет cc_region
+CC-26
+regionSlice: fetch /regions, восстановление из cc_region, при смене — dispatch cart/recalculate
+2
+Пн–Вт
+5
+Смена страны → запрос /cart/calculate и обновление цен в меню
+CC-32
+Поддержка FE2/FE3 (новые пропсы/компоненты), Admin layout + AdminTable
+2
+Ср–Пт
+6
+—
+CC-46
+Админка: каталог (CRUD), таблица цен товар × регион с инлайн-редактированием, наличие
+3
+Пн–Пт
+12
+Изменил цену → в меню новая цена
+CC-54
+Админка: скидки, промокоды, регионы/НДС, заказы (список, смена статуса)
+4
+Пн–Чт
+10
+—
+CC-61
+Багфикс
+5
+Пн–Ср
+10
+0 критичных
+3. Детальные требования
+3.1. Структура проекта
+src/
+api/          client.js (axios: baseURL=VITE_API_BASE_URL, interceptors), regions.js, products.js, cart.js, orders.js, auth.js, bookings.js, reports.js, admin.js
+components/ui/     Button, Input, Select, Checkbox, Radio, Card, Modal, Toast, Loader, Table, EmptyState, ErrorState, Badge
+components/layout/ Header, Footer, CountrySwitcher, CartBadge, AdminLayout
+pages/        Home, Menu, Cart, Checkout, Booking, Login, Register, Account, Reports, Admin/*, UiKit
+store/        index.js, regionSlice.js, cartSlice.js, authSlice.js, uiSlice.js
+hooks/        useRegion.js, useCart.js, useAuth.js, useToast.js
+utils/        format-money.js, format-date.js, validators.js, storage.js
+constants/    enums.js, storage-keys.js, routes.js, breakpoints.js
+styles/       tokens.css, reset.css, global.css
+3.2. api/client.js — единая обработка ошибок
+Request-интерцептор: если есть cc_token → заголовок Authorization: Bearer.
+Response-интерцептор: ошибка → если body соответствует ErrorResponse — dispatch(ui/showToast({type:'error', message})) и reject с объектом {status, message, errors}; 401 → очистить auth, редирект на /login.
+Страницы НЕ пишут свой try/catch для показа тостов — только для отображения errors под полями.
+3.3. UI-кит — обязательные состояния
+Компонент
+Пропсы
+Состояния
+Button
+variant (primary|secondary|ghost), size, disabled, loading, type, onClick, aria-label
+default, hover, focus-visible (кольцо 2px), active, disabled, loading (спиннер, disabled)
+Input / Select
+label, value, onChange, error, hint, required, disabled, type, inputMode
+default, focus, error (красная рамка + текст с aria-describedby), disabled; label обязателен
+Checkbox / Radio
+label, checked, onChange, disabled
++ группа с role=radiogroup
+Card
+children, onClick?, disabled?
+default, hover (если кликабельна), disabled
+Modal
+open, onClose, title, children
+фокус внутрь при открытии, Esc закрывает, фокус возвращается, aria-modal
+Toast
+type (success|error|info), message
+автозакрытие 4 с, role=status / role=alert
+Loader
+size, fullscreen?
+aria-busy на контейнере
+Table
+columns, rows, loading, empty
+горизонтальный скролл на 320, заголовки th scope=col
+EmptyState / ErrorState
+icon, title, text, action
+3.4. CountrySwitcher
+При старте: regionSlice читает cc_region; если нет — VITE_DEFAULT_REGION; затем fetch /regions и выставляет объект региона.
+Select с флагом/кодом и валютой: «🇺🇿 UZ · UZS».
+onChange → dispatch(region/setRegion(code)) → записать cc_region → dispatch(cart/recalculate()) → страницы меню подписаны на region.code и перезапрашивают /products.
+В шапке всегда видно: код страны и символ валюты.
+Доступность: это обычный <select> с label «Страна», не кастомный div.
+3.5. Админ-панель
+Раздел
+Экран
+API
+Каталог
+Список товаров (таблица: фото, название, категория, активен); форма создания/редактирования; загрузка imageUrl текстом
+/admin/products, /admin/categories
+Цены и наличие
+Матрица: строки — товары, колонки — регионы; ячейка: price + чекбокс isAvailable; инлайн-редактирование, кнопка «Сохранить строку»
+GET/PUT /admin/prices
+Регионы
+Таблица: код, валюта, НДС (редактируемый, вводится как %, отправляется как доля), активен
+/admin/regions
+Скидки
+Таблица порогов: регион, порог, %; добавить/удалить
+/admin/discounts
+Промокоды
+Таблица: код, %, срок, активен; форма
+/admin/promo-codes
+Заказы
+Таблица с пагинацией, фильтр по статусу, кнопка смены статуса по правилам NEW→CONFIRMED→DONE / →CANCELLED
+/admin/orders
+Доступ к /admin
+Роут обёрнут в <RequireRole roles={["ADMIN"]}>. Для /admin/orders — STAFF тоже. Без роли — редирект на / с тостом «Недостаточно прав». Бэк проверяет сам, фронт — только для UX.
+4. Переменные и соглашения, которые ты используешь
+Redux store
+Слайс
+Форма
+Правило
+region
+{ code, currencyCode, currencySymbol, vatRate }
+Текущая страна. Единый источник: store.region.code
+cart
+{ items[], totals: {subtotal, vatAmount, amountInclVat, discountAmount, deliveryFee, total, currencyCode}, promoCode, deliveryZoneId, status }
+totals — всегда с API (POST /cart/calculate), фронт не считает сам
+auth
+{ token, user: {id, email, role}, status }
+Авторизация
+ui
+{ toasts[], globalLoading }
+Тосты и глобальный лоадер
+localStorage
+Ключ
+Значение
+Описание
+cc_region
+"UZ"
+Выбранная страна. Читается при старте приложения; default — первая из /api/regions
+cc_cart
+JSON { items: [{productId, quantity, modifierIds[]}] }
+Корзина гостя. После входа отправляется на сервер
+cc_token
+JWT-строка
+Токен авторизации
+cc_user
+JSON { id, email, role }
+Текущий пользователь для UI (не источник истины для прав)
+Денежные поля (приходят с API — не пересчитывать)
+Имя
+Как считается
+Описание
+subtotal
+Σ(unitPrice × quantity)
+Сумма без НДС и скидок
+vatRate
+0.12
+Ставка НДС страны как десятичная доля (12 % = 0.12), НЕ 12
+vatAmount
+subtotal × vatRate
+Сумма НДС
+amountInclVat
+subtotal + vatAmount
+Сумма с НДС. От неё считается порог скидки
+discountRate
+0.05
+Доля скидки (5 % = 0.05)
+discountAmount
+amountInclVat × discountRate
+Сумма скидки
+deliveryFee
+fee зоны или 0
+Только при type = DELIVERY, иначе 0
+total
+amountInclVat − discountAmount + deliveryFee
+Итог к оплате
+unitPrice
+regionalPrice + Σ modifierPriceDelta
+Цена единицы с модификаторами
+lineTotal
+unitPrice × quantity
+Сумма строки
+currencyCode
+UZS
+Валюта всех сумм в ответе
+Enum (константы в src/constants/enums.js)
+Enum
+Значения
+Описание
+RegionCode
+UZ, KZ, RU, (добавить по таблице курса)
+Код страны, ISO 3166-1 alpha-2. Единственный способ передать страну: query ?region=UZ
+CurrencyCode
+UZS, KZT, RUB
+ISO 4217. Берётся из regions, фронт не хранит свои
+OrderType
+PICKUP, DELIVERY
+Способ получения заказа
+OrderStatus
+NEW, CONFIRMED, DONE, CANCELLED
+Жизненный цикл заказа. Переходы: NEW→CONFIRMED→DONE; любой→CANCELLED
+BookingStatus
+CONFIRMED, CANCELLED
+Статус брони столика
+Role
+CUSTOMER, VIEWER, STAFF, ADMIN
+Роли RBAC. Иерархия доступа: ADMIN ⊃ STAFF ⊃ VIEWER; CUSTOMER — обычный гость
+ModifierType
+SINGLE, MULTI
+SINGLE — радио (выбрать один), MULTI — чекбоксы
+GroupBy
+REGION, MONTH
+Группировка отчёта
+ExportFormat
+CSV, PDF
+Формат экспорта отчёта
+Токены дизайн-системы
+Токен
+Значение
+Назначение
+--color-primary
+#7B1E3C
+Вишнёвый — кнопки, акценты
+--color-primary-hover
+#5E1530
+--color-accent
+#F5E6D3
+Кремовый фон блоков
+--color-text
+#222222
+Основной текст
+--color-text-muted
+#666666
+Вторичный текст (контраст ≥ 4.5:1 на белом)
+--color-success / --color-error / --color-warning
+#1E8449 / #C0392B / #B9770E
+Состояния
+--color-border
+#DDDDDD
+--space-1 … --space-8
+4, 8, 12, 16, 24, 32, 48, 64 px
+Все отступы только из шкалы
+--font-size-xs … --font-size-2xl
+12, 14, 16, 20, 24, 32 px
+--radius-sm / --radius-md
+4 / 8 px
+--bp-mobile / --bp-tablet / --bp-desktop
+320 / 768 / 1200 px
+Брейкпоинты (в JS константах, т.к. CSS-переменные в media не работают)
+--touch-target
+44px
+Минимальный размер кликабельного элемента
+Правила именования JS
+Что
+Правило
+Пример
+Компоненты
+PascalCase, файл = имя
+ProductCard.jsx, CountrySwitcher.jsx, CartSummary.jsx
+Хуки
+use-префикс
+useCart(), useRegion(), useAuth()
+Store-слайсы
+camelCase
+regionSlice, cartSlice, authSlice, uiSlice
+Функции / переменные
+camelCase, глагол для функций
+formatMoney(amount, currencyCode), fetchProducts()
+Константы
+UPPER_SNAKE_CASE
+STORAGE_KEY_REGION = "cc_region", BREAKPOINT_TABLET = 768
+Файлы утилит
+kebab-case
+format-money.js, validators.js
+CSS-переменные
+--<группа>-<имя>
+--color-primary, --space-4, --font-size-md, --radius-md
+CSS-классы
+BEM или модули
+product-card__price, product-card--unavailable
+API-функции
+<глагол><Сущность>
+getRegions(), getProducts({region, categoryId}), calculateCart(payload), createOrder(payload)
+Тесты
+<Компонент>.test.jsx; describe/it на английском
+CartSummary.test.jsx: it("shows delivery fee only for DELIVERY")
+data-testid
+kebab-case, стабильные
+data-testid="cart-total", "country-switcher", "slot-14-30"
+Env
+Где
+Переменная
+Пример
+Frontend
+VITE_API_BASE_URL
+http://localhost:8080/api
+Frontend
+VITE_DEFAULT_REGION
+UZ
+5. Что показываешь на демо
+Неделя 1: витрина /ui-kit, переключатель страны пишет cc_region.
+Неделя 2: смена страны — все цены в меню и корзине перерисовались без перезагрузки.
+Неделя 3–4: правишь цену в админке → она видна в меню.
+Презентация: 1 минута — дизайн-система и доступность (показать Tab-навигацию).

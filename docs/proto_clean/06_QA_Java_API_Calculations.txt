@@ -1,0 +1,476 @@
+ЗАДАНИЕ ДЛЯ ТЕСТИРОВЩИКОВ
+QA Java
+Тест-кейсы на формулы, API, заказы, бронь, RBAC, сверка отчётов
+Содержание
+TOC \h \o "1-2"
+(Если содержание пустое — в Word: правая кнопка → «Обновить поле».)
+1. Твоя зона
+Последняя линия защиты для самого дорогого блока проекта: расчёт цен (45 баллов), корзина (60), отчёты (15) и все бонусы, которые зависят от бэкенда. Ваш главный инструмент — таблица тест-кейсов «вход → ожидаемый результат» и Postman. Ваша главная цель - чтобы цифры на экране, в API, в CSV, в PDF и в БД совпадали.
+QA-J1 (расчёты и каталог)
+QA-J2 (заказы, бронь, отчёты)
+Тест-кейсы на PriceCalculator: НДС, пороги, промокоды, округление, модификаторы
+E2E сценарии заказа: самовывоз, доставка, слоты, capacity, 409
+Сверка корзина (экран) = /cart/calculate
+Бронирование: конфликты, границы времени, номера
+Каталог по регионам: цены, наличие, 400 без region
+Auth/RBAC: 401/403 на всех защищённых путях
+Админ-API каталога/цен/скидок
+Отчёты: SQL-сверка, CSV = PDF = JSON
+Валидация quantity, дат на уровне API
+Админ-API заказов, статусы
+Что вы сдаёте
+Папка /qa в репозитории backend: test-plan.md, calc-cases.xlsx (или .md), postman-collection.json, bug-report-template.md, verification-protocol-week4.md.
+Баги — только в трекере, по шаблону: шаги, ожидалось, получилось, окружение, скриншот/JSON, приоритет (Critical/High/Medium/Low).
+На каждом демо — 1 минута: сколько кейсов прогнали, сколько багов нашли/закрыли.
+2. Ваш план по дням
+ID
+Задача
+Нед.
+Дни
+Ч
+Готово =
+CC-16a
+Тест-план: что тестируем, инструменты, приоритеты, критерии выхода
+1
+Пн
+3
+test-plan.md в /qa
+CC-16b
+Таблица кейсов на формулы (≥ 25 кейсов, раздел 3.1) — передать BE1 до среды
+1
+Пн–Ср
+6
+BE1 пишет unit-тесты по ней
+CC-16c
+Postman-коллекция по Swagger (все эндпоинты, переменные окружения baseUrl, token, region)
+1
+Чт–Пт
+6
+Коллекция в /qa
+CC-33
+Прогон кейсов через /cart/calculate; сверка с экраном корзины (data-testid)
+2
+Чт–Пт
+8
+Отчёт: N/25 pass
+CC-33b
+Каталог: /products по 3 регионам, наличие, 400/404; auth: register/login/401
+2
+Ср–Пт
+8
+—
+CC-47
+E2E заказ: PICKUP, DELIVERY, слот заполнен → 409, промокод, параллельные заказы (Postman Runner × 5 в слот capacity 3)
+3
+Ср–Пт
+10
+—
+CC-47b
+Пороги и промокоды в корзине; админ-правка цены → /products отражает
+J1
+3
+Ср–Пт
+8
+—
+CC-56
+Сверка отчётов: 3 набора фильтров × (JSON, CSV, PDF, SQL); протокол сверки
+оба
+4
+Чт–Пт
+8 каждый
+verification-protocol-week4.md
+CC-56b
+RBAC-матрица: 4 роли × 10 защищённых путей
+J2
+4
+Пн–Ср
+6
+Таблица в /qa
+CC-63
+Финальный регресс API на стенде; подтверждение закрытых багов
+оба
+5
+Ср–Чт
+8 каждый
+«Готово к сдаче»
+3. Тест-кейсы
+3.1. Калькулятор — обязательный набор (QA-J1)
+Условные ставки для примера: UZ VAT 12 %, RU VAT 20 %; скидки: ≥ 200 → 5 %, ≥ 500 → 10 %. Замените на реальные из Stage 3. Доставка зона «Центр» = 5.00.
+#
+Вход
+Ожидание
+Проверяет
+C01
+UZ, 1 товар 100.00 × 1, PICKUP
+subtotal 100.00, vat 12.00, incl 112.00, discount 0.00, fee 0.00, total 112.00
+базовый расчёт
+C02
+RU, тот же товар (цена 120.00) × 1
+vat 24.00, total 144.00
+НДС и цена по региону
+C03
+UZ, 100.00 × 2 + модификатор +10.00
+unitPrice 110.00, lineTotal 220.00, incl 246.40, discount 12.32 (5 %), total 234.08
+модификатор + порог 200
+C04
+UZ, subtotal 178.58 (incl = 200.01)
+discount 10.00
+порог ≥ с НДС
+C05
+UZ, subtotal 178.57 (incl = 199.99)
+discount 0.00
+граница порога
+C06
+UZ, incl ровно 200.00
+discount 10.00
+≥, не >
+C07
+UZ, incl 500.00
+discount 50.00 (10 %)
+второй порог
+C08
+C03 + DELIVERY зона Центр
+total 239.08 (234.08 + 5.00)
+доставка после скидки
+C09
+C08, но PICKUP
+deliveryFee 0.00, строки нет
+самовывоз
+C10
+UZ, 33.33 × 3
+subtotal 99.99, vat 12.00 (11.9988→12.00), total 111.99
+округление HALF_UP
+C11
+UZ, 0.01 × 1
+vat 0.00, total 0.01
+минимум
+C12
+quantity 0
+400, errors items[0].quantity
+валидация
+C13
+quantity −1
+400
+валидация
+C14
+quantity 1.5
+400
+целое
+C15
+quantity "abc"
+400
+тип
+C16
+товар isAvailable=false в UZ
+400, message про наличие
+наличие
+C17
+обязательная группа модификаторов не выбрана
+400
+isRequired
+C18
+SINGLE-группа с двумя modifierIds
+400
+тип группы
+C19
+промокод PROMO10 (10 %) при incl 112.00
+discount 11.20
+промокод
+C20
+промокод просрочен
+400 «Промокод недействителен»
+C21
+промокод 10 % + порог 5 %
+берётся 10 % (max), не 15 %
+правило max
+C22
+без ?region
+400
+обязательность региона
+C23
+region=XX
+404
+C24
+пустой items[]
+400
+C25
+смена региона UZ → RU на одном наборе
+currencyCode, все суммы и vatRate меняются; ни одно поле не осталось от UZ
+полный пересчёт
+C26
+DELIVERY без deliveryZoneId
+400
+C27
+ответ API vs экран корзины (data-testid cart-*)
+совпадают строка в строку
+фронт = API
+3.2. Заказы и слоты (QA-J2)
+#
+Сценарий
+Ожидание
+O01
+PICKUP + точка + слот свободный
+201, orderNumber CC-2026-xxxxxx, status NEW, суммы = /cart/calculate на тех же данных
+O02
+DELIVERY + зона
+deliveryFee = fee зоны, total включает
+O03
+PICKUP без pickupPointId
+400
+O04
+orderDate вчера
+400
+O05
+слот с bookedCount = capacity
+409, booked_count не изменился
+O06
+5 параллельных заказов в слот capacity 3 (Postman Runner)
+ровно 3 × 201, 2 × 409, booked_count = 3
+O07
+фронт прислал total = 1.00 в body
+игнорируется, сохранён серверный расчёт
+O08
+GET /orders/my без токена
+401
+O09
+GET /orders/my с токеном
+только заказы этого user
+O10
+смена статуса NEW→DONE напрямую (admin)
+400 или 409 — запрещённый переход
+O11
+после изменения цены товара в админке
+старый заказ показывает старые суммы
+3.3. Бронирование (QA-J2)
+#
+Сценарий
+Ожидание
+B01
+2 гостя, 19:00, столиков хватает
+201, bookingNumber BK-…, tableNumber с минимальной подходящей capacity
+B02
+все столики ≥ guests заняты в окне ±2 ч
+409 с понятным message
+B03
+та же дата, 21:30 (за пределами окна 19:00)
+201 на тот же столик
+B04
+guests 13 / 0
+400
+B05
+time 23:30
+400
+B06
+дата в прошлом
+400
+3.4. RBAC-матрица (QA-J2)
+Путь
+Гость
+CUSTOMER
+VIEWER
+STAFF
+ADMIN
+GET /products
+200
+200
+200
+200
+200
+POST /orders
+201
+201
+201
+201
+201
+GET /orders/my
+401
+200
+200
+200
+200
+GET /reports/sales
+401
+403
+200
+200
+200
+GET /admin/orders
+401
+403
+403
+200
+200
+POST /admin/products
+401
+403
+403
+403
+201
+PUT /admin/regions/1
+401
+403
+403
+403
+200
+3.5. Протокол сверки отчётов (неделя 4)
+Создать через API 10–15 заказов с известными суммами в 3 регионах за 2 месяца (скрипт в Postman Runner, данные зафиксировать в /qa/seed-orders.json).
+Выполнить SQL из документа BE2 §3.4 напрямую в БД — это эталон.
+Для 3 наборов фильтров (все регионы/весь период; один регион; groupBy=MONTH) получить JSON, CSV, PDF.
+Сравнить каждую ячейку: SQL = JSON.rows = CSV = PDF-таблица; KPI = суммам rows; averageCheck = total/ordersCount.
+Проверить шапку PDF: фильтры и generatedAt присутствуют; все числа с 2 знаками.
+Результат — таблица «ячейка / SQL / JSON / CSV / PDF / OK?» в verification-protocol-week4.md.
+4. Переменные, которые вы проверяете
+Имена полей в ответах должны быть ровно такими. Любое отклонение (vat_total, taxAmount, Total) — баг Medium «нарушение глоссария».
+Денежные поля
+Имя
+Как считается
+Описание
+subtotal
+Σ(unitPrice × quantity)
+Сумма без НДС и скидок
+vatRate
+0.12
+Ставка НДС страны как десятичная доля (12 % = 0.12), НЕ 12
+vatAmount
+subtotal × vatRate
+Сумма НДС
+amountInclVat
+subtotal + vatAmount
+Сумма с НДС. От неё считается порог скидки
+discountRate
+0.05
+Доля скидки (5 % = 0.05)
+discountAmount
+amountInclVat × discountRate
+Сумма скидки
+deliveryFee
+fee зоны или 0
+Только при type = DELIVERY, иначе 0
+total
+amountInclVat − discountAmount + deliveryFee
+Итог к оплате
+unitPrice
+regionalPrice + Σ modifierPriceDelta
+Цена единицы с модификаторами
+lineTotal
+unitPrice × quantity
+Сумма строки
+currencyCode
+UZS
+Валюта всех сумм в ответе
+Enum
+Enum
+Значения
+Описание
+RegionCode
+UZ, KZ, RU, (добавить по таблице курса)
+Код страны, ISO 3166-1 alpha-2. Единственный способ передать страну: query ?region=UZ
+CurrencyCode
+UZS, KZT, RUB
+ISO 4217. Берётся из regions, фронт не хранит свои
+OrderType
+PICKUP, DELIVERY
+Способ получения заказа
+OrderStatus
+NEW, CONFIRMED, DONE, CANCELLED
+Жизненный цикл заказа. Переходы: NEW→CONFIRMED→DONE; любой→CANCELLED
+BookingStatus
+CONFIRMED, CANCELLED
+Статус брони столика
+Role
+CUSTOMER, VIEWER, STAFF, ADMIN
+Роли RBAC. Иерархия доступа: ADMIN ⊃ STAFF ⊃ VIEWER; CUSTOMER — обычный гость
+ModifierType
+SINGLE, MULTI
+SINGLE — радио (выбрать один), MULTI — чекбоксы
+GroupBy
+REGION, MONTH
+Группировка отчёта
+ExportFormat
+CSV, PDF
+Формат экспорта отчёта
+ErrorResponse
+Поле
+Тип
+Описание
+status
+number
+HTTP-код: 400 валидация, 401 не авторизован, 403 нет прав, 404 не найдено, 409 конфликт (слот/столик занят), 500
+message
+string
+Человеческое сообщение для тоста
+errors
+object | null
+{ "items[0].quantity": "must be >= 1" } — ключ = путь к полю
+timestamp
+string
+ISO UTC
+path
+string
+Путь запроса
+Соглашения API
+Тема
+Правило
+Пример
+Формат JSON-полей
+camelCase
+subtotal, vatAmount, pickupPointId. Никакого snake_case в JSON
+Деньги в JSON
+number с 2 знаками
+255.04 (не строка, не копейки). На бэке — BigDecimal scale 2, HALF_UP
+Даты
+ISO 8601
+дата: "2026-11-03"; время: "14:30"; timestamp: "2026-11-03T10:15:30Z" (UTC)
+Идентификаторы
+id: number (Long)
+productId, orderId, regionId — суффикс Id
+Булевы поля
+is/has-префикс
+isAvailable, isActive, isRequired
+Списки
+множественное число
+items, modifiers, slots
+Страна в запросе
+query ?region=UZ
+Во всех каталожных и расчётных запросах. Без region → 400
+Авторизация
+Authorization: Bearer <jwt>
+JWT в заголовке; срок жизни — JWT_EXPIRATION_MS
+Пагинация
+?page=0&size=20&sort=createdAt,desc
+Spring-стиль; ответ: content[], totalElements, totalPages
+Базовый путь
+/api/...
+Админ-эндпоинты: /api/admin/...
+Версия
+без версии в пути
+В учебном проекте не версионируем
+Колонки CSV
+label,ordersCount,subtotal,vatAmount,discountAmount,deliveryFee,total,currencyCode
+5. Шаблон баг-репорта
+Заголовок: [API] POST /cart/calculate — скидка применяется от subtotal вместо amountInclVat
+Приоритет: Critical | High | Medium | Low
+Окружение: стенд / локально, commit abc123, region UZ
+Шаги: 1) POST /cart/calculate с body {...}  2) смотреть discountAmount
+Ожидалось: discountAmount = 10.00 (5 % от 200.00 incl)
+Получилось: discountAmount = 8.93 (5 % от 178.58 subtotal)
+Вложения: request.json, response.json
+Кейс: C04
+Приоритет
+Что это
+Срок исправления
+Critical
+Неверный расчёт, нельзя оформить заказ, 500, данные теряются
+В тот же день
+High
+Функция работает неверно в части сценариев (слот не блокируется, 409 не приходит)
+2 дня
+Medium
+Нарушение глоссария, неверный message, неверный HTTP-код
+До конца недели
+Low
+Косметика ответа, опечатки
+Если останется время
+6. Критерии выхода (когда вы говорите что все готово)
+100 % кейсов C01–C27 pass.
+0 Critical и 0 High открытых.
