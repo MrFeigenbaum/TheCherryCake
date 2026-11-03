@@ -8,11 +8,25 @@ import Toast from '../components/ui/Toast';
 import Loader from '../components/ui/Loader';
 import './UIKit.css';
 
+type ToastType = 'success' | 'error' | 'warning';
+
+const regionOptions = [
+  { value: 'tashkent', label: 'Tashkent' },
+  { value: 'samarkand', label: 'Samarkand' },
+  { value: 'bukhara', label: 'Bukhara' },
+];
+
 export default function UIKit() {
   const [modalOpen, setModalOpen] = useState(false);
   const [toast, setToast] = useState('');
+  const [toastType, setToastType] = useState<ToastType>('success');
   const [name, setName] = useState('');
   const [region, setRegion] = useState('tashkent');
+
+  function showNotification(message: string, type: ToastType) {
+    setToast(message);
+    setToastType(type);
+  }
 
   return (
     <section className="cc-ui-kit">
@@ -20,7 +34,9 @@ export default function UIKit() {
 
       <Card title="Buttons">
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Button onClick={() => setToast('Button clicked!')}>Primary</Button>
+          <Button onClick={() => showNotification('Button clicked!', 'success')}>
+            Primary
+          </Button>
           <Button variant="secondary">Secondary</Button>
           <Button disabled>Disabled</Button>
           <Button loading>Loading</Button>
@@ -35,26 +51,44 @@ export default function UIKit() {
             onChange={(event) => setName(event.target.value)}
             placeholder="Enter your name"
           />
-          <Input label="Email" error="Invalid email" placeholder="Enter email" />
-          <Input label="Disabled input" disabled placeholder="Unavailable" />
+          <Input
+            label="Email"
+            error="Invalid email"
+            placeholder="Enter email"
+          />
+          <Input
+            label="Disabled input"
+            disabled
+            placeholder="Unavailable"
+          />
         </div>
       </Card>
 
       <Card title="Select">
-        <Select
-          label="Choose your region"
-          value={region}
-          onChange={(event) => setRegion(event.target.value)}
-          options={[
-            { value: 'tashkent', label: 'Tashkent' },
-            { value: 'samarkand', label: 'Samarkand' },
-            { value: 'bukhara', label: 'Bukhara' },
-          ]}
-        />
+        <div style={{ display: 'grid', gap: 16 }}>
+          <Select
+            label="Choose your region"
+            value={region}
+            onChange={(event) => setRegion(event.target.value)}
+            options={regionOptions}
+          />
+          <Select
+            label="Select with error"
+            options={regionOptions}
+            error="Please select a valid region"
+          />
+          <Select
+            label="Disabled select"
+            options={regionOptions}
+            disabled
+          />
+        </div>
       </Card>
 
       <Card title="Modal">
-        <Button onClick={() => setModalOpen(true)}>Open Modal</Button>
+        <Button onClick={() => setModalOpen(true)}>
+          Open Modal
+        </Button>
         <Modal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
@@ -65,9 +99,17 @@ export default function UIKit() {
       </Card>
 
       <Card title="Toast">
-        <Button onClick={() => setToast('Success notification!')}>
-          Show Toast
-        </Button>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <Button onClick={() => showNotification('Success notification!', 'success')}>
+            Success Toast
+          </Button>
+          <Button onClick={() => showNotification('Error notification!', 'error')}>
+            Error Toast
+          </Button>
+          <Button onClick={() => showNotification('Warning notification!', 'warning')}>
+            Warning Toast
+          </Button>
+        </div>
       </Card>
 
       <Card title="Loader">
@@ -76,7 +118,7 @@ export default function UIKit() {
 
       <Toast
         message={toast}
-        type="success"
+        type={toastType}
         onClose={() => setToast('')}
       />
     </section>
