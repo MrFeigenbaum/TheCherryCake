@@ -54,6 +54,12 @@ out/
 .DS_Store
 Thumbs.db
 
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+node_modules/
+dist/
+
 # Secrets & Environment variables
 *.env
 application-local.yml
