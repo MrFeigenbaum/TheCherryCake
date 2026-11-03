@@ -11,14 +11,14 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>uz.itpu.cherrycake</groupId>
-    <artifactId>cherry-cake</artifactId>
+    <groupId>com.cherrycake</groupId>
+    <artifactId>cherrycake-backend</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>cherry-cake</name>
+    <name>cherrycake-backend</name>
     <description>Cherry Cake Bakery &amp; Café Backend API</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
         <springdoc.version>2.6.0</springdoc.version>
         <jwt.version>0.12.6</jwt.version>
         <opencsv.version>5.9</opencsv.version>

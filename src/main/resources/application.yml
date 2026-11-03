@@ -5,7 +5,7 @@ server:
 
 spring:
   application:
-    name: cherry-cake
+    name: cherrycake-backend
 
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/cherry_cake}
