@@ -12,7 +12,7 @@ describe('Modal component', () => {
     render(
       <Modal open={false} title="Test Modal" onClose={() => {}}>
         <p>Modal content</p>
-      </Modal>
+      </Modal>,
     );
 
     expect(screen.queryByRole('dialog')).toBeNull();
@@ -22,7 +22,7 @@ describe('Modal component', () => {
     render(
       <Modal open={true} title="Cherry Cake Modal" onClose={() => {}}>
         <p>Welcome to Cherry Cake</p>
-      </Modal>
+      </Modal>,
     );
 
     expect(screen.getByRole('dialog')).toBeTruthy();
@@ -36,7 +36,7 @@ describe('Modal component', () => {
     render(
       <Modal open={true} title="Test Modal" onClose={handleClose}>
         <p>Content</p>
-      </Modal>
+      </Modal>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
@@ -50,7 +50,7 @@ describe('Modal component', () => {
     render(
       <Modal open={true} title="Test Modal" onClose={handleClose}>
         <p>Content</p>
-      </Modal>
+      </Modal>,
     );
 
     fireEvent.keyDown(document, { key: 'Escape' });

@@ -1,22 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../store';
-import {
-  setRegion,
-  addToCart,
-  clearCart,
-  showToast,
-} from '../store';
+import { setRegion, addToCart, clearCart, showToast } from '../store';
 
 export default function ReduxDemo() {
   const dispatch = useDispatch();
 
-  const region = useSelector(
-    (state: RootState) => state.region.selected
-  );
+  const region = useSelector((state: RootState) => state.region.selected);
 
-  const cart = useSelector(
-    (state: RootState) => state.cart.items
-  );
+  const cart = useSelector((state: RootState) => state.cart.items);
 
   return (
     <section style={{ padding: 24 }}>
@@ -25,12 +16,7 @@ export default function ReduxDemo() {
       <h3>Region</h3>
       <p>Selected region: {region}</p>
 
-      <select
-        value={region}
-        onChange={(event) =>
-          dispatch(setRegion(event.target.value))
-        }
-      >
+      <select value={region} onChange={(event) => dispatch(setRegion(event.target.value))}>
         <option value="Tashkent">Tashkent</option>
         <option value="Samarkand">Samarkand</option>
         <option value="Bukhara">Bukhara</option>
@@ -41,17 +27,11 @@ export default function ReduxDemo() {
       <h3>Cart</h3>
       <p>Items in cart: {cart.length}</p>
 
-      <button onClick={() => dispatch(addToCart('Chocolate Cake'))}>
-        Add Chocolate Cake
-      </button>
+      <button onClick={() => dispatch(addToCart('Chocolate Cake'))}>Add Chocolate Cake</button>
 
-      <button onClick={() => dispatch(addToCart('Cherry Cake'))}>
-        Add Cherry Cake
-      </button>
+      <button onClick={() => dispatch(addToCart('Cherry Cake'))}>Add Cherry Cake</button>
 
-      <button onClick={() => dispatch(clearCart())}>
-        Clear Cart
-      </button>
+      <button onClick={() => dispatch(clearCart())}>Clear Cart</button>
 
       <ul>
         {cart.map((item, index) => (
@@ -62,11 +42,7 @@ export default function ReduxDemo() {
       <hr />
 
       <h3>UI State</h3>
-      <button
-        onClick={() =>
-          dispatch(showToast('Redux UI state is working!'))
-        }
-      >
+      <button onClick={() => dispatch(showToast('Redux UI state is working!'))}>
         Show Redux Toast
       </button>
     </section>

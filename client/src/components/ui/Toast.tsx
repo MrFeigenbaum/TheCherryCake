@@ -4,11 +4,7 @@ type ToastProps = {
   type?: 'success' | 'error' | 'warning';
 };
 
-export default function Toast({
-  message,
-  onClose,
-  type = 'error',
-}: ToastProps) {
+export default function Toast({ message, onClose, type = 'error' }: ToastProps) {
   const colors = {
     success: 'var(--color-success)',
     error: 'var(--color-primary)',

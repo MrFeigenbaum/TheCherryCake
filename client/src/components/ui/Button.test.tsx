@@ -1,10 +1,5 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
-import {
-  render,
-  screen,
-  fireEvent,
-  cleanup,
-} from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import Button from './Button';
 
 afterEach(() => {
@@ -15,23 +10,15 @@ describe('Button component', () => {
   it('renders button text', () => {
     render(<Button>Order Now</Button>);
 
-    expect(
-      screen.getByRole('button', { name: 'Order Now' })
-    ).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Order Now' })).toBeTruthy();
   });
 
   it('calls onClick when clicked', () => {
     const handleClick = vi.fn();
 
-    render(
-      <Button onClick={handleClick}>
-        Add to Cart
-      </Button>
-    );
+    render(<Button onClick={handleClick}>Add to Cart</Button>);
 
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Add to Cart' })
-    );
+    fireEvent.click(screen.getByRole('button', { name: 'Add to Cart' }));
 
     expect(handleClick).toHaveBeenCalledOnce();
   });
@@ -65,8 +52,6 @@ describe('Button component', () => {
       name: 'Cancel',
     });
 
-    expect(
-      button.classList.contains('cc-button--secondary')
-    ).toBe(true);
+    expect(button.classList.contains('cc-button--secondary')).toBe(true);
   });
 });

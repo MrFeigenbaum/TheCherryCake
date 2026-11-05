@@ -5,13 +5,6 @@ type BadgeProps = {
   variant?: 'success' | 'warning' | 'error' | 'neutral';
 };
 
-export default function Badge({
-  children,
-  variant = 'neutral',
-}: BadgeProps) {
-  return (
-    <span className={`cc-badge cc-badge--${variant}`}>
-      {children}
-    </span>
-  );
+export default function Badge({ children, variant = 'neutral' }: BadgeProps) {
+  return <span className={`cc-badge cc-badge--${variant}`}>{children}</span>;
 }

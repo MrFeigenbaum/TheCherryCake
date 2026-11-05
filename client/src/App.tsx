@@ -22,16 +22,11 @@ function Page({ title }: { title: string }) {
 function Home() {
   return (
     <section className="cc-hero">
-      <span className="cc-eyebrow">
-        Handmade with love
-      </span>
+      <span className="cc-eyebrow">Handmade with love</span>
 
       <h2>Life is sweeter with Cherry Cake.</h2>
 
-      <p>
-        Discover delicious cakes, fresh desserts,
-        and sweet moments made especially for you.
-      </p>
+      <p>Discover delicious cakes, fresh desserts, and sweet moments made especially for you.</p>
 
       <Link to="/menu" className="cc-hero-action">
         Explore Our Menu
@@ -41,9 +36,7 @@ function Home() {
 }
 
 export default function App() {
-  const toast = useSelector(
-    (state: RootState) => state.ui.toast
-  );
+  const toast = useSelector((state: RootState) => state.ui.toast);
 
   const dispatch = useDispatch();
 
@@ -54,7 +47,9 @@ export default function App() {
           <h1 className="cc-brand">🍒 Cherry Cake</h1>
 
           <nav className="cc-nav" aria-label="Main navigation">
-            <NavLink to="/" end>Home</NavLink>
+            <NavLink to="/" end>
+              Home
+            </NavLink>
             <NavLink to="/menu">Menu</NavLink>
             <NavLink to="/cart">Cart</NavLink>
             <NavLink to="/orders">Orders</NavLink>
@@ -74,11 +69,7 @@ export default function App() {
         </Routes>
       </main>
 
-      <Toast
-        message={toast}
-        type="error"
-        onClose={() => dispatch(hideToast())}
-      />
+      <Toast message={toast} type="error" onClose={() => dispatch(hideToast())} />
     </div>
   );
 }

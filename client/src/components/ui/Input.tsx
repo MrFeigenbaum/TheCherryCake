@@ -17,7 +17,7 @@ export default function Input({ label, error, id, ...props }: InputProps) {
         aria-invalid={Boolean(error)}
         style={{
           backgroundColor: '#ffffff',
-          color: 'var(--color-text)',   
+          color: 'var(--color-text)',
           padding: 12,
           border: `1px solid ${error ? 'var(--color-error)' : 'var(--color-border)'}`,
           borderRadius: 'var(--radius-md)',

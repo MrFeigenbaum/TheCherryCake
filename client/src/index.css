@@ -41,7 +41,9 @@ select:focus-visible {
   outline-offset: 3px;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   color: var(--color-text);
 }
 

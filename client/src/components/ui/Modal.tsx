@@ -8,12 +8,7 @@ type ModalProps = {
   onClose: () => void;
 };
 
-export default function Modal({
-  open,
-  title,
-  children,
-  onClose,
-}: ModalProps) {
+export default function Modal({ open, title, children, onClose }: ModalProps) {
   const titleId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -25,8 +20,8 @@ export default function Modal({
     const focusable = () =>
       Array.from(
         dialog?.querySelectorAll<HTMLElement>(
-          'button:not([disabled]), input:not([disabled]), select:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
-        ) ?? []
+          'button:not([disabled]), input:not([disabled]), select:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
       );
 
     focusable()[0]?.focus();

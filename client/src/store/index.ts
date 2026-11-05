@@ -4,7 +4,8 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const regionSlice = createSlice({
   name: 'region',
   initialState: {
-  selected: import.meta.env.VITE_DEFAULT_REGION || 'Tashkent' , },
+    selected: import.meta.env.VITE_DEFAULT_REGION || 'Tashkent',
+  },
   reducers: {
     setRegion: (state, action: PayloadAction<string>) => {
       state.selected = action.payload;

@@ -13,15 +13,13 @@ export default function ErrorState({
 }: ErrorStateProps) {
   return (
     <div className="cc-state cc-state--error" role="alert">
-      <div className="cc-state-icon" aria-hidden="true">!</div>
+      <div className="cc-state-icon" aria-hidden="true">
+        !
+      </div>
       <h3>{title}</h3>
       <p>{message}</p>
 
-      {onRetry && (
-        <Button onClick={onRetry}>
-          Try Again
-        </Button>
-      )}
+      {onRetry && <Button onClick={onRetry}>Try Again</Button>}
     </div>
   );
 }

@@ -7,13 +7,7 @@ type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   error?: string;
 };
 
-export default function Select({
-  label,
-  options,
-  error,
-  id,
-  ...props
-}: SelectProps) {
+export default function Select({ label, options, error, id, ...props }: SelectProps) {
   const generatedId = useId();
   const selectId = id || generatedId;
 
@@ -38,7 +32,11 @@ export default function Select({
           </option>
         ))}
       </select>
-      {error && <small role="alert" style={{ color: 'var(--color-error)' }}>{error}</small>}
+      {error && (
+        <small role="alert" style={{ color: 'var(--color-error)' }}>
+          {error}
+        </small>
+      )}
     </div>
   );
 }

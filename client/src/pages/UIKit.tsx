@@ -50,11 +50,7 @@ export default function UIKit() {
 
       <Card title="Buttons">
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Button
-            onClick={() => showNotification('Button clicked!', 'success')}
-          >
-            Primary
-          </Button>
+          <Button onClick={() => showNotification('Button clicked!', 'success')}>Primary</Button>
           <Button variant="secondary">Secondary</Button>
           <Button disabled>Disabled</Button>
           <Button loading>Loading</Button>
@@ -69,16 +65,8 @@ export default function UIKit() {
             onChange={(event) => setName(event.target.value)}
             placeholder="Enter your name"
           />
-          <Input
-            label="Email"
-            error="Invalid email"
-            placeholder="Enter email"
-          />
-          <Input
-            label="Disabled input"
-            disabled
-            placeholder="Unavailable"
-          />
+          <Input label="Email" error="Invalid email" placeholder="Enter email" />
+          <Input label="Disabled input" disabled placeholder="Unavailable" />
         </div>
       </Card>
 
@@ -95,48 +83,26 @@ export default function UIKit() {
             options={regionOptions}
             error="Please select a valid region"
           />
-          <Select
-            label="Disabled select"
-            options={regionOptions}
-            disabled
-          />
+          <Select label="Disabled select" options={regionOptions} disabled />
         </div>
       </Card>
 
       <Card title="Modal">
-        <Button onClick={() => setModalOpen(true)}>
-          Open Modal
-        </Button>
-        <Modal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          title="Cherry Cake Modal"
-        >
+        <Button onClick={() => setModalOpen(true)}>Open Modal</Button>
+        <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Cherry Cake Modal">
           <p>This is a reusable modal component.</p>
         </Modal>
       </Card>
 
       <Card title="Toast">
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Button
-            onClick={() =>
-              showNotification('Success notification!', 'success')
-            }
-          >
+          <Button onClick={() => showNotification('Success notification!', 'success')}>
             Success Toast
           </Button>
-          <Button
-            onClick={() =>
-              showNotification('Error notification!', 'error')
-            }
-          >
+          <Button onClick={() => showNotification('Error notification!', 'error')}>
             Error Toast
           </Button>
-          <Button
-            onClick={() =>
-              showNotification('Warning notification!', 'warning')
-            }
-          >
+          <Button onClick={() => showNotification('Warning notification!', 'warning')}>
             Warning Toast
           </Button>
         </div>
@@ -186,11 +152,7 @@ export default function UIKit() {
           title="Your cart is empty"
           description="Explore our delicious cakes and add something sweet."
           action={
-            <Button
-              onClick={() =>
-                showNotification('Explore our menu!', 'success')
-              }
-            >
+            <Button onClick={() => showNotification('Explore our menu!', 'success')}>
               Explore Menu
             </Button>
           }
@@ -200,17 +162,11 @@ export default function UIKit() {
       <Card title="Error State">
         <ErrorState
           message="We couldn't load the products. Please try again."
-          onRetry={() =>
-            showNotification('Retry requested!', 'warning')
-          }
+          onRetry={() => showNotification('Retry requested!', 'warning')}
         />
       </Card>
 
-      <Toast
-        message={toast}
-        type={toastType}
-        onClose={() => setToast('')}
-      />
+      <Toast message={toast} type={toastType} onClose={() => setToast('')} />
     </section>
   );
 }
