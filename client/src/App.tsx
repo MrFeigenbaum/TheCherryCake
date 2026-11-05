@@ -2,11 +2,9 @@ import { NavLink, Link, Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { hideToast } from './store';
 import type { RootState } from './store';
-
 import Toast from './components/ui/Toast';
 import UIKit from './pages/UIKit';
 import ReduxDemo from './pages/ReduxDemo';
-
 import './App.css';
 
 function Page({ title }: { title: string }) {
@@ -37,7 +35,6 @@ function Home() {
 
 export default function App() {
   const toast = useSelector((state: RootState) => state.ui.toast);
-
   const dispatch = useDispatch();
 
   return (
@@ -61,11 +58,25 @@ export default function App() {
       <main className="cc-content">
         <Routes>
           <Route path="/" element={<Home />} />
+
           <Route path="/menu" element={<Page title="Menu" />} />
           <Route path="/cart" element={<Page title="Cart" />} />
+          <Route path="/checkout" element={<Page title="Checkout" />} />
+          <Route path="/booking" element={<Page title="Booking" />} />
+
+          <Route path="/login" element={<Page title="Login" />} />
+          <Route path="/register" element={<Page title="Register" />} />
+          <Route path="/account" element={<Page title="Account" />} />
+
           <Route path="/orders" element={<Page title="Orders" />} />
+          <Route path="/reports" element={<Page title="Reports" />} />
+
+          <Route path="/admin/*" element={<Page title="Admin Panel" />} />
+
           <Route path="/ui-kit" element={<UIKit />} />
           <Route path="/redux-demo" element={<ReduxDemo />} />
+
+          <Route path="*" element={<Page title="Page Not Found" />} />
         </Routes>
       </main>
 
