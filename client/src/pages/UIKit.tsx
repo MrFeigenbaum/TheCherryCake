@@ -38,6 +38,7 @@ export default function UIKit() {
   const [region, setRegion] = useState('tashkent');
   const [extraCream, setExtraCream] = useState(false);
   const [cakeSize, setCakeSize] = useState('medium');
+  const [extraCherries, setExtraCherries] = useState(false);
 
   function showNotification(message: string, type: ToastType) {
     setToast(message);
@@ -118,6 +119,11 @@ export default function UIKit() {
             label="Extra cream"
             checked={extraCream}
             onChange={(event) => setExtraCream(event.target.checked)}
+          />
+          <Checkbox
+            label="Extra cherries"
+            checked={extraCherries}
+            onChange={(event) => setExtraCherries(event.target.checked)}
           />
           <Checkbox label="Unavailable option" disabled />
         </div>

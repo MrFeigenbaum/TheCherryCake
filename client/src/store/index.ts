@@ -1,5 +1,6 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+
 import authReducer from './authSlice';
 
 type RegionState = {
@@ -10,8 +11,10 @@ type RegionState = {
   selected: string;
 };
 
+const savedRegion = localStorage.getItem('cc_region');
+
 const initialRegionState: RegionState = {
-  code: import.meta.env.VITE_DEFAULT_REGION || 'UZ',
+  code: savedRegion || import.meta.env.VITE_DEFAULT_REGION || 'UZ',
   currencyCode: null,
   currencySymbol: null,
   vatRate: null,
@@ -22,6 +25,10 @@ const regionSlice = createSlice({
   name: 'region',
   initialState: initialRegionState,
   reducers: {
+    setRegionCode: (state, action: PayloadAction<string>) => {
+      state.code = action.payload;
+    },
+
     setRegion: (state, action: PayloadAction<string>) => {
       state.selected = action.payload;
     },
@@ -147,8 +154,10 @@ const uiSlice = createSlice({
   },
 });
 
-export const { setRegion, setRegionDetails } = regionSlice.actions;
+export const { setRegion, setRegionDetails, setRegionCode } = regionSlice.actions;
+
 export const { addToCart, clearCart, setCartTotals } = cartSlice.actions;
+
 export const { showToast, hideToast, setGlobalLoading, addToast, removeToast } = uiSlice.actions;
 
 export const store = configureStore({

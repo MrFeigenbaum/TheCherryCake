@@ -1,10 +1,15 @@
-import { NavLink, Link, Routes, Route } from 'react-router-dom';
+import { Link, Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { hideToast } from './store';
 import type { RootState } from './store';
+
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
 import Toast from './components/ui/Toast';
 import UIKit from './pages/UIKit';
 import ReduxDemo from './pages/ReduxDemo';
+
 import './App.css';
 
 function Page({ title }: { title: string }) {
@@ -39,21 +44,7 @@ export default function App() {
 
   return (
     <div className="cc-app">
-      <header className="cc-header">
-        <div className="cc-header-inner">
-          <h1 className="cc-brand">🍒 Cherry Cake</h1>
-
-          <nav className="cc-nav" aria-label="Main navigation">
-            <NavLink to="/" end>
-              Home
-            </NavLink>
-            <NavLink to="/menu">Menu</NavLink>
-            <NavLink to="/cart">Cart</NavLink>
-            <NavLink to="/orders">Orders</NavLink>
-            <NavLink to="/ui-kit">UI Kit</NavLink>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main className="cc-content">
         <Routes>
@@ -79,6 +70,8 @@ export default function App() {
           <Route path="*" element={<Page title="Page Not Found" />} />
         </Routes>
       </main>
+
+      <Footer />
 
       <Toast message={toast} type="error" onClose={() => dispatch(hideToast())} />
     </div>
