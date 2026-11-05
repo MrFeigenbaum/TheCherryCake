@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Select from '../components/ui/Select';
@@ -6,7 +7,14 @@ import Card from '../components/ui/Card';
 import Modal from '../components/ui/Modal';
 import Toast from '../components/ui/Toast';
 import Loader from '../components/ui/Loader';
+import Checkbox from '../components/ui/Checkbox';
+import Radio from '../components/ui/Radio';
+import Badge from '../components/ui/Badge';
+import EmptyState from '../components/ui/EmptyState';
+import ErrorState from '../components/ui/ErrorState';
+
 import './UIKit.css';
+import '../components/ui/ExtraComponents.css';
 
 type ToastType = 'success' | 'error' | 'warning';
 
@@ -16,12 +24,20 @@ const regionOptions = [
   { value: 'bukhara', label: 'Bukhara' },
 ];
 
+const cakeSizeOptions = [
+  { value: 'small', label: 'Small cake' },
+  { value: 'medium', label: 'Medium cake' },
+  { value: 'large', label: 'Large cake' },
+];
+
 export default function UIKit() {
   const [modalOpen, setModalOpen] = useState(false);
   const [toast, setToast] = useState('');
   const [toastType, setToastType] = useState<ToastType>('success');
   const [name, setName] = useState('');
   const [region, setRegion] = useState('tashkent');
+  const [extraCream, setExtraCream] = useState(false);
+  const [cakeSize, setCakeSize] = useState('medium');
 
   function showNotification(message: string, type: ToastType) {
     setToast(message);
@@ -34,7 +50,9 @@ export default function UIKit() {
 
       <Card title="Buttons">
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Button onClick={() => showNotification('Button clicked!', 'success')}>
+          <Button
+            onClick={() => showNotification('Button clicked!', 'success')}
+          >
             Primary
           </Button>
           <Button variant="secondary">Secondary</Button>
@@ -100,13 +118,25 @@ export default function UIKit() {
 
       <Card title="Toast">
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Button onClick={() => showNotification('Success notification!', 'success')}>
+          <Button
+            onClick={() =>
+              showNotification('Success notification!', 'success')
+            }
+          >
             Success Toast
           </Button>
-          <Button onClick={() => showNotification('Error notification!', 'error')}>
+          <Button
+            onClick={() =>
+              showNotification('Error notification!', 'error')
+            }
+          >
             Error Toast
           </Button>
-          <Button onClick={() => showNotification('Warning notification!', 'warning')}>
+          <Button
+            onClick={() =>
+              showNotification('Warning notification!', 'warning')
+            }
+          >
             Warning Toast
           </Button>
         </div>
@@ -114,6 +144,66 @@ export default function UIKit() {
 
       <Card title="Loader">
         <Loader />
+      </Card>
+
+      <Card title="Checkbox">
+        <div style={{ display: 'grid', gap: 12 }}>
+          <Checkbox
+            label="Extra cream"
+            checked={extraCream}
+            onChange={(event) => setExtraCream(event.target.checked)}
+          />
+          <Checkbox label="Unavailable option" disabled />
+        </div>
+      </Card>
+
+      <Card title="Radio">
+        <div style={{ display: 'grid', gap: 12 }}>
+          {cakeSizeOptions.map((option) => (
+            <Radio
+              key={option.value}
+              name="cake-size"
+              label={option.label}
+              value={option.value}
+              checked={cakeSize === option.value}
+              onChange={() => setCakeSize(option.value)}
+            />
+          ))}
+        </div>
+      </Card>
+
+      <Card title="Badge">
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <Badge variant="success">In stock</Badge>
+          <Badge variant="warning">Low stock</Badge>
+          <Badge variant="error">Out of stock</Badge>
+          <Badge>New</Badge>
+        </div>
+      </Card>
+
+      <Card title="Empty State">
+        <EmptyState
+          title="Your cart is empty"
+          description="Explore our delicious cakes and add something sweet."
+          action={
+            <Button
+              onClick={() =>
+                showNotification('Explore our menu!', 'success')
+              }
+            >
+              Explore Menu
+            </Button>
+          }
+        />
+      </Card>
+
+      <Card title="Error State">
+        <ErrorState
+          message="We couldn't load the products. Please try again."
+          onRetry={() =>
+            showNotification('Retry requested!', 'warning')
+          }
+        />
       </Card>
 
       <Toast
