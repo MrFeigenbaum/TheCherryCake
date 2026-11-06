@@ -14,11 +14,11 @@ type RegionState = {
 const savedRegion = localStorage.getItem('cc_region');
 
 const initialRegionState: RegionState = {
-  code: savedRegion || import.meta.env.VITE_DEFAULT_REGION || 'UZ',
-  currencyCode: null,
-  currencySymbol: null,
-  vatRate: null,
-  selected: 'Tashkent',
+  code: savedRegion || 'UZB',
+  currencyCode: 'UZS',
+  currencySymbol: "so'm",
+  vatRate: 0.15,
+  selected: savedRegion || 'UZB',
 };
 
 const regionSlice = createSlice({
@@ -27,6 +27,17 @@ const regionSlice = createSlice({
   reducers: {
     setRegionCode: (state, action: PayloadAction<string>) => {
       state.code = action.payload;
+      state.selected = action.payload;
+
+      if (action.payload === 'UZB') {
+        state.currencyCode = 'UZS';
+        state.currencySymbol = "so'm";
+        state.vatRate = 0.15;
+      } else {
+        state.currencyCode = null;
+        state.currencySymbol = null;
+        state.vatRate = null;
+      }
     },
 
     setRegion: (state, action: PayloadAction<string>) => {

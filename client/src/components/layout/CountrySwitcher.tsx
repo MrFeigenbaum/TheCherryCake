@@ -1,17 +1,25 @@
 import { useDispatch, useSelector } from 'react-redux';
-
 import { setRegionCode } from '../../store';
 import type { RootState } from '../../store';
 
 const countries = [
-  { code: 'UZ', name: 'Uzbekistan' },
-  { code: 'KZ', name: 'Kazakhstan' },
-  { code: 'KG', name: 'Kyrgyzstan' },
+  { code: 'UZB', name: 'Uzbekistan' },
+  { code: 'KAZ', name: 'Kazakhstan' },
+  { code: 'GEO', name: 'Georgia' },
+  { code: 'UKR', name: 'Ukraine' },
+  { code: 'CHN', name: 'China' },
 ];
+
+const defaultCountry = 'UZB';
 
 export default function CountrySwitcher() {
   const dispatch = useDispatch();
+
   const code = useSelector((state: RootState) => state.region.code);
+
+  const selectedCountry = countries.some((country) => country.code === code)
+    ? code
+    : defaultCountry;
 
   function handleChange(newCode: string) {
     localStorage.setItem('cc_region', newCode);
@@ -20,16 +28,16 @@ export default function CountrySwitcher() {
 
   return (
     <label className="cc-country-switcher">
-      <span>Country</span>
+      <span>Страна</span>
 
       <select
         aria-label="Select country"
-        value={countries.some((country) => country.code === code) ? code : 'UZ'}
+        value={selectedCountry}
         onChange={(event) => handleChange(event.target.value)}
       >
         {countries.map((country) => (
           <option key={country.code} value={country.code}>
-            {country.name}
+            {country.code} — {country.name}
           </option>
         ))}
       </select>

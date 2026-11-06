@@ -14,7 +14,7 @@ export type ApiError = {
 };
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api/v1',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   timeout: 10000,
 });
 
@@ -41,13 +41,7 @@ api.interceptors.response.use(
 
     store.dispatch(showToast(apiError.message));
 
-    if (apiError.status === 401) {
-      store.dispatch(logout());
-
-      if (window.location.pathname !== '/login') {
-        window.location.assign('/login');
-      }
-    }
+   if (apiError.status === 401) {store.dispatch(logout());}
 
     return Promise.reject(apiError);
   },
