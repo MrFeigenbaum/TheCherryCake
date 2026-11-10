@@ -59,6 +59,11 @@ public class CartCalculationService {
     }
 
     public CalculateCartResponse calculate(CalculateCartRequest request) {
+        return calculate(request, NO_MONEY);
+    }
+
+    public CalculateCartResponse calculate(CalculateCartRequest request, BigDecimal deliveryFee) {
+        BigDecimal effectiveFee = deliveryFee != null ? deliveryFee : NO_MONEY;
         Region region = catalogService.getRegion(request.region());
         CartCatalog catalog = loadCatalog(region, request.items());
 
@@ -70,7 +75,7 @@ public class CartCalculationService {
                 .reduce(NO_MONEY, BigDecimal::add);
 
         PriceBreakdown price = priceCalculatorService.calculate(
-                subtotal, region.getVatRate(), region.getExchangeRate(), NO_MONEY);
+                subtotal, region.getVatRate(), region.getExchangeRate(), effectiveFee);
         return new CalculateCartResponse(
                 lines,
                 price.subtotal(),

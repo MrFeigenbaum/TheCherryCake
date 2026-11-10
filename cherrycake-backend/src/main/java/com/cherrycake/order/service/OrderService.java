@@ -5,17 +5,26 @@ import com.cherrycake.catalog.entity.Region;
 import com.cherrycake.catalog.repository.ProductRepository;
 import com.cherrycake.catalog.repository.RegionRepository;
 import com.cherrycake.catalog.service.CatalogService;
+import com.cherrycake.common.exception.BadRequestException;
+import com.cherrycake.common.exception.ConflictException;
 import com.cherrycake.common.exception.NotFoundException;
 import com.cherrycake.order.dto.CreateOrderRequest;
 import com.cherrycake.order.dto.OrderResponse;
+import com.cherrycake.order.entity.DeliveryZone;
 import com.cherrycake.order.entity.Order;
 import com.cherrycake.order.entity.OrderItem;
+import com.cherrycake.order.entity.PickupPoint;
+import com.cherrycake.order.entity.TimeSlot;
+import com.cherrycake.order.repository.DeliveryZoneRepository;
 import com.cherrycake.order.repository.OrderRepository;
+import com.cherrycake.order.repository.PickupPointRepository;
+import com.cherrycake.order.repository.TimeSlotRepository;
 import com.cherrycake.pricing.dto.CalculateCartRequest;
 import com.cherrycake.pricing.dto.CalculateCartResponse;
 import com.cherrycake.pricing.service.CartCalculationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.List;
@@ -27,18 +36,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Validates and persists guest orders using server-side calculation from {@link CartCalculationService} (CC-24).
+ * Validates and persists guest orders with optional fulfillment/slot reservation (CC-24 / CC-38).
  */
 @Service
 public class OrderService {
 
     private static final AtomicLong ORDER_SEQ = new AtomicLong(100);
+    private static final BigDecimal ZERO_FEE = new BigDecimal("0.00");
 
     private final OrderRepository orderRepository;
     private final CatalogService catalogService;
     private final CartCalculationService cartCalculationService;
     private final ProductRepository productRepository;
     private final RegionRepository regionRepository;
+    private final PickupPointRepository pickupPointRepository;
+    private final DeliveryZoneRepository deliveryZoneRepository;
+    private final TimeSlotRepository timeSlotRepository;
     private final ObjectMapper objectMapper;
 
     public OrderService(
@@ -47,12 +60,18 @@ public class OrderService {
             CartCalculationService cartCalculationService,
             ProductRepository productRepository,
             RegionRepository regionRepository,
+            PickupPointRepository pickupPointRepository,
+            DeliveryZoneRepository deliveryZoneRepository,
+            TimeSlotRepository timeSlotRepository,
             ObjectMapper objectMapper) {
         this.orderRepository = orderRepository;
         this.catalogService = catalogService;
         this.cartCalculationService = cartCalculationService;
         this.productRepository = productRepository;
         this.regionRepository = regionRepository;
+        this.pickupPointRepository = pickupPointRepository;
+        this.deliveryZoneRepository = deliveryZoneRepository;
+        this.timeSlotRepository = timeSlotRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -60,8 +79,40 @@ public class OrderService {
     public OrderResponse createOrder(CreateOrderRequest request) {
         Region region = catalogService.getRegion(request.region());
 
+        if (request.pickupPointId() != null && request.deliveryZoneId() != null) {
+            throw new BadRequestException("Specify either pickupPointId or deliveryZoneId, not both");
+        }
+
+        if (request.pickupPointId() != null) {
+            PickupPoint pickup = pickupPointRepository.findById(request.pickupPointId())
+                    .orElseThrow(() -> new NotFoundException("Pickup point not found: " + request.pickupPointId()));
+            if (!pickup.getRegionId().equals(region.getId())) {
+                throw new BadRequestException("Pickup point does not belong to region " + region.getCode());
+            }
+        }
+
+        BigDecimal deliveryFee = ZERO_FEE;
+        if (request.deliveryZoneId() != null) {
+            DeliveryZone zone = deliveryZoneRepository.findById(request.deliveryZoneId())
+                    .orElseThrow(() -> new NotFoundException("Delivery zone not found: " + request.deliveryZoneId()));
+            if (!zone.getRegionId().equals(region.getId())) {
+                throw new BadRequestException("Delivery zone does not belong to region " + region.getCode());
+            }
+            deliveryFee = zone.getDeliveryFee();
+        }
+
+        if (request.timeSlotId() != null) {
+            TimeSlot slot = timeSlotRepository.findById(request.timeSlotId())
+                    .orElseThrow(() -> new NotFoundException("Time slot not found: " + request.timeSlotId()));
+            if (!slot.isAvailable()) {
+                throw new ConflictException("Time slot " + slot.getStartTime() + " on " + slot.getSlotDate() + " is full");
+            }
+            slot.setBookedCount(slot.getBookedCount() + 1);
+            timeSlotRepository.save(slot);
+        }
+
         CalculateCartResponse calculated = cartCalculationService.calculate(
-                new CalculateCartRequest(region.getCode(), request.items()));
+                new CalculateCartRequest(region.getCode(), request.items()), deliveryFee);
 
         List<Long> productIds = request.items().stream()
                 .map(CalculateCartRequest.Item::productId)
@@ -74,6 +125,9 @@ public class OrderService {
         order.setOrderNumber(nextOrderNumber());
         order.setOrderDate(request.orderDate());
         order.setRegionId(region.getId());
+        order.setPickupPointId(request.pickupPointId());
+        order.setDeliveryZoneId(request.deliveryZoneId());
+        order.setTimeSlotId(request.timeSlotId());
         order.setCustomerName(request.customer().name().trim());
         order.setPhone(request.customer().phone().trim());
         order.setEmail(request.customer().email().trim());
@@ -167,4 +221,3 @@ public class OrderService {
                 order.getCurrencyCode());
     }
 }
-

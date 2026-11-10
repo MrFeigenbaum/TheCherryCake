@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cherrycake.order.repository.OrderRepository;
+import com.cherrycake.order.repository.TimeSlotRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
@@ -36,6 +37,9 @@ class OrderControllerTests {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private TimeSlotRepository timeSlotRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -148,6 +152,78 @@ class OrderControllerTests {
         mvc.perform(get("/api/orders/CC-2026-999999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void addsDeliveryFeeLastAndReservesSlot() throws Exception {
+        long cakeId = product("Cherry Cake");
+        long mod1 = modifier("Cherry Cake", "Medium, 10 slices");
+        long mod2 = modifier("Cherry Cake", "Fresh cherries");
+        long geoZoneId = jdbc.queryForObject(
+                "SELECT dz.id FROM delivery_zones dz JOIN regions r ON r.id = dz.region_id WHERE r.code = 'GEO'",
+                Long.class);
+        long slotId = jdbc.queryForObject("SELECT MIN(id) FROM time_slots", Long.class);
+        String tomorrow = LocalDate.now().plusDays(1).toString();
+
+        String body = """
+                {
+                  "region": "GEO",
+                  "customer": {
+                    "name": "Nino Beridze",
+                    "phone": "+995599112233",
+                    "email": "nino@example.com"
+                  },
+                  "orderDate": "%s",
+                  "items": [
+                    { "productId": %d, "quantity": 2, "modifierIds": [%d, %d] }
+                  ],
+                  "deliveryZoneId": %d,
+                  "timeSlotId": %d
+                }
+                """.formatted(tomorrow, cakeId, mod1, mod2, geoZoneId, slotId);
+
+        mvc.perform(post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.subtotal").value(234.00))
+                .andExpect(jsonPath("$.discountAmount").value(7.86))
+                .andExpect(jsonPath("$.deliveryFee").value(8.00))
+                .andExpect(jsonPath("$.total").value(262.22));
+
+        timeSlotRepository.flush();
+        Integer booked = jdbc.queryForObject("SELECT booked_count FROM time_slots WHERE id = ?", Integer.class, slotId);
+        assertThat(booked).isEqualTo(1);
+    }
+
+    @Test
+    void returns409WhenSelectedTimeSlotIsFull() throws Exception {
+        long tiramisuId = product("Tiramisu");
+        long slotId = jdbc.queryForObject("SELECT MIN(id) FROM time_slots", Long.class);
+        jdbc.update("UPDATE time_slots SET booked_count = capacity WHERE id = ?", slotId);
+        String tomorrow = LocalDate.now().plusDays(1).toString();
+
+        String body = """
+                {
+                  "region": "UZB",
+                  "customer": {
+                    "name": "Malika",
+                    "phone": "+998901234567",
+                    "email": "malika@example.com"
+                  },
+                  "orderDate": "%s",
+                  "items": [
+                    { "productId": %d, "quantity": 1 }
+                  ],
+                  "timeSlotId": %d
+                }
+                """.formatted(tomorrow, tiramisuId, slotId);
+
+        mvc.perform(post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409));
     }
 
     private long product(String name) {

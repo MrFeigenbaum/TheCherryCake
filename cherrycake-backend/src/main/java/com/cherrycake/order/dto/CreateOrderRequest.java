@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Guest checkout request matching the platform API v1 contract (CC-10 / CC-24).
+ * Guest checkout request with optional bonus fulfillment fields (CC-24 / CC-38).
  */
 public record CreateOrderRequest(
         @Schema(example = "UZB")
@@ -29,7 +29,11 @@ public record CreateOrderRequest(
         LocalDate orderDate,
 
         @NotEmpty(message = "items must not be empty")
-        List<CalculateCartRequest.@NotNull @Valid Item> items) {
+        List<CalculateCartRequest.@NotNull @Valid Item> items,
+
+        Long pickupPointId,
+        Long deliveryZoneId,
+        Long timeSlotId) {
 
     public record Customer(
             @Schema(example = "Malika Karimova")

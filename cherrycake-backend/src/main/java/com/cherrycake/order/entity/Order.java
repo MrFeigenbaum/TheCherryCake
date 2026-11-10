@@ -70,6 +70,15 @@ public class Order {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "pickup_point_id")
+    private Long pickupPointId;
+
+    @Column(name = "delivery_zone_id")
+    private Long deliveryZoneId;
+
+    @Column(name = "time_slot_id")
+    private Long timeSlotId;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
@@ -206,6 +215,30 @@ public class Order {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Long getPickupPointId() {
+        return pickupPointId;
+    }
+
+    public void setPickupPointId(Long pickupPointId) {
+        this.pickupPointId = pickupPointId;
+    }
+
+    public Long getDeliveryZoneId() {
+        return deliveryZoneId;
+    }
+
+    public void setDeliveryZoneId(Long deliveryZoneId) {
+        this.deliveryZoneId = deliveryZoneId;
+    }
+
+    public Long getTimeSlotId() {
+        return timeSlotId;
+    }
+
+    public void setTimeSlotId(Long timeSlotId) {
+        this.timeSlotId = timeSlotId;
     }
 
     public List<OrderItem> getItems() {
