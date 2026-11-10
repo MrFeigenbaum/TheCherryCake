@@ -10,3 +10,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     boolean existsByOrderNumber(String orderNumber);
 }
+

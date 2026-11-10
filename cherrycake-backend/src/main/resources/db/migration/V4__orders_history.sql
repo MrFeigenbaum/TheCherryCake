@@ -86,3 +86,4 @@ JOIN regions r ON r.id = o.region_id
 JOIN products p ON p.name = 'Cherry Cake'
 JOIN regional_prices rp ON rp.product_id = p.id AND rp.region_id = r.id
 WHERE o.order_number LIKE 'CC-2026-0000%';
+

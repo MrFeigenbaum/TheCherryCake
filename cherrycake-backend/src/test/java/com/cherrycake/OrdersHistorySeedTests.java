@@ -48,3 +48,4 @@ class OrdersHistorySeedTests {
         assertThat(invalidMath).isZero();
     }
 }
+
