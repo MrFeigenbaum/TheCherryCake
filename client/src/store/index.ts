@@ -1,100 +1,175 @@
+
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-import authReducer from './authSlice';
+type RegionCode = string;
+
+type CountryInfo = {
+  name: string;
+  currencyCode: string;
+  currencySymbol: string;
+  vatRate: number;
+};
 
 type RegionState = {
+  code: RegionCode;
+  selected: RegionCode;
+  name: string;
+  currencyCode: string;
+  currencySymbol: string;
+  vatRate: number;
+};
+
+type RegionDetails = {
   code: string;
-  currencyCode: string | null;
-  currencySymbol: string | null;
-  vatRate: number | null;
-  selected: string;
+  name: string;
+  currencyCode?: string;
+  currencySymbol: string;
+  vatRate?: number;
+};
+
+// Fallback countries used when the API is unavailable.
+const countries: Record<string, CountryInfo> = {
+  UZB: {
+    name: 'Uzbekistan',
+    currencyCode: 'UZS',
+    currencySymbol: "so'm",
+    vatRate: 0.15,
+  },
+  KAZ: {
+    name: 'Kazakhstan',
+    currencyCode: 'KZT',
+    currencySymbol: '\u20B8',
+    vatRate: 0.20,
+  },
+  GEO: {
+    name: 'Georgia',
+    currencyCode: 'GEL',
+    currencySymbol: '\u20BE',
+    vatRate: 0.12,
+  },
+  UKR: {
+    name: 'Ukraine',
+    currencyCode: 'UAH',
+    currencySymbol: '\u20B4',
+    vatRate: 0.08,
+  },
+  CHN: {
+    name: 'China',
+    currencyCode: 'CNY',
+    currencySymbol: '\u00A5',
+    vatRate: 0.18,
+  },
+};
+
+const isRegionCode = (value: string): boolean => {
+  return /^[A-Z]{3}$/.test(value);
 };
 
 const savedRegion = localStorage.getItem('cc_region');
+const envRegion = import.meta.env.VITE_DEFAULT_REGION || 'UZB';
+
+const initialCode: RegionCode =
+  savedRegion && isRegionCode(savedRegion)
+    ? savedRegion
+    : isRegionCode(envRegion)
+      ? envRegion
+      : 'UZB';
 
 const initialRegionState: RegionState = {
-  code: savedRegion || 'UZB',
-  currencyCode: 'UZS',
-  currencySymbol: "so'm",
-  vatRate: 0.15,
-  selected: savedRegion || 'UZB',
+  code: initialCode,
+  selected: initialCode,
+  ...(countries[initialCode] ?? countries.UZB),
 };
 
 const regionSlice = createSlice({
   name: 'region',
   initialState: initialRegionState,
   reducers: {
-    setRegionCode: (state, action: PayloadAction<string>) => {
-      state.code = action.payload;
-      state.selected = action.payload;
+    setRegion: (state, action: PayloadAction<string>) => {
+      const code = action.payload;
+      const country = countries[code];
 
-      if (action.payload === 'UZB') {
-        state.currencyCode = 'UZS';
-        state.currencySymbol = "so'm";
-        state.vatRate = 0.15;
-      } else {
-        state.currencyCode = null;
-        state.currencySymbol = null;
-        state.vatRate = null;
+      if (!country) {
+        return;
       }
+
+      state.code = code;
+      state.selected = code;
+      state.name = country.name;
+      state.currencyCode = country.currencyCode;
+      state.currencySymbol = country.currencySymbol;
+      state.vatRate = country.vatRate;
     },
 
-    setRegion: (state, action: PayloadAction<string>) => {
-      state.selected = action.payload;
+    setRegionCode: (state, action: PayloadAction<string>) => {
+      const code = action.payload;
+      const country = countries[code];
+
+      if (!country) {
+        return;
+      }
+
+      state.code = code;
+      state.selected = code;
+      state.name = country.name;
+      state.currencyCode = country.currencyCode;
+      state.currencySymbol = country.currencySymbol;
+      state.vatRate = country.vatRate;
     },
 
     setRegionDetails: (
       state,
-      action: PayloadAction<{
-        code: string;
-        currencyCode: string;
-        currencySymbol: string;
-        vatRate: number;
-      }>,
+      action: PayloadAction<RegionDetails>
     ) => {
-      state.code = action.payload.code;
-      state.currencyCode = action.payload.currencyCode;
-      state.currencySymbol = action.payload.currencySymbol;
-      state.vatRate = action.payload.vatRate;
+      const {
+        code,
+        name,
+        currencyCode,
+        currencySymbol,
+        vatRate,
+      } = action.payload;
+
+      if (!isRegionCode(code)) {
+        return;
+      }
+
+      const fallbackCountry = countries[code];
+
+      const resolvedCurrencyCode =
+        currencyCode ?? fallbackCountry?.currencyCode;
+
+      const resolvedVatRate =
+        vatRate ?? fallbackCountry?.vatRate;
+
+      if (
+        !name.trim() ||
+        !resolvedCurrencyCode ||
+        !currencySymbol ||
+        resolvedVatRate === undefined ||
+        !Number.isFinite(resolvedVatRate) ||
+        resolvedVatRate < 0
+      ) {
+        return;
+      }
+
+      state.code = code;
+      state.selected = code;
+      state.name = name;
+      state.currencyCode = resolvedCurrencyCode;
+      state.currencySymbol = currencySymbol;
+      state.vatRate = resolvedVatRate;
     },
   },
 });
 
-type CartTotals = {
-  subtotal: number;
-  vatAmount: number;
-  amountInclVat: number;
-  discountAmount: number;
-  deliveryFee: number;
-  total: number;
-  currencyCode: string;
-};
-
+// Cart state
 type CartState = {
   items: string[];
-  totals: CartTotals;
-  promoCode: string | null;
-  deliveryZoneId: string | null;
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-};
-
-const initialCartTotals: CartTotals = {
-  subtotal: 0,
-  vatAmount: 0,
-  amountInclVat: 0,
-  discountAmount: 0,
-  deliveryFee: 0,
-  total: 0,
-  currencyCode: 'UZS',
 };
 
 const initialCartState: CartState = {
   items: [],
-  totals: initialCartTotals,
-  promoCode: null,
-  deliveryZoneId: null,
-  status: 'idle',
 };
 
 const cartSlice = createSlice({
@@ -107,36 +182,17 @@ const cartSlice = createSlice({
 
     clearCart: (state) => {
       state.items = [];
-      state.totals = { ...initialCartTotals };
-      state.promoCode = null;
-      state.deliveryZoneId = null;
-      state.status = 'idle';
-    },
-
-    setCartTotals: (state, action: PayloadAction<CartTotals>) => {
-      state.totals = action.payload;
     },
   },
 });
 
-type ToastType = 'success' | 'error' | 'warning' | 'info';
-
-type ToastItem = {
-  id: string;
-  type: ToastType;
-  message: string;
-};
-
+// UI state
 type UiState = {
   toast: string;
-  toasts: ToastItem[];
-  globalLoading: boolean;
 };
 
 const initialUiState: UiState = {
   toast: '',
-  toasts: [],
-  globalLoading: false,
 };
 
 const uiSlice = createSlice({
@@ -150,34 +206,49 @@ const uiSlice = createSlice({
     hideToast: (state) => {
       state.toast = '';
     },
-
-    setGlobalLoading: (state, action: PayloadAction<boolean>) => {
-      state.globalLoading = action.payload;
-    },
-
-    addToast: (state, action: PayloadAction<ToastItem>) => {
-      state.toasts.push(action.payload);
-    },
-
-    removeToast: (state, action: PayloadAction<string>) => {
-      state.toasts = state.toasts.filter((toast) => toast.id !== action.payload);
-    },
   },
 });
 
-export const { setRegion, setRegionDetails, setRegionCode } = regionSlice.actions;
+// Redux actions
+export const {
+  setRegion,
+  setRegionCode,
+  setRegionDetails,
+} = regionSlice.actions;
 
-export const { addToCart, clearCart, setCartTotals } = cartSlice.actions;
+export const {
+  addToCart,
+  clearCart,
+} = cartSlice.actions;
 
-export const { showToast, hideToast, setGlobalLoading, addToast, removeToast } = uiSlice.actions;
+export const {
+  showToast,
+  hideToast,
+} = uiSlice.actions;
 
+// Redux store
 export const store = configureStore({
   reducer: {
     region: regionSlice.reducer,
     cart: cartSlice.reducer,
     ui: uiSlice.reducer,
-    auth: authReducer,
   },
+});
+
+// Persist selected region in localStorage.
+let previousRegion = store.getState().region.code;
+
+store.subscribe(() => {
+  const currentRegion = store.getState().region.code;
+
+  if (currentRegion !== previousRegion) {
+    previousRegion = currentRegion;
+
+    localStorage.setItem(
+      'cc_region',
+      currentRegion
+    );
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;
