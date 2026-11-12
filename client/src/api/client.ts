@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import { store, showToast } from '../store';
 import { logout } from '../store/authSlice';
@@ -31,17 +32,30 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error: unknown) => {
-    const response = axios.isAxiosError<ErrorResponse>(error) ? error.response : undefined;
+    // Do not show errors for cancelled requests.
+    if (axios.isCancel(error)) {
+      return Promise.reject(error);
+    }
+
+    const response = axios.isAxiosError<ErrorResponse>(error)
+      ? error.response
+      : undefined;
 
     const apiError: ApiError = {
       status: response?.status ?? 0,
-      message: response?.data?.message || 'Server bilan bog‘lanishda xatolik yuz berdi',
+      message:
+        response?.data?.message ||
+        'Server bilan bog‘lanishda xatolik yuz berdi',
       errors: response?.data?.errors,
     };
 
+    // Show real API errors.
     store.dispatch(showToast(apiError.message));
 
-   if (apiError.status === 401) {store.dispatch(logout());}
+    // Log out when authorization expires.
+    if (apiError.status === 401) {
+      store.dispatch(logout());
+    }
 
     return Promise.reject(apiError);
   },
