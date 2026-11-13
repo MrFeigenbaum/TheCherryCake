@@ -40,3 +40,4 @@ ENV PORT=8080
 EXPOSE ${PORT}
 
 ENTRYPOINT ["sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -Dserver.port=${PORT} -jar app.jar"]
+
