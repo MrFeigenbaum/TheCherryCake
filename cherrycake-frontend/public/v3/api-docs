@@ -1,0 +1,212 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Cherry Cake API",
+    "description": "API v1: regions, categories, products, cart calculation and guest orders across 16 sovereign territories.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Default Server"
+    }
+  ],
+  "paths": {
+    "/api/regions": {
+      "get": {
+        "tags": ["Regions"],
+        "summary": "Get all available operating regions and currency details",
+        "operationId": "getRegions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RegionResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "tags": ["Catalog"],
+        "summary": "Get all product categories",
+        "operationId": "getCategories",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "tags": ["Catalog"],
+        "summary": "Get products filtered by region and category",
+        "operationId": "getProducts",
+        "parameters": [
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "example": "UZB" }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/{id}": {
+      "get": {
+        "tags": ["Catalog"],
+        "summary": "Get product details with modifiers and prices",
+        "operationId": "getProductById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/cart/calculate": {
+      "post": {
+        "tags": ["Cart & Pricing Engine"],
+        "summary": "Calculate cart totals, item totals, discounts, and VAT using server-side BigDecimal math",
+        "operationId": "calculateCart",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "regionCode": { "type": "string", "example": "UZB" },
+                  "items": { "type": "array", "items": { "type": "object" } },
+                  "promoCode": { "type": "string", "example": "CHERRY10" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "post": {
+        "tags": ["Orders"],
+        "summary": "Create a new guest customer order",
+        "operationId": "createOrder",
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/api/orders/{orderNumber}": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "Get order by tracking order number",
+        "operationId": "getOrderByNumber",
+        "parameters": [
+          {
+            "name": "orderNumber",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegionResponse": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "example": "UZB" },
+          "name": { "type": "string", "example": "Uzbekistan" },
+          "currencyCode": { "type": "string", "example": "UZS" },
+          "currencySymbol": { "type": "string", "example": "so'm" },
+          "vatRate": { "type": "number", "example": 0.12 }
+        }
+      },
+      "CategoryResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" }
+        }
+      },
+      "ProductResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "price": { "type": "number" },
+          "imageUrl": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,7 +1,12 @@
 {
+  "cleanUrls": false,
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/swagger-ui",
+      "destination": "/swagger.html"
+    },
+    {
+      "source": "/((?!assets|v3|swagger|mockups|.*\\..*).*)",
       "destination": "/index.html"
     }
   ]
