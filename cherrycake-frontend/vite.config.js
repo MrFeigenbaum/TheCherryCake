@@ -10,15 +10,7 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true
       },
-      '/swagger.html': {
-        target: 'http://localhost:8080',
-        changeOrigin: true
-      },
       '/v3/api-docs': {
-        target: 'http://localhost:8080',
-        changeOrigin: true
-      },
-      '/assets/audio': {
         target: 'http://localhost:8080',
         changeOrigin: true
       }
