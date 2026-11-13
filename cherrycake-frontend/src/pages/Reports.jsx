@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getSalesReport, exportReport } from '../api/reports';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
@@ -8,7 +8,7 @@ import Select from '../components/ui/Select';
 import Input from '../components/ui/Input';
 import { Radio, RadioGroup } from '../components/ui/Radio';
 import { formatMoney } from '../utils/format-money';
-import { RATES_PER_CU } from '../store/regionSlice';
+import { RATES_PER_CU, setRegion } from '../store/regionSlice';
 
 import {
   Chart as ChartJS,
@@ -31,18 +31,34 @@ ChartJS.register(
 );
 
 export function Reports() {
-  const currencyCode = useSelector((state) => state.region?.currencyCode || 'UZS');
+  const dispatch = useDispatch();
+  const headerCurrencyCode = useSelector((state) => state.region?.currencyCode || 'UZS');
+  const headerRegionCode = useSelector((state) => state.region?.code || 'UZ');
   const regions = useSelector((state) => state.region?.regions || []);
-  const activeExchangeRate = useSelector((state) => state.region?.exchangeRate) || RATES_PER_CU[currencyCode] || 3000;
+
+  const [groupBy, setGroupBy] = useState('MONTH');
+  const [selectedRegion, setSelectedRegion] = useState(headerRegionCode || 'ALL');
+  const [dateFrom, setDateFrom] = useState('2026-01-01');
+  const [dateTo, setDateTo] = useState('2026-12-31');
+
+  // Keep selectedRegion synced if header country selector changes
+  useEffect(() => {
+    if (headerRegionCode) {
+      setSelectedRegion(headerRegionCode);
+    }
+  }, [headerRegionCode]);
+
+  // When selectedRegion is chosen, resolve the specific region object
+  const activeRegionObj = selectedRegion !== 'ALL'
+    ? regions.find((r) => r.code === selectedRegion) || { currencyCode: headerCurrencyCode, exchangeRate: 3000 }
+    : regions.find((r) => r.code === headerRegionCode) || { currencyCode: headerCurrencyCode, exchangeRate: 3000 };
+
+  const currencyCode = activeRegionObj.currencyCode || headerCurrencyCode;
+  const activeExchangeRate = activeRegionObj.exchangeRate || RATES_PER_CU[currencyCode] || RATES_PER_CU[activeRegionObj.code] || 3000;
 
   // Base database/report currency is UZS (1 CU = 3000 UZS)
   // Calculate conversion factor relative to base UZS
   const conversionFactor = (activeExchangeRate || 3000) / 3000;
-
-  const [groupBy, setGroupBy] = useState('MONTH');
-  const [selectedRegion, setSelectedRegion] = useState('ALL');
-  const [dateFrom, setDateFrom] = useState('2026-01-01');
-  const [dateTo, setDateTo] = useState('2026-12-31');
 
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -65,22 +81,35 @@ export function Reports() {
       })
       .catch(() => {
         if (isMounted) {
+          // Dynamic territory volume scaling in mock mode
+          const territoryVolumeRatio = selectedRegion === 'ALL'
+            ? 1
+            : selectedRegion === 'UZ' || selectedRegion === 'UZB' ? 0.60
+            : selectedRegion === 'KZ' || selectedRegion === 'KAZ' ? 0.25
+            : selectedRegion === 'GE' || selectedRegion === 'GEO' ? 0.15
+            : 0.10;
+
+          const baseTotal = Math.round(50700000 * territoryVolumeRatio);
+          const baseOrders = Math.round(550 * territoryVolumeRatio);
+          const baseAvgCheck = Math.round(baseTotal / (baseOrders || 1));
+          const baseVat = Math.round(baseTotal * 0.12);
+
           // Fallback mock data in base CU (UZS = 3000/CU)
           setReportData({
             kpi: {
-              totalRevenue: 50700000,
-              ordersCount: 550,
-              averageCheck: 92181,
-              vatTotal: 6084000
+              totalRevenue: baseTotal,
+              ordersCount: baseOrders,
+              averageCheck: baseAvgCheck,
+              vatTotal: baseVat
             },
             rows: groupBy === 'REGION' ? [
               { period: 'Uzbekistan (UZB)', ordersCount: 280, totalRevenue: 28000000, vatTotal: 3360000, averageCheck: 100000 },
               { period: 'Kazakhstan (KAZ)', ordersCount: 150, totalRevenue: 13500000, vatTotal: 1620000, averageCheck: 90000 },
               { period: 'Georgia (GEO)', ordersCount: 120, totalRevenue: 9200000, vatTotal: 1104000, averageCheck: 76666 }
             ] : [
-              { period: '2026-01', ordersCount: 140, totalRevenue: 12500000, vatTotal: 1500000, averageCheck: 89285 },
-              { period: '2026-02', ordersCount: 190, totalRevenue: 16800000, vatTotal: 2016000, averageCheck: 88421 },
-              { period: '2026-03', ordersCount: 220, totalRevenue: 21400000, vatTotal: 2568000, averageCheck: 97272 }
+              { period: '2026-01', ordersCount: Math.round(140 * territoryVolumeRatio), totalRevenue: Math.round(12500000 * territoryVolumeRatio), vatTotal: Math.round(1500000 * territoryVolumeRatio), averageCheck: Math.round(89285 * territoryVolumeRatio) },
+              { period: '2026-02', ordersCount: Math.round(190 * territoryVolumeRatio), totalRevenue: Math.round(16800000 * territoryVolumeRatio), vatTotal: Math.round(2016000 * territoryVolumeRatio), averageCheck: Math.round(88421 * territoryVolumeRatio) },
+              { period: '2026-03', ordersCount: Math.round(220 * territoryVolumeRatio), totalRevenue: Math.round(21400000 * territoryVolumeRatio), vatTotal: Math.round(2568000 * territoryVolumeRatio), averageCheck: Math.round(97272 * territoryVolumeRatio) }
             ]
           });
           setLoading(false);
@@ -220,7 +249,13 @@ export function Reports() {
           <Select
             label="Operating Territory"
             value={selectedRegion}
-            onChange={(e) => setSelectedRegion(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSelectedRegion(val);
+              if (val !== 'ALL') {
+                dispatch(setRegion(val));
+              }
+            }}
             options={[
               { value: 'ALL', label: 'All Territories (Global)' },
               ...regions.map((r) => ({

@@ -26,7 +26,9 @@ export function Table({
           borderCollapse: 'collapse',
           textAlign: 'left',
           fontSize: 'var(--font-size-sm)',
-          minWidth: '500px'
+          minWidth: '500px',
+          backgroundColor: 'var(--cherry-card, #2d0e24)',
+          color: 'var(--text-main, #fdf2f5)'
         }}
       >
         <thead>
