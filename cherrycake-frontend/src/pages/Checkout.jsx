@@ -240,8 +240,8 @@ export function Checkout() {
               borderRadius: 'var(--radius-sm)',
               fontSize: 'var(--font-size-sm)',
               fontWeight: 600,
-              backgroundColor: step === s.num ? 'var(--color-primary)' : step > s.num ? 'var(--color-accent)' : '#EEEEEE',
-              color: step === s.num ? '#FFFFFF' : 'var(--color-text)',
+              backgroundColor: step === s.num ? 'var(--color-primary)' : step > s.num ? 'rgba(230, 57, 96, 0.25)' : 'var(--input-bg)',
+              color: step === s.num ? '#FFFFFF' : step > s.num ? 'var(--sakura-pink)' : 'var(--text-dim)',
               cursor: step > s.num ? 'pointer' : 'default',
               transition: 'all 0.2s ease'
             }}
@@ -368,7 +368,8 @@ export function Checkout() {
                 <div
                   style={{
                     padding: 'var(--space-3)',
-                    backgroundColor: '#FFEBEE',
+                    backgroundColor: 'rgba(255, 71, 87, 0.15)',
+                    border: '1px solid var(--color-error)',
                     color: 'var(--color-error)',
                     borderRadius: 'var(--radius-sm)',
                     marginBottom: 'var(--space-4)',
