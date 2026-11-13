@@ -21,6 +21,7 @@ spring:
     locations: classpath:db/migration
     # V3 (catalog seed) can reach master before V2 (orders); this lets V2 still run on databases that already have V3.
     out-of-order: true
+    validate-on-migrate: false
 
 springdoc:
   paths-to-match: /api/regions,/api/categories,/api/products,/api/products/*,/api/cart/calculate,/api/orders
