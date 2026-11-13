@@ -3,15 +3,23 @@ import React, { useState, useEffect, useRef } from 'react';
 const FALLBACK_PLAYLIST = [
   {
     title: 'Mellow Fox - Backyard',
-    url: 'https://files.catbox.moe/qvicec.m4a'
+    url: '/assets/audio/Mellow Fox - Backyard.m4a'
   },
   {
     title: 'Rio - Fly Love',
-    url: 'https://files.catbox.moe/8x7inv.m4a'
+    url: '/assets/audio/Rio - Fly Love.m4a'
   },
   {
     title: 'Notre Dame de Paris - Belle',
-    url: 'https://files.catbox.moe/vcyd7u.m4a'
+    url: '/assets/audio/Notre Dame de Paris - Belle.m4a'
+  },
+  {
+    title: 'Garou - Je Nattendais Que Vous',
+    url: '/assets/audio/Garou - Je Nattendais Que Vous.mp3'
+  },
+  {
+    title: 'Notre Dame de Paris - Lune',
+    url: '/assets/audio/Notre Dame de Paris - Lune.mp3'
   }
 ];
 
