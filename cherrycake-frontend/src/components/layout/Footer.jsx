@@ -10,8 +10,12 @@ export function Footer() {
           <div className="footer-col brand-col">
             <div className="footer-brand">
               <img
-                src="/TransparentSakuraFlower.png"
+                src="/TransparentSakuraFlower.png?v=3"
                 alt="Cherry Cake Blossom"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/assets/TransparentSakuraFlower.png";
+                }}
                 className="footer-logo-img"
               />
               <div className="footer-brand-title">

@@ -10,8 +10,12 @@ export function Home() {
           <div className="blossom-glow-ring"></div>
           <div className="blossom-card">
             <img
-              src="/TransparentSakuraFlower.png"
+              src="/TransparentSakuraFlower.png?v=3"
               alt="Cherry Cake Blossom Logo"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/assets/TransparentSakuraFlower.png";
+              }}
             />
           </div>
         </div>

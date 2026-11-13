@@ -17,8 +17,12 @@ export function Header() {
         <Link to="/" className="navbar-brand">
           <div className="navbar-brand-icon">
             <img
-              src="/TransparentSakuraFlower.png"
+              src="/TransparentSakuraFlower.png?v=3"
               alt="Cherry Logo"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/assets/TransparentSakuraFlower.png";
+              }}
               style={{ width: '24px', height: '24px', flexShrink: 0, objectFit: 'contain' }}
             />
           </div>
