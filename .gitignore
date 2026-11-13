@@ -1,3 +1,13 @@
 .idea/
 *.iml
 .DS_Store
+.vscode/
+target/
+**/target/
+frontend/
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+*.log
+

@@ -1,0 +1,9 @@
+target/
+cherrycake-backend/target/
+cherrycake-frontend/node_modules/
+cherrycake-frontend/dist/
+frontend/
+.git
+.idea
+.vscode
+*.log
