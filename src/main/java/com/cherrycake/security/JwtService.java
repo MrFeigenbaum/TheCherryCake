@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
+@SuppressWarnings("null")
 public class JwtService
 {
     @Value("${app.jwt.secret:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}")
@@ -35,12 +36,12 @@ public class JwtService
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails)
     {
         return Jwts.builder()
-            .claims(extraClaims)
-            .subject(userDetails.getUsername())
-            .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
-            .signWith(getSignInKey())
-            .compact();
+        .claims(extraClaims)
+        .subject(userDetails.getUsername())
+        .issuedAt(new Date(System.currentTimeMillis()))
+        .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
+        .signWith(getSignInKey())
+        .compact();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails)
@@ -56,10 +57,10 @@ public class JwtService
     private Claims extractAllClaims(String token)
     {
         return Jwts.parser()
-            .verifyWith(getSignInKey())
-            .build()
-            .parseSignedClaims(token)
-            .getPayload();
+        .verifyWith(getSignInKey())
+        .build()
+        .parseSignedClaims(token)
+        .getPayload();
     }
 
     private SecretKey getSignInKey()

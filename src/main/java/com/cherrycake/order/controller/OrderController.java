@@ -42,9 +42,7 @@ public class OrderController
     @GetMapping({"/api/orders/{orderNumber}", "/api/v1/orders/{orderNumber}"})
     @Operation(summary = "Get order details by order tracking number")
     public ResponseEntity<OrderResponse> getOrderByNumber(@PathVariable String orderNumber)
-    {
-        return ResponseEntity.ok(orderService.getOrderByNumber(orderNumber));
-    }
+    { return ResponseEntity.ok(orderService.getOrderByNumber(orderNumber)); }
 
     @GetMapping({"/api/orders/my", "/api/v1/orders/my"})
     @PreAuthorize("isAuthenticated()")
@@ -54,9 +52,7 @@ public class OrderController
         User currentUser = authService.getCurrentAuthenticatedUser();
 
         if (currentUser == null)
-        {
             throw new BadRequestException("User not authenticated");
-        }
 
         return ResponseEntity.ok(orderService.getUserOrders(currentUser.getId()));
     }

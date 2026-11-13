@@ -60,7 +60,7 @@
 
 ### 2.6. Бронирование столиков (Booking)
 - [x] Поле даты `<input data-testid="booking-date">` (не ранее сегодня).
-- [x] Селектор времени `<select data-testid="booking-time">` (10:00–22:00).
+- [x] Селектор времени `<select data-testid="booking-time">` (10:00-22:00).
 - [x] Поле гостей `<input data-testid="booking-guests">` (целое число от 1 до 12).
 - [x] Кнопка отправки `<button data-testid="booking-submit">`.
 - [x] Успешное бронирование: номер `<span data-testid="booking-number">`.

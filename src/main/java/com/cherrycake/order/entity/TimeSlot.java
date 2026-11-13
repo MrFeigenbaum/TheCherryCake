@@ -28,24 +28,45 @@ public class TimeSlot
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "slot_time", nullable = false)
-    private LocalDateTime slotTime;
+    @Column(name = "slot_date", nullable = false)
+    private LocalDate slotDate;
+
+    @Column(name = "start_time", nullable = false)
+    private LocalTime startTime;
+
+    @Column(name = "end_time", nullable = false)
+    private LocalTime endTime;
 
     @Column(nullable = false)
     @Builder.Default
     private Integer capacity = 10;
 
-    @Column(name = "reserved_count", nullable = false)
+    @Column(name = "booked_count", nullable = false)
     @Builder.Default
-    private Integer reservedCount = 0;
+    private Integer bookedCount = 0;
 
-    public boolean isFull() { return reservedCount >= capacity; }
+    @Column(name = "is_available", nullable = false)
+    @Builder.Default
+    private boolean isAvailable = true;
 
-    public boolean isAvailable() { return reservedCount < capacity; }
+    public boolean isFull() { return bookedCount >= capacity; }
 
-    public LocalDate getSlotDate() { return slotTime != null ? slotTime.toLocalDate() : null; }
+    public boolean isAvailable() { return isAvailable && bookedCount < capacity; }
 
-    public LocalTime getStartTime() { return slotTime != null ? slotTime.toLocalTime() : null; }
+    public LocalDateTime getSlotTime()
+    { return slotDate != null && startTime != null ? LocalDateTime.of(slotDate, startTime) : null; }
 
-    public LocalTime getEndTime() { return slotTime != null ? slotTime.toLocalTime().plusMinutes(30) : null; }
+    public void setSlotTime(LocalDateTime ldt)
+    {
+        if (ldt != null)
+        {
+            this.slotDate = ldt.toLocalDate();
+            this.startTime = ldt.toLocalTime();
+            this.endTime = ldt.toLocalTime().plusMinutes(30);
+        }
+    }
+
+    // Aliases for compatibility
+    public Integer getReservedCount() { return bookedCount; }
+    public void setReservedCount(Integer count) { this.bookedCount = count; }
 }

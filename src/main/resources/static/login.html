@@ -10,18 +10,19 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Parisienne&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
-    <link rel="icon" type="image/png" href="assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png">
+    <link rel="icon" type="image/png" href="TransparentSakuraFlower.png">
 
     <!-- Anti-flash script -->
     <script>
-        (function() {
+        (function () {
             const savedTheme = localStorage.getItem('cherry_theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
 
     <style>
-        :root, [data-theme="dark"] {
+        :root,
+        [data-theme="dark"] {
             /* Design System Tokens */
             --color-primary: #7B1E3C;
             --color-primary-hover: #5E1530;
@@ -630,7 +631,6 @@
         [data-theme="dark"] .inline-svg-icon {
             stroke: #ffffff;
         }
-
     </style>
 </head>
 
@@ -641,7 +641,7 @@
     <header class="auth-header">
         <div class="nav-container">
             <a href="/index.html" class="brand-link">
-                <img src="assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png" alt="Cherry Logo">
+                <img src="TransparentSakuraFlower.png" alt="Cherry Logo">
                 <div class="brand-text">
                     <h1>Cherry Cake</h1>
                     <span>Bakery &amp; Café</span>
@@ -650,13 +650,35 @@
 
             <div class="nav-actions">
                 <a href="/index.html" class="nav-btn">
-                    <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 0 1 4 4c0 2-2 3-4 3-2 0-4-1-4-3a4 4 0 0 1 4-4z"/><path d="M22 12a4 4 0 0 1-4 4c-2 0-3-2-3-4 0-2 1-4 3-4a4 4 0 0 1 4 4z"/><path d="M12 22a4 4 0 0 1-4-4c0-2 2-3 4-3 2 0 4 1 4 3a4 4 0 0 1-4 4z"/><path d="M2 12a4 4 0 0 1 4-4c2 0 3 2 3 4 0 2-1 4-3 4a4 4 0 0 1-4-4z"/></svg></span> Storefront
+                    <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3" />
+                            <path d="M12 2a4 4 0 0 1 4 4c0 2-2 3-4 3-2 0-4-1-4-3a4 4 0 0 1 4-4z" />
+                            <path d="M22 12a4 4 0 0 1-4 4c-2 0-3-2-3-4 0-2 1-4 3-4a4 4 0 0 1 4 4z" />
+                            <path d="M12 22a4 4 0 0 1-4-4c0-2 2-3 4-3 2 0 4 1 4 3a4 4 0 0 1-4 4z" />
+                            <path d="M2 12a4 4 0 0 1 4-4c2 0 3 2 3 4 0 2-1 4-3 4a4 4 0 0 1-4-4z" />
+                        </svg></span> Storefront
                 </a>
                 <a href="/swagger.html" class="nav-btn">
-                    <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span> API Docs
+                    <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                        </svg></span> API Docs
                 </a>
                 <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Theme">
-                    <span id="themeToggleIcon"><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+                    <span id="themeToggleIcon"><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg></span>
                     <span id="themeToggleLabel">Light</span>
                 </button>
             </div>
@@ -669,25 +691,46 @@
             <!-- Emblem -->
             <div class="auth-emblem-wrap">
                 <div class="auth-emblem">
-                    <img src="assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png" alt="Blossom Emblem">
+                    <img src="TransparentSakuraFlower.png" alt="Blossom Emblem">
                 </div>
             </div>
 
             <!-- LOGGED-IN VIEW (shown if token exists) -->
             <div id="loggedInPanel" class="logged-in-panel">
-                <div class="user-avatar-wrap" id="userAvatar" style="display:flex;align-items:center;justify-content:center;"><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 0 1 4 4c0 2-2 3-4 3-2 0-4-1-4-3a4 4 0 0 1 4-4z"/><path d="M22 12a4 4 0 0 1-4 4c-2 0-3-2-3-4 0-2 1-4 3-4a4 4 0 0 1 4 4z"/><path d="M12 22a4 4 0 0 1-4-4c0-2 2-3 4-3 2 0 4 1 4 3a4 4 0 0 1-4 4z"/><path d="M2 12a4 4 0 0 1 4-4c2 0 3 2 3 4 0 2-1 4-3 4a4 4 0 0 1-4-4z"/></svg></div>
+                <div class="user-avatar-wrap" id="userAvatar"
+                    style="display:flex;align-items:center;justify-content:center;"><svg class="inline-svg-icon"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M12 2a4 4 0 0 1 4 4c0 2-2 3-4 3-2 0-4-1-4-3a4 4 0 0 1 4-4z" />
+                        <path d="M22 12a4 4 0 0 1-4 4c-2 0-3-2-3-4 0-2 1-4 3-4a4 4 0 0 1 4 4z" />
+                        <path d="M12 22a4 4 0 0 1-4-4c0-2 2-3 4-3 2 0 4 1 4 3a4 4 0 0 1-4 4z" />
+                        <path d="M2 12a4 4 0 0 1 4-4c2 0 3 2 3 4 0 2-1 4-3 4a4 4 0 0 1-4-4z" />
+                    </svg></div>
                 <div class="user-welcome-name" id="userWelcomeName">Welcome, Customer!</div>
                 <div class="user-role-badge" id="userRoleBadge">ROLE_USER</div>
                 <p id="userEmailText" style="color:var(--text-dim); font-size:0.88rem; margin-top:6px;"></p>
 
                 <div class="logged-actions">
                     <a href="/index.html" class="action-link primary">
-                        <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 0 1 4 4c0 2-2 3-4 3-2 0-4-1-4-3a4 4 0 0 1 4-4z"/><path d="M22 12a4 4 0 0 1-4 4c-2 0-3-2-3-4 0-2 1-4 3-4a4 4 0 0 1 4 4z"/><path d="M12 22a4 4 0 0 1-4-4c0-2 2-3 4-3 2 0 4 1 4 3a4 4 0 0 1-4 4z"/><path d="M2 12a4 4 0 0 1 4-4c2 0 3 2 3 4 0 2-1 4-3 4a4 4 0 0 1-4-4z"/></svg></span> Open Artisan Storefront
+                        <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3" />
+                                <path d="M12 2a4 4 0 0 1 4 4c0 2-2 3-4 3-2 0-4-1-4-3a4 4 0 0 1 4-4z" />
+                                <path d="M22 12a4 4 0 0 1-4 4c-2 0-3-2-3-4 0-2 1-4 3-4a4 4 0 0 1 4 4z" />
+                                <path d="M12 22a4 4 0 0 1-4-4c0-2 2-3 4-3 2 0 4 1 4 3a4 4 0 0 1-4 4z" />
+                                <path d="M2 12a4 4 0 0 1 4-4c2 0 3 2 3 4 0 2-1 4-3 4a4 4 0 0 1-4-4z" />
+                            </svg></span> Open Artisan Storefront
                     </a>
                     <a href="/swagger.html" class="action-link secondary">
-                        <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span> Open Swagger API Console
+                        <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                            </svg></span> Open Swagger API Console
                     </a>
-                    <button class="logout-btn" data-testid="header-logout" onclick="handleLogout()">Sign Out of Session</button>
+                    <button class="logout-btn" data-testid="header-logout" onclick="handleLogout()">Sign Out of
+                        Session</button>
                 </div>
             </div>
 
@@ -710,15 +753,23 @@
                     <div class="form-group">
                         <label for="loginEmail">Email Address</label>
                         <div class="input-wrapper">
-                            <input type="email" id="loginEmail" data-testid="login-email" placeholder="customer@cherrycake.com" required autocomplete="email">
+                            <input type="email" id="loginEmail" data-testid="login-email"
+                                placeholder="customer@cherrycake.com" required autocomplete="email">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="loginPassword">Password</label>
                         <div class="input-wrapper">
-                            <input type="password" id="loginPassword" data-testid="login-password" placeholder="••••••••" required autocomplete="current-password">
-                            <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('loginPassword', this)"><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                            <input type="password" id="loginPassword" data-testid="login-password"
+                                placeholder="••••••••" required autocomplete="current-password">
+                            <button type="button" class="toggle-pwd-btn"
+                                onclick="togglePasswordVisibility('loginPassword', this)"><svg class="inline-svg-icon"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg></button>
                         </div>
                     </div>
 
@@ -730,12 +781,22 @@
                     <div class="demo-box">
                         <div class="demo-title">One-Click Test Accounts</div>
                         <div class="demo-pills">
-                            <button type="button" class="demo-btn" onclick="fillDemo('customer@cherrycake.com', 'password123')">
-                                <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <strong>Customer:</strong> customer@cherrycake.com</span>
+                            <button type="button" class="demo-btn"
+                                onclick="fillDemo('customer@cherrycake.com', 'password123')">
+                                <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                    </svg> <strong>Customer:</strong> customer@cherrycake.com</span>
                                 <span>Fill →</span>
                             </button>
-                            <button type="button" class="demo-btn" onclick="fillDemo('admin@cherrycake.com', 'password123')">
-                                <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l3 12h14l3-12-5 4-5-6-5 6z"/><path d="M5 20h14"/></svg> <strong>Administrator:</strong> admin@cherrycake.com</span>
+                            <button type="button" class="demo-btn"
+                                onclick="fillDemo('admin@cherrycake.com', 'password123')">
+                                <span><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M2 4l3 12h14l3-12-5 4-5-6-5 6z" />
+                                        <path d="M5 20h14" />
+                                    </svg> <strong>Administrator:</strong> admin@cherrycake.com</span>
                                 <span>Fill →</span>
                             </button>
                         </div>
@@ -756,22 +817,31 @@
                     <div class="form-group">
                         <label for="regEmail">Email Address</label>
                         <div class="input-wrapper">
-                            <input type="email" id="regEmail" placeholder="your.name@example.com" required autocomplete="email">
+                            <input type="email" id="regEmail" placeholder="your.name@example.com" required
+                                autocomplete="email">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="regPhone">Phone Number</label>
                         <div class="input-wrapper">
-                            <input type="tel" id="regPhone" placeholder="+998901234567" required pattern="^\+?[0-9]{9,15}$">
+                            <input type="tel" id="regPhone" placeholder="+998901234567" required
+                                pattern="^\+?[0-9]{9,15}$">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="regPassword">Password</label>
                         <div class="input-wrapper">
-                            <input type="password" id="regPassword" placeholder="Минимум 8 символов" required minlength="8" autocomplete="new-password">
-                            <button type="button" class="toggle-pwd-btn" onclick="togglePasswordVisibility('regPassword', this)"><svg class="inline-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                            <input type="password" id="regPassword" placeholder="Минимум 8 символов" required
+                                minlength="8" autocomplete="new-password">
+                            <button type="button" class="toggle-pwd-btn"
+                                onclick="togglePasswordVisibility('regPassword', this)"><svg class="inline-svg-icon"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg></button>
                         </div>
                     </div>
 
@@ -1049,7 +1119,7 @@
             }
 
             const sakuraLogoImg = new Image();
-            sakuraLogoImg.src = 'assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png';
+            sakuraLogoImg.src = 'TransparentSakuraFlower.png';
 
             function drawPetal(x, y, size, rotation, opacity) {
                 if (!sakuraLogoImg.complete || sakuraLogoImg.naturalWidth === 0) return;

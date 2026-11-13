@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@SuppressWarnings("null")
 class CartControllerTest
 {
     @Autowired
@@ -41,38 +42,42 @@ class CartControllerTest
     void testCalculateCartEndpoint() throws Exception
     {
         CartCalculateResponse mockResponse = CartCalculateResponse.builder()
-            .regionCode("UZB")
-            .currency("UZS")
-            .currencySymbol("soʻm")
-            .subtotal(new BigDecimal("200000.00"))
-            .vatRate(new BigDecimal("15.00"))
-            .vatAmount(new BigDecimal("30000.00"))
-            .amountInclVat(new BigDecimal("230000.00"))
-            .discountAmount(BigDecimal.ZERO)
-            .deliveryFee(BigDecimal.ZERO)
-            .finalTotal(new BigDecimal("230000.00"))
-            .build();
+        .regionCode("UZB")
+        .currency("UZS")
+        .currencySymbol("soʻm")
+        .subtotal(new BigDecimal("200000.00"))
+        .vatRate(new BigDecimal("15.00"))
+        .vatAmount(new BigDecimal("30000.00"))
+        .amountInclVat(new BigDecimal("230000.00"))
+        .discountAmount(BigDecimal.ZERO)
+        .deliveryFee(BigDecimal.ZERO)
+        .finalTotal(new BigDecimal("230000.00"))
+        .build();
 
         when(priceCalculatorService.calculateCart(any(CartCalculateRequest.class))).thenReturn(mockResponse);
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZB")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder()
+        .regionCode("UZB")
+        .orderType(OrderType.PICKUP)
+        .items
+        (List.of
+            (CartItemDto.builder()
                 .productId(1L)
                 .quantity(1)
-                .build()))
-            .build();
+                .build()
+            )
+        )
+        .build();
 
         mockMvc.perform(post("/api/v1/cart/calculate").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.regionCode").value("UZB"))
-            .andExpect(jsonPath("$.total").value(230000.00));
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.regionCode").value("UZB"))
+        .andExpect(jsonPath("$.total").value(230000.00));
 
         mockMvc.perform(post("/api/cart/calculate").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.regionCode").value("UZB"))
-            .andExpect(jsonPath("$.total").value(230000.00));
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.regionCode").value("UZB"))
+        .andExpect(jsonPath("$.total").value(230000.00));
     }
 
     @Test
@@ -80,13 +85,13 @@ class CartControllerTest
     void testCalculateCartValidationFailure() throws Exception
     {
         CartCalculateRequest invalidRequest = CartCalculateRequest.builder()
-            .regionCode("UZB")
-            .items(List.of())
-            .build();
+        .regionCode("UZB")
+        .items(List.of())
+        .build();
 
         mockMvc.perform(post("/api/v1/cart/calculate").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(invalidRequest)))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.message").value("Validation failed"));
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.status").value(400))
+        .andExpect(jsonPath("$.message").value("Validation failed"));
     }
 }

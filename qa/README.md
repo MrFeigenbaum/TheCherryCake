@@ -56,7 +56,7 @@ During **Week 1** (Setup & Foundation), the QA team delivered the following crit
 
 - **Official Postman Collection (`qa/postman/cherry-cake-api.postman_collection.json`)**: 24 automated REST API requests covering Authentication, 16 Countries Catalog, BigDecimal Cart Recalculations, Order Entity Creation, Table Reservation Conflicts, and Reporting.
 - **Local Environment Profile (`qa/postman/cherry-cake-local.postman_environment.json`)**: Pre-configured environment variables for instant testing against `http://localhost:8080` with automatic JWT token management.
-- **Formula Mathematical Reconciliation (`qa/test-cases/formula-test-cases.md`)**: Concrete input-to-output test cases for all 16 operating countries, comparing base prices, add-on modifiers, volume discount tiers (3%–15%), promo code overrides, and regional VAT rates (8%–25.5%).
+- **Formula Mathematical Reconciliation (`qa/test-cases/formula-test-cases.md`)**: Concrete input-to-output test cases for all 16 operating countries, comparing base prices, add-on modifiers, volume discount tiers (3%-15%), promo code overrides, and regional VAT rates (8%-25.5%).
 - **UI & Accessibility Benchmark (`qa/checklists/ui-accessibility-checklist.md`)**: Comprehensive testing protocol for 320px, 768px, and 1200px viewports, 4.5:1 text contrast ratios, Google Lighthouse $\ge 90$ standards, and automated axe-core scans.
 
 <p align="center"><img src="assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
@@ -87,7 +87,7 @@ The Postman suite is partitioned into 7 functional modules:
 | **2. Catalog & 16 Regions** | 7 | `GET /api/v1/catalog/regions`<br>`GET /api/v1/catalog/categories`<br>`GET /api/v1/catalog/products`<br>`GET /api/v1/catalog/pickup-points`<br>`GET /api/v1/catalog/delivery-zones` | Verification of exactly 16 sovereign country codes (`UZB`, `KAZ`, `GEO`, `UKR`, `CHN`, `BLR`, `LTU`, `LVA`, `EST`, `FIN`, `SWE`, `MDA`, `ROU`, `TUR`, `AZE`, `ARM`), currency symbols, and VAT rates. |
 | **3. Cart & BigDecimal Math** | 5 | `POST /api/v1/cart/calculate` | Strict financial balance `Subtotal - Discount + VAT + Delivery == Total`, item modifier surcharges, promo code `WELCOME10` (10%), Finland 25.5% non-integer VAT, Kazakhstan KZT 20%. |
 | **4. Order Management** | 3 | `POST /api/v1/orders`<br>`GET /api/v1/orders/{id}`<br>`GET /api/v1/orders/user/{id}` | Order creation with server price locking, response status 200/201, `orderId` environment extraction, line items verification. |
-| **5. Table Bookings** | 2 | `GET /api/v1/bookings/available-slots`<br>`POST /api/v1/bookings` | Slot availability inspection by date, guest count boundary validation (1–20), double-booking collision prevention returning `409 Conflict`. |
+| **5. Table Bookings** | 2 | `GET /api/v1/bookings/available-slots`<br>`POST /api/v1/bookings` | Slot availability inspection by date, guest count boundary validation (1-20), double-booking collision prevention returning `409 Conflict`. |
 | **6. Business Intelligence** | 2 | `GET /api/v1/reports/sales`<br>`GET /api/v1/reports/sales/csv` | Monthly revenue aggregation, regional breakdown, RFC 4180 CSV header format verification, `ROLE_ADMIN` RBAC security checks. |
 | **7. Error & Validation** | 2 | `POST /api/v1/cart/calculate` | Non-existent region code triggers `400 Bad Request` or `404 Not Found`, empty cart trigger triggers Jakarta Bean Validation error (`@NotEmpty`). |
 
@@ -128,9 +128,9 @@ As detailed in the [**UI & Accessibility Checklist**](checklists/ui-accessibilit
 
 | Viewport Tier | Resolution Range | Target Behavior |
 |---|:---:|---|
-| **Mobile** | **320px – 480px** | Single column card flow, 44x44px touch targets, sticky cart bar. |
-| **Tablet** | **768px – 1024px** | Two-column catalog grid, responsive navigation bar, 2x2 executive metrics. |
-| **Desktop** | **1200px – 1920px** | Full multi-column storefront, 4-card metric dashboard, expanded Swagger window. |
+| **Mobile** | **320px - 480px** | Single column card flow, 44x44px touch targets, sticky cart bar. |
+| **Tablet** | **768px - 1024px** | Two-column catalog grid, responsive navigation bar, 2x2 executive metrics. |
+| **Desktop** | **1200px - 1920px** | Full multi-column storefront, 4-card metric dashboard, expanded Swagger window. |
 
 ### Quality Audit Benchmark Scores:
 - **Google Lighthouse Accessibility:** **98 / 100**

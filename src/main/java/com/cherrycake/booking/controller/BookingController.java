@@ -30,7 +30,7 @@ public class BookingController
     private final BookingService bookingService;
     private final AuthService authService;
 
-    @PostMapping({"/api/bookings", "/api/v1/bookings"})
+    @PostMapping({ "/api/bookings", "/api/v1/bookings" })
     @Operation(summary = "Reserve a table in the café with automatic capacity allocation")
     public ResponseEntity<BookingResponse> createBooking(@Valid @RequestBody BookingCreateRequest request)
     {
@@ -39,14 +39,12 @@ public class BookingController
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping({"/api/bookings/{bookingNumber}", "/api/v1/bookings/{bookingNumber}"})
+    @GetMapping({ "/api/bookings/{bookingNumber}", "/api/v1/bookings/{bookingNumber}" })
     @Operation(summary = "Get table booking details by booking number")
     public ResponseEntity<BookingResponse> getBookingByNumber(@PathVariable String bookingNumber)
-    {
-        return ResponseEntity.ok(bookingService.getBookingByNumber(bookingNumber));
-    }
+    { return ResponseEntity.ok(bookingService.getBookingByNumber(bookingNumber)); }
 
-    @GetMapping({"/api/bookings/my", "/api/v1/bookings/my"})
+    @GetMapping({ "/api/bookings/my", "/api/v1/bookings/my" })
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get current authenticated user's reservations")
     public ResponseEntity<List<BookingResponse>> getMyBookings()
@@ -54,9 +52,7 @@ public class BookingController
         User currentUser = authService.getCurrentAuthenticatedUser();
 
         if (currentUser == null)
-        {
             throw new BadRequestException("User not authenticated");
-        }
 
         return ResponseEntity.ok(bookingService.getUserBookings(currentUser.getId()));
     }

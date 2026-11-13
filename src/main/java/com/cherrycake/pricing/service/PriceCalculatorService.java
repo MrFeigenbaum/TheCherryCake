@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@SuppressWarnings("null")
 public class PriceCalculatorService
 {
     private static final int SCALE = 2;
@@ -52,24 +53,17 @@ public class PriceCalculatorService
     private final DiscountRepository discountRepository;
     private final DeliveryZoneRepository deliveryZoneRepository;
 
-    public CartCalculateResponse calculate(CartCalculateRequest request)
-    {
-        return calculateCart(request);
-    }
+    public CartCalculateResponse calculate(CartCalculateRequest request) { return calculateCart(request); }
 
     public CartCalculateResponse calculateCart(CartCalculateRequest request)
     {
         if (request == null)
-        {
             throw new BadRequestException("Calculate request cannot be null");
-        }
 
         // 1. Resolve Region
         String regionCode = request.getRegionCode();
         if (regionCode == null || regionCode.trim().isEmpty())
-        {
             throw new BadRequestException("Region code is required");
-        }
 
         Region region = regionRepository.findByCodeIgnoreCase(regionCode.trim())
             .orElseThrow(() -> new ResourceNotFoundException("Region not found: " + regionCode));
@@ -78,9 +72,7 @@ public class PriceCalculatorService
 
         // 2. Validate Items
         if (request.getItems() == null || request.getItems().isEmpty())
-        {
             throw new BadRequestException("Cart items cannot be empty");
-        }
 
         BigDecimal subtotal = BigDecimal.ZERO.setScale(SCALE, ROUNDING);
         List<CalculatedItemDto> calculatedItems = new ArrayList<>();
@@ -131,13 +123,10 @@ public class PriceCalculatorService
                 long countSelectedInGroup = groupMods.stream().filter(m -> selectedModifierIds.contains(m.getId())).count();
 
                 if (isRequired && countSelectedInGroup == 0)
-                {
                     throw new BadRequestException("Required modifier group '" + entry.getKey() + "' has no selected option");
-                }
+
                 if (isSingle && countSelectedInGroup > 1)
-                {
                     throw new BadRequestException("Single-choice modifier group '" + entry.getKey() + "' cannot have multiple selections");
-                }
             }
 
             BigDecimal modifiersPerUnit = BigDecimal.ZERO.setScale(SCALE, ROUNDING);
@@ -159,14 +148,14 @@ public class PriceCalculatorService
             subtotal = subtotal.add(lineTotal).setScale(SCALE, ROUNDING);
 
             calculatedItems.add(CalculatedItemDto.builder()
-                .productId(product.getId())
-                .name(product.getName())
-                .quantity(item.getQuantity())
-                .unitPrice(effectiveUnitPrice)
-                .modifiersPrice(modifiersPerUnit)
-                .lineTotal(lineTotal)
-                .modifiers(modifierNames)
-                .build());
+            .productId(product.getId())
+            .name(product.getName())
+            .quantity(item.getQuantity())
+            .unitPrice(effectiveUnitPrice)
+            .modifiersPrice(modifiersPerUnit)
+            .lineTotal(lineTotal)
+            .modifiers(modifierNames)
+            .build());
         }
 
         // 3. VAT Computation
@@ -182,15 +171,11 @@ public class PriceCalculatorService
             String promoCode = request.getPromoCode().trim();
             Optional<Discount> promoOpt = discountRepository.findByCodeIgnoreCaseAndActiveTrue(promoCode);
             if (promoOpt.isEmpty() || promoOpt.get().isExpired())
-            {
                 throw new PromoCodeInvalidException("Промокод недействителен: " + promoCode);
-            }
             Discount promo = promoOpt.get();
             if (promo.getPercentage().compareTo(BigDecimal.ZERO) > 0)
-            {
                 promoRate = promo.getPercentage().divide(ONE_HUNDRED, 4, ROUNDING);
                 discountDescription = promo.getName() + " (" + promo.getPercentage().setScale(0, ROUNDING) + "%)";
-            }
         }
 
         // Threshold Discount Resolution (checked against amountInclVat strictly >=)
@@ -205,9 +190,7 @@ public class PriceCalculatorService
                 {
                     thresholdRate = rate;
                     if (promoRate.compareTo(thresholdRate) < 0)
-                    {
                         discountDescription = threshold.getName() + " (" + threshold.getPercentage().setScale(0, ROUNDING) + "%)";
-                    }
                 }
             }
         }
@@ -221,9 +204,7 @@ public class PriceCalculatorService
         if (request.getOrderType() == OrderType.DELIVERY)
         {
             if (request.getDeliveryZoneId() == null)
-            {
                 throw new BadRequestException("deliveryZoneId is required for DELIVERY");
-            }
             DeliveryZone zone = deliveryZoneRepository.findById(request.getDeliveryZoneId())
                 .orElseThrow(() -> new ResourceNotFoundException("Delivery zone not found with id: " + request.getDeliveryZoneId()));
             deliveryFee = zone.getDeliveryFee().setScale(SCALE, ROUNDING);
@@ -232,28 +213,26 @@ public class PriceCalculatorService
         // 6. Total = amountInclVat - discountAmount + deliveryFee
         BigDecimal total = amountInclVat.subtract(discountAmount).add(deliveryFee).setScale(SCALE, ROUNDING);
         if (total.compareTo(BigDecimal.ZERO) < 0)
-        {
             total = BigDecimal.ZERO.setScale(SCALE, ROUNDING);
-        }
 
         // Display rate as 2-decimal fraction e.g. 0.05 or 0.12
         BigDecimal displayDiscountRate = effectiveDiscountRate.setScale(2, ROUNDING);
-        BigDecimal displayVatRate = vatRate.setScale(2, ROUNDING);
+        BigDecimal displayVatRate = vatRate;
 
         return CartCalculateResponse.builder()
-            .regionCode(region.getCode())
-            .currencyCode(region.getCurrencyCode())
-            .currencySymbol(region.getCurrencySymbol())
-            .subtotal(subtotal)
-            .vatRate(displayVatRate)
-            .vatAmount(vatAmount)
-            .amountInclVat(amountInclVat)
-            .discountRate(displayDiscountRate)
-            .discountAmount(discountAmount)
-            .discountDescription(discountDescription)
-            .deliveryFee(deliveryFee)
-            .total(total)
-            .items(calculatedItems)
-            .build();
+        .regionCode(region.getCode())
+        .currencyCode(region.getCurrencyCode())
+        .currencySymbol(region.getCurrencySymbol())
+        .subtotal(subtotal)
+        .vatRate(displayVatRate)
+        .vatAmount(vatAmount)
+        .amountInclVat(amountInclVat)
+        .discountRate(displayDiscountRate)
+        .discountAmount(discountAmount)
+        .discountDescription(discountDescription)
+        .deliveryFee(deliveryFee)
+        .total(total)
+        .items(calculatedItems)
+        .build();
     }
 }

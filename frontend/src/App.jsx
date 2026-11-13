@@ -7,9 +7,9 @@ import RootLayout from './components/layout/RootLayout';
 import AdminLayout from './components/layout/AdminLayout';
 
 import Home from './pages/Home';
-import Menu from './pages/Menu';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
+import OrderSuccess from './pages/OrderSuccess';
 import Booking from './pages/Booking';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -36,9 +36,11 @@ export function App() {
       <Routes>
         <Route path="/" element={<RootLayout />}>
           <Route index element={<Home />} />
-          <Route path="menu" element={<Menu />} />
+          <Route path="menu" element={<Home />} />
+          <Route path="about" element={<Home />} />
           <Route path="cart" element={<Cart />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="order-success/:orderNumber" element={<OrderSuccess />} />
           <Route path="booking" element={<Booking />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />

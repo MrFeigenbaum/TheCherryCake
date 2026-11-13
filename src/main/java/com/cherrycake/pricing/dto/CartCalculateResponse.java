@@ -63,25 +63,13 @@ public class CartCalculateResponse
     @Builder.Default
     private List<CalculatedItemDto> items = new ArrayList<>();
 
-    public String getCurrencyCode()
-    {
-        return currencyCode != null ? currencyCode : currency;
-    }
+    public String getCurrencyCode() { return currencyCode != null ? currencyCode : currency; }
 
-    public String getCurrency()
-    {
-        return currency != null ? currency : currencyCode;
-    }
+    public String getCurrency() { return currency != null ? currency : currencyCode; }
 
-    public BigDecimal getTotal()
-    {
-        return total != null ? total : finalTotal;
-    }
+    public BigDecimal getTotal() { return total != null ? total : finalTotal; }
 
-    public BigDecimal getFinalTotal()
-    {
-        return finalTotal != null ? finalTotal : total;
-    }
+    public BigDecimal getFinalTotal() { return finalTotal != null ? finalTotal : total; }
 
     @Data
     @Builder

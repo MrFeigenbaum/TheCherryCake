@@ -33,24 +33,12 @@ public class OrderItemResponse
     private String selectedModifiers;
 
     @JsonIgnore
-    public String getName()
-    {
-        return productName;
-    }
+    public String getName() { return productName; }
 
-    public void setName(String n)
-    {
-        this.productName = n;
-    }
+    public void setName(String n) { this.productName = n; }
 
     @JsonIgnore
-    public BigDecimal getLineTotal()
-    {
-        return totalPrice;
-    }
+    public BigDecimal getLineTotal() { return totalPrice; }
 
-    public void setLineTotal(BigDecimal lt)
-    {
-        this.totalPrice = lt;
-    }
+    public void setLineTotal(BigDecimal lt) { this.totalPrice = lt; }
 }

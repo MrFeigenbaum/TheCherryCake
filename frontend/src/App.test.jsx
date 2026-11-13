@@ -20,9 +20,13 @@ describe('App & Router Integration (CC-11)', () => {
     // Country switcher
     expect(screen.getByTestId('country-switcher')).toBeInTheDocument();
 
-    // Nav links
+    // Nav links (sr-only text for accessibility)
     expect(screen.getByText('Меню')).toBeInTheDocument();
     expect(screen.getByText('Бронь')).toBeInTheDocument();
-    expect(screen.getByText('UI-кит')).toBeInTheDocument();
+
+    // Navbar links matching port 8080 portal
+    expect(screen.getAllByText('Artisan Menu').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Table Reservation').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('API Reference').length).toBeGreaterThanOrEqual(1);
   });
 });

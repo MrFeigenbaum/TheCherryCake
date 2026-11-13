@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cherry Cake — Интерактивные дизайн-макеты (320 / 768 / 1200 px)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #7B1E3C;
+      --color-primary-hover: #5E1530;
+      --color-accent: #F5E6D3;
+      --color-text: #222222;
+      --color-text-muted: #666666;
+      --color-success: #1E8449;
+      --color-error: #C0392B;
+      --color-warning: #B9770E;
+      --color-border: #DDDDDD;
+      --color-bg: #FDFBF7;
+      --color-surface: #FFFFFF;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 24px;
+      --space-6: 32px;
+      --space-7: 48px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --touch-target: 44px;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: #2D3748;
+      color: var(--color-text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Top Control Bar */
+    .toolbar {
+      background: #1A202C;
+      color: #FFF;
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .toolbar__title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      color: #F6AD55;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toolbar__group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      background: #2D3748;
+      padding: 4px;
+      border-radius: 6px;
+    }
+
+    .tool-btn {
+      background: transparent;
+      border: none;
+      color: #CBD5E0;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tool-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFF;
+    }
+
+    .tool-btn.active {
+      background: #7B1E3C;
+      color: #FFF;
+      box-shadow: 0 2px 6px rgba(123, 30, 60, 0.5);
+    }
+
+    /* Viewport Simulator Canvas */
+    .canvas-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 16px;
+      overflow-x: auto;
+    }
+
+    .device-frame {
+      background: var(--color-bg);
+      border-radius: 12px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 1200px;
+      max-width: 100%;
+      min-height: 800px;
+      overflow: hidden;
+      border: 1px solid #4A5568;
+      position: relative;
+    }
+
+    /* Header Mock */
+    .mock-header {
+      background: #FFF;
+      border-bottom: 1px solid var(--color-border);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .mock-brand {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--color-primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mock-nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .mock-nav a {
+      text-decoration: none;
+      color: var(--color-text);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 4px 8px;
+    }
+
+    .mock-tools {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .country-tag {
+      background: var(--color-accent);
+      color: var(--color-primary);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .cart-btn {
+      background: var(--color-primary);
+      color: #FFF;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    /* Screen Sections */
+    .screen-view {
+      display: none;
+      padding: 24px 20px;
+    }
+
+    .screen-view.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Typography & Layouts */
+    h1.screen-title {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      color: var(--color-primary);
+      margin-bottom: 8px;
+    }
+
+    p.screen-subtitle {
+      color: var(--color-text-muted);
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
+
+    /* UI Component Mock Cards */
+    .card {
+      background: #FFF;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    .grid-menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    /* Button variants */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      min-height: var(--touch-target);
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: #FFF;
+    }
+
+    .btn-secondary {
+      background: var(--color-accent);
+      color: var(--color-primary);
+      border-color: var(--color-border);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text);
+      border-color: var(--color-border);
+    }
+
+    /* State Simulation classes */
+    .state-hover .btn-primary {
+      background: var(--color-primary-hover) !important;
+      transform: translateY(-1px);
+    }
+
+    .state-hover .card.interactive {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .state-focus input,
+    .state-focus select,
+    .state-focus .btn {
+      outline: 2px solid var(--color-primary) !important;
+      outline-offset: 2px !important;
+    }
+
+    .state-error input,
+    .state-error select {
+      border-color: var(--color-error) !important;
+      background-color: #FFF5F5 !important;
+    }
+
+    .state-error .error-text {
+      display: block !important;
+    }
+
+    .error-text {
+      color: var(--color-error);
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .state-disabled .btn,
+    .state-disabled input,
+    .state-disabled select {
+      opacity: 0.55 !important;
+      cursor: not-allowed !important;
+      pointer-events: none;
+    }
+
+    /* Form Fields */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .form-group input,
+    .form-group select {
+      min-height: var(--touch-target);
+      padding: 8px 12px;
+      font-size: 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+      background: #FFF;
+      outline: none;
+    }
+
+    /* Stepper */
+    .stepper {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .step-item {
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      background: #E2E8F0;
+      color: #4A5568;
+    }
+
+    .step-item.active {
+      background: var(--color-primary);
+      color: #FFF;
+    }
+
+    .step-item.done {
+      background: var(--color-accent);
+      color: var(--color-primary);
+    }
+
+    /* Modifiers Modal Simulation Overlay */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 500;
+    }
+
+    .modal-box {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      max-width: 500px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Table Mock */
+    .mock-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .mock-table th {
+      background: var(--color-accent);
+      color: var(--color-primary);
+      padding: 10px 14px;
+      font-weight: 700;
+    }
+
+    .mock-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--color-border);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Viewport & State Controls -->
+  <header class="toolbar">
+    <div class="toolbar__title">
+      <span>🌸</span>
+      <strong>Cherry Cake UI Mockups</strong>
+    </div>
+
+    <!-- Screen Navigator -->
+    <div class="toolbar__group">
+      <button class="tool-btn active" onclick="switchScreen('home')">1. Главная</button>
+      <button class="tool-btn" onclick="switchScreen('menu')">2. Меню</button>
+      <button class="tool-btn" onclick="switchScreen('card')">3. Карточка товара</button>
+      <button class="tool-btn" onclick="switchScreen('modal')">4. Окно модификаторов</button>
+      <button class="tool-btn" onclick="switchScreen('cart')">5. Корзина</button>
+      <button class="tool-btn" onclick="switchScreen('checkout')">6. Чекаут (4 шага)</button>
+      <button class="tool-btn" onclick="switchScreen('reports')">7. Отчёты</button>
+    </div>
+
+    <!-- Viewport Switcher -->
+    <div class="toolbar__group">
+      <button class="tool-btn" onclick="setViewport(320)">📱 320 px</button>
+      <button class="tool-btn" onclick="setViewport(768)">📱 768 px</button>
+      <button class="tool-btn active" onclick="setViewport(1200)">💻 1200 px</button>
+    </div>
+
+    <!-- Component State Switcher -->
+    <div class="toolbar__group">
+      <button class="tool-btn active" onclick="setState('default')">Default</button>
+      <button class="tool-btn" onclick="setState('hover')">Hover</button>
+      <button class="tool-btn" onclick="setState('focus')">Focus (2px)</button>
+      <button class="tool-btn" onclick="setState('error')">Error</button>
+      <button class="tool-btn" onclick="setState('disabled')">Disabled</button>
+    </div>
+  </header>
+
+  <!-- Canvas Simulation -->
+  <div class="canvas-container">
+    <div id="deviceFrame" class="device-frame state-default">
+
+      <!-- Shared Header -->
+      <header class="mock-header">
+        <a href="#" class="mock-brand">🌸 Cherry Cake</a>
+        <nav class="mock-nav">
+          <a href="#" onclick="switchScreen('menu')">Меню</a>
+          <a href="#" onclick="switchScreen('reports')">Отчёты</a>
+          <a href="#" onclick="switchScreen('cart')">Корзина</a>
+        </nav>
+        <div class="mock-tools">
+          <span class="country-tag">🇺🇿 UZ · UZS</span>
+          <button class="cart-btn" onclick="switchScreen('cart')">🛒 Корзина (2)</button>
+        </div>
+      </header>
+
+      <!-- 1. HOME SCREEN -->
+      <div id="screen-home" class="screen-view active">
+        <div style="text-align: center; padding: 48px 16px; max-width: 800px; margin: 0 auto;">
+          <span style="font-size: 54px; display: block; margin-bottom: 12px;">🍰</span>
+          <h1 class="screen-title" style="font-size: 36px;">Ремесленная кондитерская Comfy Cakes</h1>
+          <p class="screen-subtitle">Авторские десерты, классические французские круассаны и праздничные торты из
+            натуральных ингредиентов с доставкой по всей стране.</p>
+          <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="switchScreen('menu')">Перейти в меню ➔</button>
+            <button class="btn btn-secondary" onclick="switchScreen('reports')">Смотреть отчёты</button>
+          </div>
+        </div>
+
+        <div style="margin-top: 32px;">
+          <h2
+            style="font-family: var(--font-serif); color: var(--color-primary); font-size: 22px; margin-bottom: 16px;">
+            Популярные позиции</h2>
+          <div class="grid-menu">
+            <div class="card interactive">
+              <div style="font-size: 40px; margin-bottom: 8px;">🎂</div>
+              <h3 style="font-size: 16px; color: var(--color-primary);">Торт «Вишнёвый Сад»</h3>
+              <p style="font-size: 13px; color: var(--color-text-muted); margin: 6px 0 12px;">Фирменный трёхъярусный
+                торт со спелой вишней.</p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong>220 000 UZS</strong>
+                <button class="btn btn-primary" onclick="switchScreen('modal')">Настроить</button>
+              </div>
+            </div>
+            <div class="card interactive">
+              <div style="font-size: 40px; margin-bottom: 8px;">🥐</div>
+              <h3 style="font-size: 16px; color: var(--color-primary);">Вишнёвый Даниш</h3>
+              <p style="font-size: 13px; color: var(--color-text-muted); margin: 6px 0 12px;">Хрустящее слоёное тесто с
+                вишней.</p>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong>38 000 UZS</strong>
+                <button class="btn btn-primary" onclick="switchScreen('cart')">В корзину</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. MENU SCREEN -->
+      <div id="screen-menu" class="screen-view">
+        <h1 class="screen-title">Меню кондитерской</h1>
+        <p class="screen-subtitle">Все цены и ставки НДС (12%) адаптированы под выбранный регион (UZB).</p>
+
+        <!-- Category Tabs -->
+        <div style="display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;">
+          <button class="btn btn-primary">Все</button>
+          <button class="btn btn-ghost">Торты</button>
+          <button class="btn btn-ghost">Выпечка</button>
+          <button class="btn btn-ghost">Десерты</button>
+          <button class="btn btn-ghost">Напитки</button>
+        </div>
+
+        <div class="grid-menu">
+          <!-- Item 1 -->
+          <div class="card interactive">
+            <div
+              style="height: 140px; background: #FFF4E6; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 48px; margin-bottom: 12px;">
+              🎂</div>
+            <span
+              style="background: #E6F4EA; color: #1E8449; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px;">В
+              наличии</span>
+            <h3 style="font-size: 16px; color: var(--color-primary);">Торт «Вишнёвый Сад»</h3>
+            <p style="font-size: 13px; color: var(--color-text-muted); margin: 4px 0 12px;">Шоколадный бисквит, крем
+              пралине и вишня.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 16px; font-weight: 700;">220 000 UZS</span>
+              <button class="btn btn-primary" onclick="switchScreen('modal')">Выбрать</button>
+            </div>
+          </div>
+          <!-- Item 2 -->
+          <div class="card interactive">
+            <div
+              style="height: 140px; background: #FDE8E8; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 48px; margin-bottom: 12px;">
+              🧁</div>
+            <span
+              style="background: #E6F4EA; color: #1E8449; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px;">В
+              наличии</span>
+            <h3 style="font-size: 16px; color: var(--color-primary);">Красный Бархат</h3>
+            <p style="font-size: 13px; color: var(--color-text-muted); margin: 4px 0 12px;">Нежный крем-чиз и бархатный
+              корж.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 16px; font-weight: 700;">205 000 UZS</span>
+              <button class="btn btn-primary" onclick="switchScreen('modal')">Выбрать</button>
+            </div>
+          </div>
+          <!-- Item 3 Disabled -->
+          <div class="card" style="opacity: 0.6;">
+            <div
+              style="height: 140px; background: #EDF2F7; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 48px; margin-bottom: 12px;">
+              🥧</div>
+            <span
+              style="background: #FED7D7; color: #C0392B; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px;">Нет
+              в наличии</span>
+            <h3 style="font-size: 16px; color: #718096;">Тарталетка с Вишней</h3>
+            <p style="font-size: 13px; color: var(--color-text-muted); margin: 4px 0 12px;">Фисташковый франжипан и
+              вишня.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 16px; font-weight: 700; color: #718096;">42 000 UZS</span>
+              <button class="btn btn-ghost" disabled>Недоступно</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. PRODUCT CARD DETAIL -->
+      <div id="screen-card" class="screen-view">
+        <h1 class="screen-title">Карточка товара (Детальный вид)</h1>
+        <p class="screen-subtitle">Отображение фото, полного состава, региональной цены и доступных опций.</p>
+        <div class="card"
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+          <div
+            style="background: #FFF4E6; border-radius: 8px; display: flex; align-items: center; justify-content: center; min-height: 260px; font-size: 80px;">
+            🎂
+          </div>
+          <div>
+            <span
+              style="background: #E6F4EA; color: #1E8449; font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 4px;">В
+              наличии</span>
+            <h2 style="font-family: var(--font-serif); color: var(--color-primary); font-size: 26px; margin: 8px 0;">
+              Торт «Вишнёвый Сад» (Signature)</h2>
+            <p style="color: var(--color-text-muted); line-height: 1.6; margin-bottom: 16px;">
+              Флагманский трёхъярусный десерт кондитерской Comfy Cakes. Выпекается из отборного шоколадного бисквита с
+              пропиткой ликёром, взбитым фермерским крем-чизом и сочной спелой вишней.
+            </p>
+            <div style="font-size: 24px; font-weight: 700; color: var(--color-primary); margin-bottom: 20px;">
+              220 000 UZS
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <button class="btn btn-primary" onclick="switchScreen('modal')">Настроить размер и топпинги ➔</button>
+              <button class="btn btn-secondary" onclick="switchScreen('menu')">В каталог</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. MODIFIERS MODAL SCREEN -->
+      <div id="screen-modal" class="screen-view" style="position: relative; min-height: 540px;">
+        <h1 class="screen-title">Окно настройки модификаторов</h1>
+        <p class="screen-subtitle">Выбор размера (SINGLE radio) и дополнений (MULTI checkboxes) с пересчётом цены на
+          лету.</p>
+        <div class="modal-box" style="margin: 20px auto; border: 1px solid var(--color-border);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h2 style="font-family: var(--font-serif); color: var(--color-primary); font-size: 20px;">Торт «Вишнёвый
+              Сад»</h2>
+            <span style="cursor: pointer; font-size: 20px;" onclick="switchScreen('menu')">&times;</span>
+          </div>
+
+          <!-- Modifier SINGLE -->
+          <div class="form-group">
+            <label>Размер десерта (Обязательно):</label>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                <input type="radio" name="mockSize" checked> Стандартный (1 кг) — 220 000 UZS
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                <input type="radio" name="mockSize"> Большой праздничный (2 кг) — +90 000 UZS
+              </label>
+            </div>
+          </div>
+
+          <!-- Modifier MULTI -->
+          <div class="form-group">
+            <label>Дополнительные опции:</label>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                <input type="checkbox" checked> Экстра-порция вишни (+25 000 UZS)
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                <input type="checkbox"> Набор праздничных свечей (+10 000 UZS)
+              </label>
+            </div>
+          </div>
+
+          <!-- Summary & Add -->
+          <div
+            style="border-top: 1px solid var(--color-border); padding-top: 16px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 12px; color: var(--color-text-muted);">Итог с модификаторами:</div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--color-primary);">245 000 UZS</div>
+            </div>
+            <button class="btn btn-primary" onclick="switchScreen('cart')">Добавить в корзину</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. CART SCREEN -->
+      <div id="screen-cart" class="screen-view">
+        <h1 class="screen-title">Корзина покупок</h1>
+        <p class="screen-subtitle">Серверный пересчёт стоимости, НДС (12%) и пороговых скидок.</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+          <!-- Cart Items -->
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h3 style="font-size: 15px; color: var(--color-primary);">Торт «Вишнёвый Сад»</h3>
+                <span style="font-size: 12px; color: var(--color-text-muted);">Экстра вишня · 245 000 UZS / шт.</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button class="btn btn-ghost" style="padding: 4px 10px;">-</button>
+                <strong>1</strong>
+                <button class="btn btn-ghost" style="padding: 4px 10px;">+</button>
+                <button class="btn btn-ghost" style="color: var(--color-error); padding: 4px 8px;">✕</button>
+              </div>
+            </div>
+
+            <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h3 style="font-size: 15px; color: var(--color-primary);">Вишнёвый Даниш</h3>
+                <span style="font-size: 12px; color: var(--color-text-muted);">38 000 UZS / шт.</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button class="btn btn-ghost" style="padding: 4px 10px;">-</button>
+                <strong>2</strong>
+                <button class="btn btn-ghost" style="padding: 4px 10px;">+</button>
+                <button class="btn btn-ghost" style="color: var(--color-error); padding: 4px 8px;">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Totals Panel -->
+          <div class="card" style="background: #FAF7F2;">
+            <h3
+              style="font-family: var(--font-serif); color: var(--color-primary); font-size: 18px; margin-bottom: 16px;">
+              Расчёт стоимости заказа</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; margin-bottom: 16px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>Сумма без НДС:</span>
+                <span>286 607.14 UZS</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>НДС (12%):</span>
+                <span>34 392.86 UZS</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Сумма с НДС:</span>
+                <span>321 000.00 UZS</span>
+              </div>
+              <div
+                style="display: flex; justify-content: space-between; color: var(--color-success); font-weight: 600;">
+                <span>Скидка (WELCOME 5%):</span>
+                <span>-16 050.00 UZS</span>
+              </div>
+              <hr style="border: none; border-top: 1px solid var(--color-border); margin: 6px 0;">
+              <div
+                style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; color: var(--color-primary);">
+                <span>Итого:</span>
+                <span>304 950.00 UZS</span>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="switchScreen('checkout')">Перейти к оформлению
+              ➔</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. CHECKOUT SCREEN (4 STEPS) -->
+      <div id="screen-checkout" class="screen-view">
+        <h1 class="screen-title">Оформление заказа (4 Шага)</h1>
+        <p class="screen-subtitle">Пошаговый Stepper с независимой валидацией полей на каждом этапе.</p>
+
+        <!-- Stepper Indicators -->
+        <div class="stepper">
+          <div class="step-item done">1. Контакты ✓</div>
+          <div class="step-item active">2. Способ получения</div>
+          <div class="step-item">3. Дата и время</div>
+          <div class="step-item">4. Подтверждение</div>
+        </div>
+
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+          <h2
+            style="font-family: var(--font-serif); color: var(--color-primary); font-size: 20px; margin-bottom: 16px;">
+            Шаг 2: Выберите способ получения</h2>
+
+          <div class="form-group">
+            <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+              <label style="display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                <input type="radio" name="chkType"> Самовывоз
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                <input type="radio" name="chkType" checked> Доставка курьером
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Зона доставки (с тарифом курьера):</label>
+            <select>
+              <option>Ташкент — Центр (+20 000 UZS, ~30 мин)</option>
+              <option>Ташкент — Мирзо-Улугбекский р-н (+25 000 UZS)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Адрес доставки <span style="color: var(--color-error);">*</span></label>
+            <input type="text" value="ул. Навои, д. 14, кв. 22" placeholder="Улица, дом, квартира">
+            <span class="error-text">Адрес доставки обязателен для заполнения</span>
+          </div>
+
+          <div
+            style="display: flex; justify-content: space-between; margin-top: 24px; border-top: 1px solid var(--color-border); padding-top: 16px;">
+            <button class="btn btn-ghost" onclick="switchScreen('cart')">Назад в корзину</button>
+            <button class="btn btn-primary" onclick="alert('Шаг 2 валиден -> Переход к Шагу 3 (Дата и слоты)');">Далее:
+              Дата и время ➔</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. REPORTS SCREEN -->
+      <div id="screen-reports" class="screen-view">
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h1 class="screen-title">Аналитические отчёты</h1>
+            <p class="screen-subtitle">Динамика продаж по месяцам и регионам с экспортом в CSV и PDF.</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary" onclick="alert('Выгрузка sales-report.csv начата');">Скачать CSV</button>
+            <button class="btn btn-primary" onclick="alert('Генерация PDF отчёта с графиками...');">Скачать PDF</button>
+          </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+          <div class="card">
+            <span
+              style="font-size: 11px; text-transform: uppercase; color: var(--color-text-muted); font-weight: 700;">Общая
+              выручка</span>
+            <div style="font-size: 22px; font-weight: 700; color: var(--color-primary); margin-top: 4px;">50 700 000 UZS
+            </div>
+          </div>
+          <div class="card">
+            <span
+              style="font-size: 11px; text-transform: uppercase; color: var(--color-text-muted); font-weight: 700;">Количество
+              заказов</span>
+            <div style="font-size: 22px; font-weight: 700; margin-top: 4px;">550 шт.</div>
+          </div>
+          <div class="card">
+            <span
+              style="font-size: 11px; text-transform: uppercase; color: var(--color-text-muted); font-weight: 700;">Средний
+              чек</span>
+            <div style="font-size: 22px; font-weight: 700; margin-top: 4px;">92 181 UZS</div>
+          </div>
+          <div class="card">
+            <span
+              style="font-size: 11px; text-transform: uppercase; color: var(--color-text-muted); font-weight: 700;">Сумма
+              НДС</span>
+            <div style="font-size: 22px; font-weight: 700; color: var(--color-text-muted); margin-top: 4px;">6 084 000
+              UZS</div>
+          </div>
+        </div>
+
+        <!-- Table View -->
+        <div class="card" style="overflow-x: auto;">
+          <table class="mock-table">
+            <thead>
+              <tr>
+                <th scope="col">Период</th>
+                <th scope="col">Заказов</th>
+                <th scope="col">Выручка</th>
+                <th scope="col">НДС (12%)</th>
+                <th scope="col">Средний чек</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026-01</td>
+                <td>140</td>
+                <td>12 500 000 UZS</td>
+                <td>1 500 000 UZS</td>
+                <td>89 285 UZS</td>
+              </tr>
+              <tr>
+                <td>2026-02</td>
+                <td>190</td>
+                <td>16 800 000 UZS</td>
+                <td>2 016 000 UZS</td>
+                <td>88 421 UZS</td>
+              </tr>
+              <tr>
+                <td>2026-03</td>
+                <td>220</td>
+                <td>21 400 000 UZS</td>
+                <td>2 568 000 UZS</td>
+                <td>97 272 UZS</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function setViewport(width) {
+      const frame = document.getElementById('deviceFrame');
+      frame.style.width = width + 'px';
+
+      document.querySelectorAll('.toolbar__group:nth-child(3) .tool-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText.includes(width + ' px'));
+      });
+    }
+
+    function switchScreen(screenId) {
+      document.querySelectorAll('.screen-view').forEach(view => view.classList.remove('active'));
+      const activeScreen = document.getElementById('screen-' + screenId);
+      if (activeScreen) activeScreen.classList.add('active');
+
+      document.querySelectorAll('.toolbar__group:nth-child(2) .tool-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(screenId));
+      });
+    }
+
+    function setState(stateName) {
+      const frame = document.getElementById('deviceFrame');
+      frame.className = 'device-frame state-' + stateName;
+
+      document.querySelectorAll('.toolbar__group:nth-child(4) .tool-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(stateName));
+      });
+    }
+  </script>
+</body>
+
+</html>

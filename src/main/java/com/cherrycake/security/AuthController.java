@@ -46,21 +46,21 @@ public class AuthController
         User user = authService.getCurrentAuthenticatedUser();
 
         if (user == null)
-        {
             throw new ResourceNotFoundException("User session expired or invalid");
-        }
 
         AuthResponse profile = AuthResponse.builder()
             .userId(user.getId())
             .email(user.getEmail())
             .fullName(user.getFullName())
             .role(user.getRole())
-            .user(AuthResponse.UserDto.builder()
+            .user
+            (AuthResponse.UserDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .role(user.getRole())
                 .fullName(user.getFullName())
-                .build())
+                .build()
+            )
             .build();
 
         return ResponseEntity.ok(profile);

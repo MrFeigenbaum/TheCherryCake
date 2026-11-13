@@ -1,0 +1,151 @@
+Backend Java #1
+
+Каталог · Цены · Расчёт суммы · Ошибки
+
+Теги: ОБЯЗАТЕЛЬНО — требует платформа (этапы 1, 2, 3, 5 и процесс команды). БОНУС — этап 4 платформы (самовывоз, доставка, слоты, бронь столика), берём только после обязательного. Всё остальное (регистрация, личный кабинет, роли, админ-панель, промокоды, статусы заказов) в проект не входит.
+
+1. Твоя зона
+
+--- TABLE START ---
+
+Входит | Не входит (BE2)
+
+Каркас backend, CI, Swagger, обработка ошибок Миграция V1: страны, категории, товары, цены, модификаторы, скидки Сид-данные API каталога Сервис расчёта суммы и POST /cart/calculate Тесты расчёта, индексы БД, покрытие тестами | Заказы и их сохранение Отчёты и PDF Слоты, самовывоз, доставка, бронь (бонус) Контракт API для своих эндпоинтов (BE2 пишет свою часть)
+
+--- TABLE END ---
+
+2. План
+
+--- TABLE START ---
+
+ID | Задача | Тип | Дни | Готово =
+
+CC-67 | Каркас backend: start.spring.io (Maven, Java 17, Spring Boot 3; Web, Data JPA, Validation, PostgreSQL, Flyway, H2), пакеты, профили, docker-compose, README, PR в develop | ОБЯЗАТЕЛЬНО | Пн | Запускается по README, BE2 может начинать
+
+CC-5 | ER-схема и миграция V1__catalog.sql | ОБЯЗАТЕЛЬНО | Пн–Ср | TL утвердил, migrate проходит на чистой базе
+
+CC-3 | CI backend: сборка, Checkstyle, тесты на H2, GitHub Actions | ОБЯЗАТЕЛЬНО | Вт | PR с падающим тестом не мержится
+
+CC-7 | Сид-данные V3__seed.sql: 5 стран с НДС, 3 категории, 12 товаров с ценами по странам, модификаторы, правила скидок | ОБЯЗАТЕЛЬНО | Ср–Чт | После старта меню непустое для каждой страны
+
+CC-8 | GlobalExceptionHandler, ErrorResponse, Swagger, CORS | ОБЯЗАТЕЛЬНО | Чт | Любая ошибка даёт единый JSON
+
+CC-10 | Контракт API v1 (со своей частью): Swagger с DTO | ОБЯЗАТЕЛЬНО | Пт | Ссылка в чате, API freeze
+
+CC-21 | API каталога | ОБЯЗАТЕЛЬНО | Нед. 2, Пн–Ср | Эндпоинты отвечают реальными данными
+
+CC-22 | PriceCalculatorService по формуле и таблицам | ОБЯЗАТЕЛЬНО | Нед. 2, Ср–Чт | Unit-тесты на контрольных примерах зелёные
+
+CC-23 | POST /api/cart/calculate | ОБЯЗАТЕЛЬНО | Нед. 2, Чт–Пт | Итоги с сервера
+
+CC-36 | Unit-тесты расчёта по таблице QAJ и граничные случаи | ОБЯЗАТЕЛЬНО | Нед. 3, Пн–Ср | Все пороги проверены
+
+CC-52 | Индексы БД, покрытие тестами не ниже 70 % (JaCoCo), Checkstyle | ОБЯЗАТЕЛЬНО | Нед. 4, Пн–Чт | Отчёт JaCoCo, CI зелёный
+
+CC-61 | Исправление багов | ОБЯЗАТЕЛЬНО | Нед. 5 | 0 критичных
+
+--- TABLE END ---
+
+3. Что делаешь по задачам
+
+CC-67. Каркас backend
+
+Проект cherrycake-backend, группа com.cherrycake. Пакеты: common (config, exception, dto), catalog, pricing, order, report; для бонуса позже booking. Внутри пакетов controller, service, repository, dto, entity (в common и report свои папки).
+
+Профили: application.yml, application-dev.yml (PostgreSQL), application-test.yml (H2). Переменные окружения DB_URL, DB_USER, DB_PASSWORD, CORS_ALLOWED_ORIGINS; в репозитории только .env.example.
+
+docker-compose.yml с PostgreSQL 15. README: как поднять базу, запустить приложение и тесты. Пустые папки с файлом .gitkeep.
+
+CC-5. Схема V1
+
+--- TABLE START ---
+
+Таблица | Поля
+
+regions | id, code (3 символа: UZB, KAZ, GEO, UKR, CHN), name, currency_code, currency_symbol, vat_rate (доля, например 0.15)
+
+categories | id, name, sort_order
+
+products | id, category_id, name, description, photo_url
+
+regional_prices | product_id, region_id, price, in_stock (первичный ключ product_id + region_id)
+
+modifier_groups | id, product_id, name, type (SINGLE или MULTI), is_required
+
+modifiers | id, group_id, name
+
+modifier_regional_prices | modifier_id, region_id, price_delta
+
+discount_rules | id, threshold, rate (общая таблица: 100 → 0.03, 500 → 0.05, 700 → 0.07, 1000 → 0.10, 5000 → 0.15)
+
+--- TABLE END ---
+
+Деньги в NUMERIC(12,2), ставки в NUMERIC(5,4). Валюты стран уточняются у ментора.
+
+CC-21 и CC-23. Эндпоинты
+
+--- TABLE START ---
+
+Метод | Путь | Что делает
+
+GET | /api/regions | Страны, валюты и НДС
+
+GET | /api/categories | Категории для вкладок меню
+
+GET | /api/products?region=UZB&categoryId= | Карточки: id, название, описание, цена страны, фото, inStock
+
+GET | /api/products/{id}?region=UZB | Карточка с группами модификаторов и ценами страны
+
+POST | /api/cart/calculate | Принимает страну и позиции, возвращает расчёт
+
+--- TABLE END ---
+
+CC-22. Расчёт суммы
+
+Subtotal = сумма (цена товара с модификаторами × количество) по ценам выбранной страны.
+
+VAT = Subtotal × ставка НДС страны.
+
+Amount_incl_VAT = Subtotal + VAT.
+
+Discount = Amount_incl_VAT × ставка скидки; порог выбирается по Amount_incl_VAT.
+
+Доставка (только если выбрана, бонус) добавляется последней и на порог скидки не влияет.
+
+Total = Amount_incl_VAT − Discount + Delivery_fee.
+
+Округление: до 2 знаков, режим HALF_UP, после каждого шага (vatAmount, discountAmount). Деньги только в BigDecimal.
+
+Ответ /cart/calculate: по каждой позиции unitPrice, modifiersPrice, quantity, lineTotal; общие поля subtotal, vatRate, vatAmount, amountInclVat, discountRate, discountAmount, deliveryFee (0, если доставка не выбрана), total, currencyCode. Если страна не передана, ответ 400; неизвестная страна 404; нет в наличии 409; quantity меньше 1 даёт 400.
+
+--- TABLE START ---
+
+Страна | Subtotal | VAT | С НДС | Скидка | Итог | Что проверяет
+
+UZB | 1000 | 150,00 | 1150,00 | 10 % = 115,00 | 1035,00 | Порог 1000 по сумме с НДС
+
+KAZ | 400 | 80,00 | 480,00 | 3 % = 14,40 | 465,60 | Скидка по сумме с НДС
+
+GEO | 90 | 10,80 | 100,80 | 3 % = 3,02 | 97,78 | Subtotal ниже 100, но с НДС порог пройден
+
+UZB | 85 | 12,75 | 97,75 | нет | 97,75 | Ниже самого низкого порога
+
+CHN | 4300 | 774,00 | 5074,00 | 15 % = 761,10 | 4312,90 | Порог 5000 по сумме с НДС
+
+KAZ | 80 + доставка 10 | 16,00 | 96,00 | нет | 106,00 | Доставка в конце, на порог не влияет
+
+--- TABLE END ---
+
+CC-8. Формат ошибок
+
+ErrorResponse: status, message, errors (список полей и сообщений), timestamp, path. Коды: 400 валидация, 404 не найдено, 409 конфликт.
+
+4. Кого ждёшь и кому отдаёшь
+
+Ждёшь от TL: репозиторий (Пн). От QAJ: таблицу кейсов на формулы до среды недели 1.
+
+Отдаёшь BE2: каркас (Пн) и схему V1 (Ср).
+
+Отдаёшь FE: контракт API (Пт недели 1), каталог (Ср недели 2), /cart/calculate (Пт недели 2); до этого frontend работает на моках.
+
+Если срок «в тот же день»: договорись о форме ответа в контракте и дай заглушку.

@@ -5,9 +5,4 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class PromoCodeInvalidException extends RuntimeException
-{
-    public PromoCodeInvalidException(String message)
-    {
-        super(message);
-    }
-}
+{ public PromoCodeInvalidException(String message) { super(message); } }

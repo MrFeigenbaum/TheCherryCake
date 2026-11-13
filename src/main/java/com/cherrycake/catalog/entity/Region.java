@@ -49,10 +49,7 @@ public class Region
     public BigDecimal getVatRateFraction()
     {
         if (vatRate == null) return BigDecimal.ZERO;
-        if (vatRate.compareTo(BigDecimal.ONE) > 0)
-        {
-            return vatRate.divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP);
-        }
+        if (vatRate.compareTo(BigDecimal.ONE) > 0) return vatRate.divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP);
         return vatRate.setScale(4, RoundingMode.HALF_UP);
     }
 }

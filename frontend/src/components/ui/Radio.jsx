@@ -50,7 +50,7 @@ export function Radio({
   );
 }
 
-export function RadioGroup({ label, children, name, className = '' }) {
+export function RadioGroup({ label, children, name: _name, className = '' }) {
   return (
     <fieldset
       role="radiogroup"

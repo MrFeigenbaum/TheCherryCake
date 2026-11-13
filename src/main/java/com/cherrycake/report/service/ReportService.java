@@ -60,10 +60,9 @@ public class ReportService
         // Fetch orders and filter strictly by status IN (CONFIRMED, DONE)
         List<Order> allOrders = orderRepository.findByCreatedAtBetween(startDateTime, endDateTime);
         List<Order> validOrders = allOrders.stream()
-            .filter(o -> o.getStatus() == OrderStatus.CONFIRMED || o.getStatus() == OrderStatus.DONE)
-            .filter(o -> region == null || region.trim().isEmpty() || region.equalsIgnoreCase("ALL") 
-                         || (o.getRegion() != null && o.getRegion().getCode().equalsIgnoreCase(region.trim())))
-            .collect(Collectors.toList());
+        .filter(o -> o.getStatus() == OrderStatus.CONFIRMED || o.getStatus() == OrderStatus.DONE)
+        .filter(o -> region == null || region.trim().isEmpty() || region.equalsIgnoreCase("ALL") || (o.getRegion() != null && o.getRegion().getCode().equalsIgnoreCase(region.trim())))
+        .collect(Collectors.toList());
 
         BigDecimal totalSubtotal = BigDecimal.ZERO;
         BigDecimal totalVat = BigDecimal.ZERO;
@@ -84,13 +83,10 @@ public class ReportService
 
             String key;
             if ("MONTH".equals(groupMode))
-            {
                 key = o.getOrderDate() != null ? o.getOrderDate().format(monthFormatter) : o.getCreatedAt().format(monthFormatter);
-            }
             else
-            {
                 key = o.getRegion() != null ? o.getRegion().getCode() : "DEFAULT";
-            }
+
             groupedMap.computeIfAbsent(key, k -> new ArrayList<>()).add(o);
         }
 
@@ -117,15 +113,15 @@ public class ReportService
             }
 
             rows.add(ReportRow.builder()
-                .label(label)
-                .ordersCount((long) groupOrders.size())
-                .subtotal(rSubtotal.setScale(2, RoundingMode.HALF_UP))
-                .vatAmount(rVat.setScale(2, RoundingMode.HALF_UP))
-                .discountAmount(rDiscount.setScale(2, RoundingMode.HALF_UP))
-                .deliveryFee(rFee.setScale(2, RoundingMode.HALF_UP))
-                .total(rTotal.setScale(2, RoundingMode.HALF_UP))
-                .currencyCode(curCode)
-                .build());
+            .label(label)
+            .ordersCount((long) groupOrders.size())
+            .subtotal(rSubtotal.setScale(2, RoundingMode.HALF_UP))
+            .vatAmount(rVat.setScale(2, RoundingMode.HALF_UP))
+            .discountAmount(rDiscount.setScale(2, RoundingMode.HALF_UP))
+            .deliveryFee(rFee.setScale(2, RoundingMode.HALF_UP))
+            .total(rTotal.setScale(2, RoundingMode.HALF_UP))
+            .currencyCode(curCode)
+            .build());
         }
 
         long ordersCount = validOrders.size();
@@ -134,13 +130,13 @@ public class ReportService
             : BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
         KpiBlock kpi = KpiBlock.builder()
-            .subtotal(totalSubtotal.setScale(2, RoundingMode.HALF_UP))
-            .vatAmount(totalVat.setScale(2, RoundingMode.HALF_UP))
-            .discountAmount(totalDiscount.setScale(2, RoundingMode.HALF_UP))
-            .total(totalRevenue.setScale(2, RoundingMode.HALF_UP))
-            .averageCheck(avgCheck)
-            .ordersCount(ordersCount)
-            .build();
+        .subtotal(totalSubtotal.setScale(2, RoundingMode.HALF_UP))
+        .vatAmount(totalVat.setScale(2, RoundingMode.HALF_UP))
+        .discountAmount(totalDiscount.setScale(2, RoundingMode.HALF_UP))
+        .total(totalRevenue.setScale(2, RoundingMode.HALF_UP))
+        .averageCheck(avgCheck)
+        .ordersCount(ordersCount)
+        .build();
 
         Map<String, Object> filtersMap = new HashMap<>();
         filtersMap.put("from", fromDate.toString());
@@ -149,20 +145,20 @@ public class ReportService
         filtersMap.put("groupBy", groupMode);
 
         return SalesReportResponse.builder()
-            .groupBy(groupMode)
-            .filters(filtersMap)
-            .generatedAt(Instant.now().toString())
-            .kpi(kpi)
-            .rows(rows)
-            .period(fromDate + " to " + toDate)
-            .regionFilter(region != null ? region : "ALL")
-            .totalSubtotal(kpi.getSubtotal())
-            .totalVat(kpi.getVatAmount())
-            .totalDiscount(kpi.getDiscountAmount())
-            .totalRevenue(kpi.getTotal())
-            .averageCheck(kpi.getAverageCheck())
-            .totalOrdersCount(kpi.getOrdersCount())
-            .build();
+        .groupBy(groupMode)
+        .filters(filtersMap)
+        .generatedAt(Instant.now().toString())
+        .kpi(kpi)
+        .rows(rows)
+        .period(fromDate + " to " + toDate)
+        .regionFilter(region != null ? region : "ALL")
+        .totalSubtotal(kpi.getSubtotal())
+        .totalVat(kpi.getVatAmount())
+        .totalDiscount(kpi.getDiscountAmount())
+        .totalRevenue(kpi.getTotal())
+        .averageCheck(kpi.getAverageCheck())
+        .totalOrdersCount(kpi.getOrdersCount())
+        .build();
     }
 
     public byte[] exportCsv(LocalDate from, LocalDate to, String region, String groupBy)
@@ -174,26 +170,26 @@ public class ReportService
             // UTF-8 BOM
             baos.write(new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF });
 
-            try (OutputStreamWriter osw = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
-                 CSVWriter writer = new CSVWriter(osw))
+            try (OutputStreamWriter osw = new OutputStreamWriter(baos, StandardCharsets.UTF_8); CSVWriter writer = new CSVWriter(osw))
             {
                 // Header strictly matching Glossary §9
-                writer.writeNext(new String[] {
-                    "label", "ordersCount", "subtotal", "vatAmount", "discountAmount", "deliveryFee", "total", "currencyCode"
-                });
+                writer.writeNext(new String[] { "label", "ordersCount", "subtotal", "vatAmount", "discountAmount", "deliveryFee", "total", "currencyCode" });
 
                 for (ReportRow row : report.getRows())
                 {
-                    writer.writeNext(new String[] {
-                        row.getLabel(),
-                        String.valueOf(row.getOrdersCount()),
-                        row.getSubtotal().toString(),
-                        row.getVatAmount().toString(),
-                        row.getDiscountAmount().toString(),
-                        row.getDeliveryFee().toString(),
-                        row.getTotal().toString(),
-                        row.getCurrencyCode() != null ? row.getCurrencyCode() : "UZS"
-                    });
+                    writer.writeNext
+                    (new String[]
+                        {
+                            row.getLabel(),
+                            String.valueOf(row.getOrdersCount()),
+                            row.getSubtotal().toString(),
+                            row.getVatAmount().toString(),
+                            row.getDiscountAmount().toString(),
+                            row.getDeliveryFee().toString(),
+                            row.getTotal().toString(),
+                            row.getCurrencyCode() != null ? row.getCurrencyCode() : "UZS"
+                        }
+                    );
                 }
 
                 writer.flush();
@@ -201,10 +197,7 @@ public class ReportService
 
             return baos.toByteArray();
         }
-        catch (Exception e)
-        {
-            throw new RuntimeException("Failed to generate CSV sales report", e);
-        }
+        catch (Exception e) { throw new RuntimeException("Failed to generate CSV sales report", e); }
     }
 
     public byte[] exportPdf(LocalDate from, LocalDate to, String region, String groupBy)
@@ -267,18 +260,17 @@ public class ReportService
             if (!report.getRows().isEmpty())
             {
                 DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-                for (ReportRow row : report.getRows())
-                {
-                    dataset.addValue(row.getTotal(), "Выручка", row.getLabel());
-                }
+                for (ReportRow row : report.getRows()) { dataset.addValue(row.getTotal(), "Выручка", row.getLabel()); }
 
-                JFreeChart barChart = ChartFactory.createBarChart(
+                JFreeChart barChart = ChartFactory.createBarChart
+                (
                     "Выручка по " + ("MONTH".equals(report.getGroupBy()) ? "месяцам" : "регионам"),
                     "Категория",
                     "Сумма",
                     dataset,
                     PlotOrientation.VERTICAL,
-                    false, true, false);
+                    false, true, false
+                );
 
                 barChart.setBackgroundPaint(Color.WHITE);
                 BufferedImage chartImg = barChart.createBufferedImage(500, 220);
@@ -317,9 +309,6 @@ public class ReportService
 
             return baos.toByteArray();
         }
-        catch (Exception e)
-        {
-            throw new RuntimeException("Failed to generate PDF sales report", e);
-        }
+        catch (Exception e) { throw new RuntimeException("Failed to generate PDF sales report", e); }
     }
 }

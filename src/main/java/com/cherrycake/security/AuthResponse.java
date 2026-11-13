@@ -23,11 +23,11 @@ public class AuthResponse
     {
         if (user != null) return user;
         return UserDto.builder()
-            .id(userId)
-            .email(email)
-            .role(role)
-            .fullName(fullName)
-            .build();
+        .id(userId)
+        .email(email)
+        .role(role)
+        .fullName(fullName)
+        .build();
     }
 
     @Data

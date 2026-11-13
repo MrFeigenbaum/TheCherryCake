@@ -38,6 +38,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@SuppressWarnings("null")
 class PriceCalculatorServiceTest
 {
     @Mock
@@ -72,101 +73,101 @@ class PriceCalculatorServiceTest
     void setUp()
     {
         uzbekistan = Region.builder()
-            .id(1L)
-            .code("UZ")
-            .name("Uzbekistan")
-            .currencyCode("UZS")
-            .currencySymbol("soʻm")
-            .vatRate(new BigDecimal("12.00"))
-            .active(true)
-            .build();
+        .id(1L)
+        .code("UZ")
+        .name("Uzbekistan")
+        .currencyCode("UZS")
+        .currencySymbol("soʻm")
+        .vatRate(new BigDecimal("12.00"))
+        .active(true)
+        .build();
 
         russia = Region.builder()
-            .id(2L)
-            .code("RU")
-            .name("Russia")
-            .currencyCode("RUB")
-            .currencySymbol("₽")
-            .vatRate(new BigDecimal("20.00"))
-            .active(true)
-            .build();
+        .id(2L)
+        .code("RU")
+        .name("Russia")
+        .currencyCode("RUB")
+        .currencySymbol("₽")
+        .vatRate(new BigDecimal("20.00"))
+        .active(true)
+        .build();
 
         cake = Product.builder()
-            .id(10L)
-            .code("CHERRY_BLOSSOM")
-            .name("Cherry Blossom Signature Cake")
-            .available(true)
-            .build();
+        .id(10L)
+        .code("CHERRY_BLOSSOM")
+        .name("Cherry Blossom Signature Cake")
+        .available(true)
+        .build();
 
         uzbCakePrice = ProductPrice.builder()
-            .id(100L)
-            .product(cake)
-            .region(uzbekistan)
-            .price(new BigDecimal("100.00"))
-            .available(true)
-            .build();
+        .id(100L)
+        .product(cake)
+        .region(uzbekistan)
+        .price(new BigDecimal("100.00"))
+        .available(true)
+        .build();
 
         ruCakePrice = ProductPrice.builder()
-            .id(101L)
-            .product(cake)
-            .region(russia)
-            .price(new BigDecimal("120.00"))
-            .available(true)
-            .build();
+        .id(101L)
+        .product(cake)
+        .region(russia)
+        .price(new BigDecimal("120.00"))
+        .available(true)
+        .build();
 
         extraCompote = ProductModifier.builder()
-            .id(50L)
-            .product(cake)
-            .name("Extra Cherry Compote")
-            .priceDelta(new BigDecimal("10.00"))
-            .groupName("Toppings")
-            .groupType("SINGLE")
-            .required(false)
-            .build();
+        .id(50L)
+        .product(cake)
+        .name("Extra Cherry Compote")
+        .priceDelta(new BigDecimal("10.00"))
+        .groupName("Toppings")
+        .groupType("SINGLE")
+        .required(false)
+        .build();
 
         centerZone = DeliveryZone.builder()
-            .id(1L)
-            .region(uzbekistan)
-            .name("Center")
-            .deliveryFee(new BigDecimal("5.00"))
-            .build();
+        .id(1L)
+        .region(uzbekistan)
+        .name("Center")
+        .deliveryFee(new BigDecimal("5.00"))
+        .build();
 
         discount5 = Discount.builder()
-            .id(1L)
-            .name("5% threshold")
-            .discountType(DiscountType.THRESHOLD)
-            .minSubtotal(new BigDecimal("200.00"))
-            .percentage(new BigDecimal("5.00"))
-            .active(true)
-            .build();
+        .id(1L)
+        .name("5% threshold")
+        .discountType(DiscountType.THRESHOLD)
+        .minSubtotal(new BigDecimal("200.00"))
+        .percentage(new BigDecimal("5.00"))
+        .active(true)
+        .build();
 
         discount10 = Discount.builder()
-            .id(2L)
-            .name("10% threshold")
-            .discountType(DiscountType.THRESHOLD)
-            .minSubtotal(new BigDecimal("500.00"))
-            .percentage(new BigDecimal("10.00"))
-            .active(true)
-            .build();
+        .id(2L)
+        .name("10% threshold")
+        .discountType(DiscountType.THRESHOLD)
+        .minSubtotal(new BigDecimal("500.00"))
+        .percentage(new BigDecimal("10.00"))
+        .active(true)
+        .build();
 
         promo10 = Discount.builder()
-            .id(3L)
-            .name("Promo 10%")
-            .discountType(DiscountType.PROMO_CODE)
-            .code("PROMO10")
-            .percentage(new BigDecimal("10.00"))
-            .active(true)
-            .build();
+        .id(3L)
+        .name("Promo 10%")
+        .discountType(DiscountType.PROMO_CODE)
+        .code("PROMO10")
+        .percentage(new BigDecimal("10.00"))
+        .active(true)
+        .build();
 
         expiredPromo = Discount.builder()
-            .id(4L)
-            .name("Expired Promo")
-            .discountType(DiscountType.PROMO_CODE)
-            .code("EXPIRED")
-            .percentage(new BigDecimal("15.00"))
-            .validTo(LocalDate.now().minusDays(1))
-            .active(true)
-            .build();
+        .id(4L)
+        .name("Expired Promo")
+        .discountType(DiscountType.PROMO_CODE)
+        .code("EXPIRED")
+        .percentage(new BigDecimal("15.00"))
+        .validTo(LocalDate.now().minusDays(1))
+        .active(true)
+        .build();
     }
 
     @Test
@@ -179,10 +180,10 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD)).thenReturn(List.of());
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -205,10 +206,10 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD)).thenReturn(List.of());
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("RU")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
-            .build();
+        .regionCode("RU")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -230,10 +231,10 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD)).thenReturn(List.of(discount5, discount10));
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(2).modifierIds(List.of(50L)).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(2).modifierIds(List.of(50L)).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -263,10 +264,10 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD)).thenReturn(List.of(discount5));
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(20L).quantity(1).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(20L).quantity(1).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -289,10 +290,10 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD)).thenReturn(List.of(discount5));
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(20L).quantity(1).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(20L).quantity(1).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -316,10 +317,10 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD)).thenReturn(List.of(discount5));
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(20L).quantity(1).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(20L).quantity(1).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -343,10 +344,10 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD)).thenReturn(List.of(discount5, discount10));
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(20L).quantity(1).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(20L).quantity(1).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -368,11 +369,11 @@ class PriceCalculatorServiceTest
         when(deliveryZoneRepository.findById(1L)).thenReturn(Optional.of(centerZone));
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.DELIVERY)
-            .deliveryZoneId(1L)
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(2).modifierIds(List.of(50L)).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.DELIVERY)
+        .deliveryZoneId(1L)
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(2).modifierIds(List.of(50L)).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -393,10 +394,10 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD)).thenReturn(List.of(discount5, discount10));
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(2).modifierIds(List.of(50L)).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(2).modifierIds(List.of(50L)).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -417,10 +418,10 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD)).thenReturn(List.of());
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(30L).quantity(3).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(30L).quantity(3).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -445,10 +446,10 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByDiscountTypeAndActiveTrue(DiscountType.THRESHOLD)).thenReturn(List.of());
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(30L).quantity(1).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(30L).quantity(1).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -469,13 +470,12 @@ class PriceCalculatorServiceTest
         when(productPriceRepository.findByProductIdAndRegionId(10L, 1L)).thenReturn(Optional.of(unavailPrice));
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
+        .build();
 
-        assertThatThrownBy(() -> priceCalculatorService.calculateCart(request))
-            .isInstanceOf(ProductUnavailableException.class);
+        assertThatThrownBy(() -> priceCalculatorService.calculateCart(request)).isInstanceOf(ProductUnavailableException.class);
     }
 
     @Test
@@ -483,14 +483,14 @@ class PriceCalculatorServiceTest
     void testC17_RequiredModifierMissing()
     {
         ProductModifier reqMod = ProductModifier.builder()
-            .id(55L)
-            .product(cake)
-            .name("Base Size")
-            .priceDelta(BigDecimal.ZERO)
-            .groupName("Size")
-            .groupType("SINGLE")
-            .required(true)
-            .build();
+        .id(55L)
+        .product(cake)
+        .name("Base Size")
+        .priceDelta(BigDecimal.ZERO)
+        .groupName("Size")
+        .groupType("SINGLE")
+        .required(true)
+        .build();
 
         when(regionRepository.findByCodeIgnoreCase("UZ")).thenReturn(Optional.of(uzbekistan));
         when(productRepository.findById(10L)).thenReturn(Optional.of(cake));
@@ -499,14 +499,14 @@ class PriceCalculatorServiceTest
 
         // modifierIds is empty
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(1).modifierIds(List.of()).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(1).modifierIds(List.of()).build()))
+        .build();
 
         assertThatThrownBy(() -> priceCalculatorService.calculateCart(request))
-            .isInstanceOf(BadRequestException.class)
-            .hasMessageContaining("Size");
+        .isInstanceOf(BadRequestException.class)
+        .hasMessageContaining("Size");
     }
 
     @Test
@@ -514,11 +514,11 @@ class PriceCalculatorServiceTest
     void testC18_SingleGroupMultipleSelection()
     {
         ProductModifier mod1 = ProductModifier.builder()
-            .id(61L).product(cake).name("Small").priceDelta(BigDecimal.ZERO)
-            .groupName("Size").groupType("SINGLE").build();
+        .id(61L).product(cake).name("Small").priceDelta(BigDecimal.ZERO)
+        .groupName("Size").groupType("SINGLE").build();
         ProductModifier mod2 = ProductModifier.builder()
-            .id(62L).product(cake).name("Large").priceDelta(new BigDecimal("10.00"))
-            .groupName("Size").groupType("SINGLE").build();
+        .id(62L).product(cake).name("Large").priceDelta(new BigDecimal("10.00"))
+        .groupName("Size").groupType("SINGLE").build();
 
         when(regionRepository.findByCodeIgnoreCase("UZ")).thenReturn(Optional.of(uzbekistan));
         when(productRepository.findById(10L)).thenReturn(Optional.of(cake));
@@ -526,14 +526,14 @@ class PriceCalculatorServiceTest
         when(productModifierRepository.findByProductId(10L)).thenReturn(List.of(mod1, mod2));
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(1).modifierIds(List.of(61L, 62L)).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(1).modifierIds(List.of(61L, 62L)).build()))
+        .build();
 
         assertThatThrownBy(() -> priceCalculatorService.calculateCart(request))
-            .isInstanceOf(BadRequestException.class)
-            .hasMessageContaining("Single-choice");
+        .isInstanceOf(BadRequestException.class)
+        .hasMessageContaining("Single-choice");
     }
 
     @Test
@@ -547,11 +547,11 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByCodeIgnoreCaseAndActiveTrue("PROMO10")).thenReturn(Optional.of(promo10));
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .promoCode("PROMO10")
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .promoCode("PROMO10")
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -571,14 +571,13 @@ class PriceCalculatorServiceTest
         when(discountRepository.findByCodeIgnoreCaseAndActiveTrue("EXPIRED")).thenReturn(Optional.of(expiredPromo));
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .promoCode("EXPIRED")
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .promoCode("EXPIRED")
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
+        .build();
 
-        assertThatThrownBy(() -> priceCalculatorService.calculateCart(request))
-            .isInstanceOf(PromoCodeInvalidException.class);
+        assertThatThrownBy(() -> priceCalculatorService.calculateCart(request)).isInstanceOf(PromoCodeInvalidException.class);
     }
 
     @Test
@@ -594,11 +593,11 @@ class PriceCalculatorServiceTest
         // quantity 2 -> incl = 224.00 >= 200.00 (threshold gives 5%)
         // promo gives 10% -> max = 10%
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("UZ")
-            .orderType(OrderType.PICKUP)
-            .promoCode("PROMO10")
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(2).build()))
-            .build();
+        .regionCode("UZ")
+        .orderType(OrderType.PICKUP)
+        .promoCode("PROMO10")
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(2).build()))
+        .build();
 
         CartCalculateResponse response = priceCalculatorService.calculateCart(request);
 
@@ -615,12 +614,11 @@ class PriceCalculatorServiceTest
         when(regionRepository.findByCodeIgnoreCase("XX")).thenReturn(Optional.empty());
 
         CartCalculateRequest request = CartCalculateRequest.builder()
-            .regionCode("XX")
-            .orderType(OrderType.PICKUP)
-            .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
-            .build();
+        .regionCode("XX")
+        .orderType(OrderType.PICKUP)
+        .items(List.of(CartItemDto.builder().productId(10L).quantity(1).build()))
+        .build();
 
-        assertThatThrownBy(() -> priceCalculatorService.calculateCart(request))
-            .isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> priceCalculatorService.calculateCart(request)).isInstanceOf(ResourceNotFoundException.class);
     }
 }

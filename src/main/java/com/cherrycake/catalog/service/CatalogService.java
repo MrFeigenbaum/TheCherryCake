@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@SuppressWarnings("null")
 public class CatalogService
 {
     private final RegionRepository regionRepository;
@@ -50,28 +51,19 @@ public class CatalogService
     private final TimeSlotRepository timeSlotRepository;
 
     public List<RegionDto> getAllActiveRegions()
-    {
-        return regionRepository.findAllByActiveTrue().stream().map(this::mapToRegionDto).collect(Collectors.toList());
-    }
+    { return regionRepository.findAllByActiveTrue().stream().map(this::mapToRegionDto).collect(Collectors.toList()); }
 
     public List<CategoryDto> getAllCategories()
-    {
-        return categoryRepository.findAllByOrderByDisplayOrderAsc().stream().map(this::mapToCategoryDto).collect(Collectors.toList());
-    }
+    { return categoryRepository.findAllByOrderByDisplayOrderAsc().stream().map(this::mapToCategoryDto).collect(Collectors.toList()); }
 
     public List<ProductDto> getProducts(String regionCode, Long categoryId)
     {
         if (regionCode == null || regionCode.trim().isEmpty())
-        {
             throw new BadRequestException("Region parameter is required");
-        }
 
-        Region region = regionRepository.findByCodeIgnoreCase(regionCode.trim())
-            .orElseThrow(() -> new ResourceNotFoundException("Region not found: " + regionCode));
+        Region region = regionRepository.findByCodeIgnoreCase(regionCode.trim()).orElseThrow(() -> new ResourceNotFoundException("Region not found: " + regionCode));
 
-        List<Product> products = (categoryId != null)
-            ? productRepository.findByCategoryIdAndAvailableTrue(categoryId)
-            : productRepository.findAllByAvailableTrue();
+        List<Product> products = (categoryId != null) ? productRepository.findByCategoryIdAndAvailableTrue(categoryId) : productRepository.findAllByAvailableTrue();
 
         return products.stream().map(p -> mapToProductDto(p, region)).collect(Collectors.toList());
     }
@@ -79,15 +71,11 @@ public class CatalogService
     public ProductDto getProductById(Long productId, String regionCode)
     {
         if (regionCode == null || regionCode.trim().isEmpty())
-        {
             throw new BadRequestException("Region parameter is required");
-        }
 
-        Region region = regionRepository.findByCodeIgnoreCase(regionCode.trim())
-            .orElseThrow(() -> new ResourceNotFoundException("Region not found: " + regionCode));
+        Region region = regionRepository.findByCodeIgnoreCase(regionCode.trim()).orElseThrow(() -> new ResourceNotFoundException("Region not found: " + regionCode));
 
-        Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
 
         return mapToProductDto(product, region);
     }
@@ -151,7 +139,8 @@ public class CatalogService
         if (slots.isEmpty())
         {
             // Fallback generation for common working hours 10:00 - 20:00
-            LocalTime[] times = new LocalTime[] {
+            LocalTime[] times = new LocalTime[]
+            {
                 LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 30),
                 LocalTime.of(14, 0), LocalTime.of(15, 30), LocalTime.of(17, 0),
                 LocalTime.of(18, 30), LocalTime.of(20, 0)
@@ -160,14 +149,14 @@ public class CatalogService
             for (LocalTime t : times)
             {
                 responses.add(TimeSlotResponse.builder()
-                    .id(idGen++)
-                    .date(targetDate)
-                    .startTime(t)
-                    .endTime(t.plusMinutes(60))
-                    .capacity(10)
-                    .bookedCount(0)
-                    .isAvailable(true)
-                    .build());
+                .id(idGen++)
+                .date(targetDate)
+                .startTime(t)
+                .endTime(t.plusMinutes(60))
+                .capacity(10)
+                .bookedCount(0)
+                .isAvailable(true)
+                .build());
             }
         }
         else
@@ -179,14 +168,14 @@ public class CatalogService
                 LocalTime endT = ts.getEndTime() != null ? ts.getEndTime() : startT.plusMinutes(60);
 
                 responses.add(TimeSlotResponse.builder()
-                    .id(ts.getId())
-                    .date(slotD)
-                    .startTime(startT)
-                    .endTime(endT)
-                    .capacity(ts.getCapacity())
-                    .bookedCount(ts.getReservedCount())
-                    .isAvailable(ts.isAvailable())
-                    .build());
+                .id(ts.getId())
+                .date(slotD)
+                .startTime(startT)
+                .endTime(endT)
+                .capacity(ts.getCapacity())
+                .bookedCount(ts.getReservedCount())
+                .isAvailable(ts.isAvailable())
+                .build());
             }
         }
         return responses;
@@ -195,26 +184,26 @@ public class CatalogService
     private RegionDto mapToRegionDto(Region region)
     {
         return RegionDto.builder()
-            .id(region.getId())
-            .code(region.getCode())
-            .name(region.getName())
-            .currencyCode(region.getCurrencyCode())
-            .currencySymbol(region.getCurrencySymbol())
-            .vatRate(region.getVatRateFraction())
-            .active(region.isActive())
-            .build();
+        .id(region.getId())
+        .code(region.getCode())
+        .name(region.getName())
+        .currencyCode(region.getCurrencyCode())
+        .currencySymbol(region.getCurrencySymbol())
+        .vatRate(region.getVatRateFraction())
+        .active(region.isActive())
+        .build();
     }
 
     private CategoryDto mapToCategoryDto(Category category)
     {
         return CategoryDto.builder()
-            .id(category.getId())
-            .code(category.getCode())
-            .name(category.getName())
-            .description(category.getDescription())
-            .displayOrder(category.getDisplayOrder())
-            .sortOrder(category.getDisplayOrder())
-            .build();
+        .id(category.getId())
+        .code(category.getCode())
+        .name(category.getName())
+        .description(category.getDescription())
+        .displayOrder(category.getDisplayOrder())
+        .sortOrder(category.getDisplayOrder())
+        .build();
     }
 
     private ProductDto mapToProductDto(Product product, Region region)
@@ -248,37 +237,37 @@ public class CatalogService
             String gType = gMods.isEmpty() ? "MULTI" : (gMods.get(0).getGroupType() != null ? gMods.get(0).getGroupType() : "MULTI");
             boolean gReq = gMods.stream().anyMatch(ProductModifier::isRequired);
 
-            List<ModifierGroupDto.ModifierItemDto> items = gMods.stream().map(
-                m -> ModifierGroupDto.ModifierItemDto.builder()
-                    .id(m.getId())
-                    .name(m.getName())
-                    .priceDelta(m.getPriceDelta())
-                    .build()
+            List<ModifierGroupDto.ModifierItemDto> items = gMods.stream().map
+            (m -> ModifierGroupDto.ModifierItemDto.builder()
+                .id(m.getId())
+                .name(m.getName())
+                .priceDelta(m.getPriceDelta())
+                .build()
             ).collect(Collectors.toList());
 
             groupDtos.add(ModifierGroupDto.builder()
-                .id(gId++)
-                .name(entry.getKey())
-                .type(gType)
-                .isRequired(gReq)
-                .modifiers(items)
-                .build());
+            .id(gId++)
+            .name(entry.getKey())
+            .type(gType)
+            .isRequired(gReq)
+            .modifiers(items)
+            .build());
         }
 
         return ProductDto.builder()
-            .id(product.getId())
-            .code(product.getCode())
-            .name(product.getName())
-            .description(product.getDescription())
-            .imageUrl(product.getImageUrl())
-            .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
-            .categoryName(product.getCategory() != null ? product.getCategory().getName() : "")
-            .price(price)
-            .currencyCode(region.getCurrencyCode())
-            .currencySymbol(region.getCurrencySymbol())
-            .isAvailable(isAvailable)
-            .modifiers(modifierDtos)
-            .modifierGroups(groupDtos)
-            .build();
+        .id(product.getId())
+        .code(product.getCode())
+        .name(product.getName())
+        .description(product.getDescription())
+        .imageUrl(product.getImageUrl())
+        .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
+        .categoryName(product.getCategory() != null ? product.getCategory().getName() : "")
+        .price(price)
+        .currencyCode(region.getCurrencyCode())
+        .currencySymbol(region.getCurrencySymbol())
+        .isAvailable(isAvailable)
+        .modifiers(modifierDtos)
+        .modifierGroups(groupDtos)
+        .build();
     }
 }

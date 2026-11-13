@@ -58,7 +58,7 @@ export function Input({
           fontSize: 'var(--font-size-md)',
           borderRadius: 'var(--radius-sm)',
           border: `1px solid ${error ? 'var(--color-error)' : 'var(--color-border)'}`,
-          backgroundColor: disabled ? '#F3F4F6' : '#FFFFFF',
+          backgroundColor: disabled ? 'rgba(0,0,0,0.2)' : 'var(--input-bg)',
           color: disabled ? 'var(--color-text-muted)' : 'var(--color-text)',
           outline: 'none',
           transition: 'border-color 0.2s ease, box-shadow 0.2s ease'

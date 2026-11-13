@@ -13,16 +13,11 @@ public class FlexibleLocalDateTimeDeserializer extends JsonDeserializer<LocalDat
     public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException
     {
         String text = p.getText();
-        if (text == null || text.trim().isEmpty())
-        {
-            return null;
-        }
+        if (text == null || text.trim().isEmpty()) return null;
+
         text = text.trim();
-        if (text.length() == 10)
-        {
-            return LocalDate.parse(text).atStartOfDay();
-        }
+        if (text.length() == 10) return LocalDate.parse(text).atStartOfDay();
+
         return LocalDateTime.parse(text.replace(" ", "T"));
     }
 }
-

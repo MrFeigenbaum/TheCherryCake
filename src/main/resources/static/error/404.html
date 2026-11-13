@@ -10,11 +10,10 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Parisienne&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
-    <link rel="icon" type="image/png" href="/assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png">
+    <link rel="icon" type="image/png" href="/TransparentSakuraFlower.png">
 
     <style>
-        :root
-        {
+        :root {
             --cherry-void: #12060e;
             --cherry-deep: #190814;
             --cherry-panel: #230b1c;
@@ -35,15 +34,13 @@
             --text-faint: #805f6e;
         }
 
-        *
-        {
+        * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        body
-        {
+        body {
             background-color: var(--cherry-void);
             color: var(--text-main);
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -58,8 +55,7 @@
             padding: 24px;
         }
 
-        #sakura-canvas
-        {
+        #sakura-canvas {
             position: absolute;
             inset: 0;
             width: 100%;
@@ -68,8 +64,7 @@
             z-index: 1;
         }
 
-        .ambient-glow
-        {
+        .ambient-glow {
             position: absolute;
             width: 500px;
             height: 500px;
@@ -83,23 +78,19 @@
             animation: pulseGlow 6s ease-in-out infinite alternate;
         }
 
-        @keyframes pulseGlow
-        {
-            0%
-            {
+        @keyframes pulseGlow {
+            0% {
                 transform: translate(-50%, -50%) scale(0.9);
                 opacity: 0.6;
             }
 
-            100%
-            {
+            100% {
                 transform: translate(-50%, -50%) scale(1.15);
                 opacity: 0.95;
             }
         }
 
-        .error-container
-        {
+        .error-container {
             position: relative;
             z-index: 2;
             max-width: 640px;
@@ -111,8 +102,7 @@
             backdrop-filter: blur(14px);
         }
 
-        .emblem-wrap
-        {
+        .emblem-wrap {
             width: 100px;
             height: 100px;
             margin: 0 auto 20px auto;
@@ -122,8 +112,7 @@
             justify-content: center;
         }
 
-        .emblem-wrap img
-        {
+        .emblem-wrap img {
             width: 75px;
             height: 75px;
             object-fit: contain;
@@ -131,14 +120,17 @@
             animation: floatFlower 4s ease-in-out infinite alternate;
         }
 
-        @keyframes floatFlower
-        {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-8px) rotate(8deg); }
+        @keyframes floatFlower {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-8px) rotate(8deg);
+            }
         }
 
-        .error-code
-        {
+        .error-code {
             font-family: 'Playfair Display', serif;
             font-size: clamp(4.5rem, 12vw, 7.5rem);
             line-height: 1;
@@ -149,8 +141,7 @@
             letter-spacing: -0.02em;
         }
 
-        .error-script
-        {
+        .error-script {
             font-family: 'Parisienne', cursive;
             font-size: clamp(1.8rem, 4vw, 2.6rem);
             color: var(--sakura-pink);
@@ -158,24 +149,21 @@
             margin-bottom: 18px;
         }
 
-        .error-message
-        {
+        .error-message {
             font-size: 1.05rem;
             color: var(--text-dim);
             line-height: 1.6;
             margin-bottom: 36px;
         }
 
-        .error-actions
-        {
+        .error-actions {
             display: flex;
             flex-wrap: wrap;
             gap: 14px;
             justify-content: center;
         }
 
-        .btn
-        {
+        .btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -188,37 +176,32 @@
             text-decoration: none;
         }
 
-        .btn-primary
-        {
+        .btn-primary {
             background: linear-gradient(135deg, var(--raspberry-coulis), var(--raspberry-bright));
             color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.25);
             box-shadow: 0 4px 20px rgba(230, 57, 96, 0.4);
         }
 
-        .btn-primary:hover
-        {
+        .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 28px rgba(230, 57, 96, 0.6);
             color: #fff;
         }
 
-        .btn-secondary
-        {
+        .btn-secondary {
             background: rgba(45, 14, 36, 0.8);
             color: var(--cheesecake-cream);
             border: 1px solid var(--cherry-border);
         }
 
-        .btn-secondary:hover
-        {
+        .btn-secondary:hover {
             background: rgba(56, 19, 45, 0.95);
             border-color: var(--sakura-pink);
             transform: translateY(-2px);
         }
 
-        .error-footer
-        {
+        .error-footer {
             margin-top: 28px;
             font-size: 0.8rem;
             color: var(--text-faint);
@@ -226,8 +209,7 @@
         }
 
         /* Floating Audio Control */
-        .audio-pill
-        {
+        .audio-pill {
             position: absolute;
             bottom: 20px;
             right: 20px;
@@ -246,7 +228,9 @@
             transition: all 0.2s;
         }
 
-        .audio-pill:hover { border-color: var(--sakura-pink); }
+        .audio-pill:hover {
+            border-color: var(--sakura-pink);
+        }
     </style>
 </head>
 
@@ -257,7 +241,7 @@
 
     <div class="error-container">
         <div class="emblem-wrap">
-            <img src="/assets/images/Flower%20Icon%20Large/TransparentSakuraFlower.png" alt="Cherry Blossom Logo">
+            <img src="/TransparentSakuraFlower.png" alt="Cherry Blossom Logo">
         </div>
 
         <div class="error-code">404</div>
@@ -317,8 +301,7 @@
         const canvas = document.getElementById('sakura-canvas');
         const ctx = canvas.getContext('2d');
 
-        function resize()
-        {
+        function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         }
@@ -331,11 +314,9 @@
         const petals = [];
         const count = Math.min(45, Math.max(18, Math.floor(window.innerWidth / 30)));
 
-        class Petal
-        {
+        class Petal {
             constructor() { this.imgIndex = Math.random() > 0.45 ? 0 : 1; this.reset(true); }
-            reset(initial = false)
-            {
+            reset(initial = false) {
                 this.x = Math.random() * canvas.width;
                 this.y = initial ? Math.random() * canvas.height : -30;
                 this.size = 16 + Math.random() * 18;
@@ -350,14 +331,12 @@
                 this.depth = 0.65 + Math.random() * 0.55;
                 this.imgIndex = Math.random() > 0.45 ? 0 : 1;
             }
-            update()
-            {
+            update() {
                 this.y += this.speedY; this.angle += this.spin; this.wobble += this.wobbleSpeed;
                 this.x += this.speedX + Math.sin(this.y * this.osc) * 0.7;
                 if (this.y > canvas.height + 35 || this.x > canvas.width + 35 || this.x < -35) this.reset(false);
             }
-            draw()
-            {
+            draw() {
                 const img = flowerImgs[this.imgIndex];
                 if (!img.complete || img.naturalWidth === 0) return;
                 ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle);
@@ -371,8 +350,7 @@
 
         for (let i = 0; i < count; i++) petals.push(new Petal());
 
-        function loop()
-        {
+        function loop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             petals.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(loop);
@@ -384,15 +362,14 @@
         const pill = document.getElementById('audioPill');
         const audioText = document.getElementById('audioText');
 
-        pill.addEventListener('click', () =>
-        {
+        pill.addEventListener('click', () => {
             if (audio.paused) audio.play().then(() => { audioText.textContent = "Pause Ambience"; }).catch(() => { });
-            else
-            {
+            else {
                 audio.pause();
                 audioText.textContent = "Play Sakura Lofi";
             }
         });
     </script>
 </body>
+
 </html>

@@ -24,13 +24,7 @@ public class CategoryDto
 
     private Integer displayOrder;
 
-    public Integer getSortOrder()
-    {
-        return sortOrder != null ? sortOrder : displayOrder;
-    }
+    public Integer getSortOrder() { return sortOrder != null ? sortOrder : displayOrder; }
 
-    public Integer getDisplayOrder()
-    {
-        return displayOrder != null ? displayOrder : sortOrder;
-    }
+    public Integer getDisplayOrder() { return displayOrder != null ? displayOrder : sortOrder; }
 }

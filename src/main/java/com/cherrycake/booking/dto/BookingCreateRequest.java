@@ -25,7 +25,7 @@ public class BookingCreateRequest
     @NotNull(message = "Guests count is required")
     @Min(value = 1, message = "Guests count must be between 1 and 12")
     @Max(value = 12, message = "Guests count must be between 1 and 12")
-    @JsonAlias({"guests", "guestsCount"})
+    @JsonAlias({ "guests", "guestsCount" })
     private Integer guestsCount;
 
     private LocalDate date;
@@ -45,5 +45,6 @@ public class BookingCreateRequest
     private String notes;
 
     public Integer getGuests() { return guestsCount; }
+
     public void setGuests(Integer g) { this.guestsCount = g; }
 }

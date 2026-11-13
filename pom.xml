@@ -25,6 +25,14 @@
         <jacoco.version>0.8.12</jacoco.version>
         <maven-checkstyle-plugin.version>3.5.0</maven-checkstyle-plugin.version>
         <checkstyle.version>10.18.1</checkstyle.version>
+        <lombok.version>1.18.32</lombok.version>
+        <java.version>17</java.version>
+        <springdoc.version>2.6.0</springdoc.version>
+        <jwt.version>0.12.6</jwt.version>
+        <opencsv.version>5.9</opencsv.version>
+        <jacoco.version>0.8.12</jacoco.version>
+        <maven-checkstyle-plugin.version>3.5.0</maven-checkstyle-plugin.version>
+        <checkstyle.version>10.18.1</checkstyle.version>
     </properties>
 
     <dependencies>

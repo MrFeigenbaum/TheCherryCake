@@ -1,16 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { STORAGE_KEY_CART } from '../constants/storage-keys';
 import { getStorageItem, setStorageItem } from '../utils/storage';
-import axios from 'axios';
+import apiClient from '../api/client';
 
 const savedCart = getStorageItem(STORAGE_KEY_CART, { items: [] });
 
 export const calculateCart = createAsyncThunk(
   'cart/calculate',
-  async (_, { getState, rejectWithValue }) => {
+  async (overridePromo, { getState, rejectWithValue }) => {
     try {
       const state = getState();
       const regionCode = state.region.code;
+      const promo = overridePromo !== undefined ? overridePromo : state.cart.promoCode;
       const payload = {
         region: regionCode,
         items: state.cart.items.map(i => ({
@@ -18,13 +19,15 @@ export const calculateCart = createAsyncThunk(
           quantity: i.quantity,
           modifierIds: i.modifierIds || []
         })),
-        promoCode: state.cart.promoCode || undefined,
+        promoCode: promo && promo.trim() ? promo.trim() : undefined,
         deliveryZoneId: state.cart.deliveryZoneId || undefined
       };
-      const res = await axios.post('/api/cart/calculate', payload);
-      return res.data;
+      const res = await apiClient.post('/cart/calculate', payload);
+      return { totals: res.data, promoCode: promo };
     } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
+      const data = err.response?.data;
+      const msg = (data && data.message) ? data.message : (typeof data === 'string' ? data : err.message);
+      return rejectWithValue(msg || 'Ошибка расчета корзины');
     }
   }
 );
@@ -45,6 +48,7 @@ export const cartSlice = createSlice({
       currencyCode: 'UZS'
     },
     promoCode: null,
+    promoError: null,
     deliveryZoneId: null,
     status: 'idle'
   },
@@ -84,13 +88,18 @@ export const cartSlice = createSlice({
     },
     setPromoCode: (state, action) => {
       state.promoCode = action.payload;
+      state.promoError = null;
     },
     setDeliveryZoneId: (state, action) => {
       state.deliveryZoneId = action.payload;
     },
+    clearPromoError: (state) => {
+      state.promoError = null;
+    },
     clearCart: (state) => {
       state.items = [];
       state.promoCode = null;
+      state.promoError = null;
       state.deliveryZoneId = null;
       state.totals = {
         subtotal: 0,
@@ -113,13 +122,16 @@ export const cartSlice = createSlice({
       })
       .addCase(calculateCart.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.totals = action.payload;
+        state.totals = action.payload.totals;
+        state.promoCode = action.payload.promoCode || null;
+        state.promoError = null;
       })
-      .addCase(calculateCart.rejected, (state) => {
+      .addCase(calculateCart.rejected, (state, action) => {
         state.status = 'failed';
+        state.promoError = action.payload || 'Промокод недействителен';
       });
   }
 });
 
-export const { addItem, removeItem, updateQuantity, setPromoCode, setDeliveryZoneId, clearCart } = cartSlice.actions;
+export const { addItem, removeItem, updateQuantity, setPromoCode, setDeliveryZoneId, clearPromoError, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;

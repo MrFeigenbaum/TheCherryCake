@@ -115,13 +115,13 @@ export function UiKit() {
             required
             error="Это поле обязательно для заполнения"
             value=""
-            onChange={() => {}}
+            onChange={() => { }}
           />
           <Input
             label="Заблокированное поле (Disabled)"
             disabled
             value="Только для чтения"
-            onChange={() => {}}
+            onChange={() => { }}
           />
         </div>
       </section>
@@ -165,15 +165,15 @@ export function UiKit() {
             <h3 style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', marginBottom: 'var(--space-2)' }}>Чекбоксы</h3>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <Checkbox label="Активный чекбокс" checked={checkedBox} onChange={(e) => setCheckedBox(e.target.checked)} />
-              <Checkbox label="Неактивный чекбокс" checked={false} onChange={() => {}} />
-              <Checkbox label="Заблокированный чекбокс" disabled checked={true} onChange={() => {}} />
+              <Checkbox label="Неактивный чекбокс" checked={false} onChange={() => { }} />
+              <Checkbox label="Заблокированный чекбокс" disabled checked={true} onChange={() => { }} />
             </div>
           </div>
           <div>
             <RadioGroup label="Группа радиокнопок">
               <Radio name="demoRadio" value="one" label="Опция 1 (Активна)" checked={radioVal === 'one'} onChange={() => setRadioVal('one')} />
               <Radio name="demoRadio" value="two" label="Опция 2" checked={radioVal === 'two'} onChange={() => setRadioVal('two')} />
-              <Radio name="demoRadio" value="three" label="Опция 3 (Disabled)" disabled checked={false} onChange={() => {}} />
+              <Radio name="demoRadio" value="three" label="Опция 3 (Disabled)" disabled checked={false} onChange={() => { }} />
             </RadioGroup>
           </div>
         </div>
@@ -263,10 +263,10 @@ export function UiKit() {
           <h3 style={{ fontSize: 'var(--font-size-md)', marginTop: 'var(--space-2)' }}>Компоненты EmptyState и ErrorState</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-4)' }}>
             <Card>
-              <EmptyState title="Корзина пуста" text="Добавьте десерты из каталога." actionText="В каталог" onAction={() => {}} />
+              <EmptyState title="Корзина пуста" text="Добавьте десерты из каталога." actionText="В каталог" onAction={() => { }} />
             </Card>
             <Card>
-              <ErrorState title="Сервер недоступен" text="Проверьте соединение с сетью." actionText="Повторить" onAction={() => {}} />
+              <ErrorState title="Сервер недоступен" text="Проверьте соединение с сетью." actionText="Повторить" onAction={() => { }} />
             </Card>
           </div>
         </div>

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class AuthService
 {
     private final UserRepository userRepository;
@@ -29,13 +30,13 @@ public class AuthService
             throw new ConflictException("User with email '" + request.getEmail() + "' already exists");
 
         User user = User.builder()
-            .email(request.getEmail().toLowerCase().trim())
-            .passwordHash(passwordEncoder.encode(request.getPassword()))
-            .fullName(request.getFullName().trim())
-            .phone(request.getPhone())
-            .role("ROLE_USER")
-            .createdAt(LocalDateTime.now())
-            .build();
+        .email(request.getEmail().toLowerCase().trim())
+        .passwordHash(passwordEncoder.encode(request.getPassword()))
+        .fullName(request.getFullName().trim())
+        .phone(request.getPhone())
+        .role("ROLE_USER")
+        .createdAt(LocalDateTime.now())
+        .build();
 
         User savedUser = userRepository.save(user);
 
@@ -43,13 +44,13 @@ public class AuthService
         String token = jwtService.generateToken(userDetails);
 
         return AuthResponse.builder()
-            .token(token)
-            .type("Bearer")
-            .userId(savedUser.getId())
-            .email(savedUser.getEmail())
-            .fullName(savedUser.getFullName())
-            .role(savedUser.getRole())
-            .build();
+        .token(token)
+        .type("Bearer")
+        .userId(savedUser.getId())
+        .email(savedUser.getEmail())
+        .fullName(savedUser.getFullName())
+        .role(savedUser.getRole())
+        .build();
     }
 
     public AuthResponse login(LoginRequest request)
@@ -62,20 +63,19 @@ public class AuthService
         String token = jwtService.generateToken(userDetails);
 
         return AuthResponse.builder()
-            .token(token)
-            .type("Bearer")
-            .userId(user.getId())
-            .email(user.getEmail())
-            .fullName(user.getFullName())
-            .role(user.getRole())
-            .build();
+        .token(token)
+        .type("Bearer")
+        .userId(user.getId())
+        .email(user.getEmail())
+        .fullName(user.getFullName())
+        .role(user.getRole())
+        .build();
     }
 
     public User getCurrentAuthenticatedUser()
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal()))
-            return null;
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) return null;
         return userRepository.findByEmailIgnoreCase(auth.getName()).orElse(null);
     }
 }

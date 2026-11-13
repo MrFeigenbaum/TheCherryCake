@@ -59,14 +59,16 @@ export function Modal({
         tabIndex={-1}
         className={`cc-modal ${className}`}
         style={{
-          backgroundColor: 'var(--color-surface)',
+          backgroundColor: 'var(--cherry-card)',
+          border: '1px solid var(--cherry-border)',
           borderRadius: 'var(--radius-md)',
           padding: 'var(--space-5)',
           maxWidth: '500px',
           width: '100%',
-          boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+          boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
           outline: 'none',
-          position: 'relative'
+          position: 'relative',
+          color: 'var(--color-text)'
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>

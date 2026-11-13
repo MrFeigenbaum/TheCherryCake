@@ -19,18 +19,18 @@ public class ApiResponse<T>
     public static <T> ApiResponse<T> ok(T data)
     {
         return ApiResponse.<T>builder()
-            .success(true)
-            .message("Success")
-            .data(data)
-            .build();
+        .success(true)
+        .message("Success")
+        .data(data)
+        .build();
     }
 
     public static <T> ApiResponse<T> ok(String message, T data)
     {
         return ApiResponse.<T>builder()
-            .success(true)
-            .message(message)
-            .data(data)
-            .build();
+        .success(true)
+        .message(message)
+        .data(data)
+        .build();
     }
 }

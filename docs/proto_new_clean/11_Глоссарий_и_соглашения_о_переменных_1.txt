@@ -1,0 +1,55 @@
+Глоссарий и соглашения о переменных
+Единые имена для backend, frontend и QA
+Теги: ОБЯЗАТЕЛЬНО — требует платформа (этапы 1, 2, 3, 5 и процесс команды). БОНУС — этап 4 платформы (самовывоз, доставка, слоты, бронь столика), берём только после обязательного. Всё остальное (регистрация, личный кабинет, роли, админ-панель, промокоды, статусы заказов) в проект не входит.
+1. Общие правила
+JSON и JavaScript: camelCase (vatAmount). База данных: snake_case (vat_amount). Java-классы: PascalCase.
+Коды стран (3 буквы, как в задании платформы): UZB, KAZ, GEO, UKR, CHN. Параметр API: region=UZB.
+Деньги: BigDecimal, 2 знака после запятой, HALF_UP, округление после каждого шага. Ставки передаются долей (0.15), на экране показываются процентами.
+Префикс всех эндпоинтов /api. Ошибки в формате ErrorResponse.
+2. Страны
+Код страны | Валюта | НДС
+UZB | UZS | 15 %
+KAZ | KZT | 20 %
+GEO | GEL | 12 %
+UKR | UAH | 8 %
+CHN | CNY | 18 %
+3. Денежные поля расчёта
+Поле | Смысл | Как считается
+unitPrice | Цена одной единицы товара в валюте страны | Из regional_prices
+modifiersPrice | Надбавка модификаторов за единицу | Сумма price_delta выбранных модификаторов
+quantity | Количество | Целое, не меньше 1
+lineTotal | Сумма строки | (unitPrice + modifiersPrice) × quantity
+subtotal | Сумма товаров | Сумма lineTotal
+vatRate | Ставка НДС страны | Из regions.vat_rate
+vatAmount | НДС | subtotal × vatRate
+amountInclVat | Сумма с НДС | subtotal + vatAmount
+discountRate | Ставка скидки | По amountInclVat и таблице скидок
+discountAmount | Скидка | amountInclVat × discountRate
+deliveryFee | Доставка (бонус), иначе 0 | Из зоны доставки
+total | Итог к оплате | amountInclVat − discountAmount + deliveryFee
+4. Таблица скидок
+Сумма заказа с НДС | Скидка
+от 100 | 3 %
+от 500 | 5 %
+от 700 | 7 %
+от 1000 | 10 %
+от 5000 | 15 %
+5. Названия DTO и объектов
+Имя | Что это
+RegionResponse | id, code, name, currencyCode, currencySymbol, vatRate
+CategoryResponse | id, name
+ProductResponse | id, name, description, photoUrl, price, inStock; в детальной карточке modifierGroups
+CalculateCartRequest | region, items [{productId, quantity, modifierIds}]; для бонуса deliveryZoneId
+CalculateCartResponse | Позиции и все денежные поля из раздела 3, currencyCode
+CreateOrderRequest | region, customer {name, phone, email}, orderDate, items; для бонуса получение и слот
+OrderResponse | orderNumber, orderDate и все денежные поля
+SalesReportResponse | kpi {ordersCount, subtotalSum, vatSum, discountSum, totalSum}, rows [{label, ordersCount, total}]
+ErrorResponse | status, message, errors, timestamp, path
+6. Ключи и переменные
+Где | Имя | Смысл
+localStorage | cc_region | Выбранная страна
+localStorage | cc_cart | Содержимое корзины
+frontend .env | VITE_API_BASE_URL, VITE_DEFAULT_REGION | Адрес API и страна по умолчанию
+backend .env | DB_URL, DB_USER, DB_PASSWORD, CORS_ALLOWED_ORIGINS | Подключение к базе и разрешённые адреса
+7. Бонус: названия
+Таблицы pickup_points, delivery_zones, time_slots, dining_tables, bookings. Поля: pickupPointId, deliveryZoneId, timeSlotId, isAvailable, bookingNumber, tableNumber. Эти имена используем только если берём этап 4.

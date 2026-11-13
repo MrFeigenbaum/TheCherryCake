@@ -1,0 +1,27 @@
+Все эндпоинты для бэка
+Контракт API v1 по критериям платформы
+Все пути с префиксом /api. Доступ открыт без входа.
+Теги: ОБЯЗАТЕЛЬНО — требует платформа (этапы 1, 2, 3, 5 и процесс команды). БОНУС — этап 4 платформы (самовывоз, доставка, слоты, бронь столика), берём только после обязательного. Всё остальное (регистрация, личный кабинет, роли, админ-панель, промокоды, статусы заказов) в проект не входит.
+1. Backend #1: каталог и расчёт
+Метод | Путь | Параметры | Ответ | Тип
+GET | /api/regions | — | RegionResponse[]: страны, валюты, НДС | ОБЯЗАТЕЛЬНО
+GET | /api/categories | — | CategoryResponse[] | ОБЯЗАТЕЛЬНО
+GET | /api/products | region (обязателен), categoryId | ProductResponse[] без модификаторов | ОБЯЗАТЕЛЬНО
+GET | /api/products/{id} | region | ProductResponse с группами модификаторов | ОБЯЗАТЕЛЬНО
+POST | /api/cart/calculate | Тело CalculateCartRequest | CalculateCartResponse: все денежные поля | ОБЯЗАТЕЛЬНО
+2. Backend #2: заказы и отчёты
+Метод | Путь | Параметры | Ответ | Тип
+POST | /api/orders | Тело CreateOrderRequest | OrderResponse с orderNumber и суммами | ОБЯЗАТЕЛЬНО
+GET | /api/reports/sales | from, to, region, groupBy=REGION|MONTH | SalesReportResponse: kpi и rows для графиков | ОБЯЗАТЕЛЬНО
+GET | /api/reports/export | Те же фильтры, format=PDF | Файл application/pdf с теми же графиками | ОБЯЗАТЕЛЬНО
+3. Бонус: самовывоз, доставка, слоты, бронь
+Метод | Путь | Параметры | Ответ | Тип
+GET | /api/pickup-points | region | Список точек самовывоза | БОНУС
+GET | /api/delivery-zones | region | Зоны доставки и deliveryFee | БОНУС
+GET | /api/time-slots | date | Слоты на дату с isAvailable | БОНУС
+POST | /api/bookings | Дата, время, гости 1–12, контакты | Номер брони и столик; 409, если слот занят | БОНУС
+4. Общие правила
+Ошибки: 400 валидация, 404 не найдено, 409 конфликт (не в наличии, слот занят); формат ErrorResponse.
+Авторизации нет: заказ оформляет гость, отчёты открыты.
+Сумму всегда считает сервер: POST /api/orders и POST /api/cart/calculate используют один и тот же сервис, frontend показывает ответ API.
+Контракт замораживается в пятницу недели 1; после этого изменения только через TL.

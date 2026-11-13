@@ -6,24 +6,35 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:sync": "vite build && node -e \"const fs=require('fs'); fs.cpSync('dist', '../src/main/resources/static', {recursive:true, force:true}); console.log('Successfully synced dist to src/main/resources/static');\"",
     "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write .",
     "test": "vitest run"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.3.0",
     "axios": "^1.7.7",
+    "chart.js": "^4.4.6",
     "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-redux": "^9.1.2",
     "react-router-dom": "^6.27.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.14.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
+    "eslint": "^9.14.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "globals": "^15.12.0",
     "jsdom": "^25.0.1",
+    "prettier": "^3.3.3",
     "vite": "^5.4.9",
     "vitest": "^2.1.3"
   }

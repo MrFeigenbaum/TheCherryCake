@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('VIEWER', 'STAFF', 'ADMIN')")
 @Tag(name = "Reports & Analytics", description = "Sales analytics, KPI metrics and financial export in CSV and PDF formats")
+@SuppressWarnings("null")
 public class ReportController
 {
     private final ReportService reportService;
@@ -38,10 +39,7 @@ public class ReportController
         @RequestParam(required = false) String region,
         @Parameter(description = "Aggregation mode: REGION or MONTH")
         @RequestParam(required = false, defaultValue = "REGION") String groupBy
-    )
-    {
-        return ResponseEntity.ok(reportService.generateSalesReport(from, to, region, groupBy));
-    }
+    ) { return ResponseEntity.ok(reportService.generateSalesReport(from, to, region, groupBy)); }
 
     @GetMapping({"/api/reports/export", "/api/v1/reports/export"})
     @Operation(summary = "Export sales report", description = "Downloads sales report in CSV or PDF format matching the official specification.")
@@ -61,17 +59,17 @@ public class ReportController
         {
             byte[] pdfBytes = reportService.exportPdf(from, to, region, groupBy);
             return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sales_" + fromStr + "_" + toStr + ".pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(pdfBytes);
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sales_" + fromStr + "_" + toStr + ".pdf")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(pdfBytes);
         }
         else
         {
             byte[] csvBytes = reportService.exportCsv(from, to, region, groupBy);
             return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sales_" + fromStr + "_" + toStr + ".csv")
-                .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
-                .body(csvBytes);
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sales_" + fromStr + "_" + toStr + ".csv")
+            .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
+            .body(csvBytes);
         }
     }
 
@@ -86,8 +84,8 @@ public class ReportController
     {
         byte[] csvBytes = reportService.exportCsv(startDate, endDate, regionCode, "REGION");
         return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sales_report.csv")
-            .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
-            .body(csvBytes);
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sales_report.csv")
+        .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
+        .body(csvBytes);
     }
 }

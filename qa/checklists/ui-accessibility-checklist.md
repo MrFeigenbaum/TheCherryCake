@@ -14,9 +14,9 @@ All UI components and landing views must render without horizontal scrollbars, t
 
 | Breakpoint Tier | Target Width | Reference Devices | Layout Expectations | Status |
 |---|:---:|---|---|:---:|
-| **Mobile S / M** | **320px – 480px** | iPhone SE, Galaxy S21, iPhone 14 | Single column flow, hamburger navigation, sticky cart button, stacked cards | PASS |
-| **Tablet Portrait** | **768px – 1024px** | iPad Mini, iPad Air, Surface Pro | Two-column grid for products, responsive header, metrics 2x2 layout | PASS |
-| **Desktop / Laptop** | **1200px – 1920px** | MacBook Pro, 1080p Desktop | Full multi-column catalog, 4-card executive metrics grid, expanded Swagger window | PASS |
+| **Mobile S / M** | **320px - 480px** | iPhone SE, Galaxy S21, iPhone 14 | Single column flow, hamburger navigation, sticky cart button, stacked cards | PASS |
+| **Tablet Portrait** | **768px - 1024px** | iPad Mini, iPad Air, Surface Pro | Two-column grid for products, responsive header, metrics 2x2 layout | PASS |
+| **Desktop / Laptop** | **1200px - 1920px** | MacBook Pro, 1080p Desktop | Full multi-column catalog, 4-card executive metrics grid, expanded Swagger window | PASS |
 
 ---
 

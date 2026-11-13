@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="docs/assets/banner.svg" alt="Cherry Cake Web Application Banner" width="100%" />
-</p>
+# 🌸 Cherry Cake - Bakery & Café Web Application Platform
 
 <p align="center">
   <img src="https://img.shields.io/badge/Java-21_LTS-b07219?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 21" />
@@ -19,22 +17,20 @@
   <a href="#team--raci-governance"><img src="https://img.shields.io/badge/Team_9-RACI_Governance-4a1537?style=for-the-badge" alt="RACI" /></a>
 </p>
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 # 🌸 Cherry Cake - Bakery & Café Web Application API
 
 > **ITPU Team 9 — Confectionery & Café Web Application (Week 1: Setup & Architecture Baseline)**  
 > Welcome to the official repository of **Team 9** (`t09-cherry-cake`). This project represents the foundational deliverable for **Week 1** of our 5-week Scrum lifecycle: establishing the multi-region database architecture across **16 sovereign nations**, versioned Flyway migrations, core domain models, the financial-grade `BigDecimal` calculation engine, interactive Swagger documentation, and automated CI pipelines.
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## Global Executive Metrics
 
-<p align="center">
-  <img src="docs/assets/metrics-dashboard.svg" alt="Executive Metrics Dashboard" width="100%" />
-</p>
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+
+---
 
 ## Table of Contents
 
@@ -50,7 +46,7 @@
 - [Getting Started & Local Setup](#getting-started--local-setup)
 - [Testing & Quality Assurance](#testing--quality-assurance)
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## Week 1 Milestone Deliverables
 
@@ -63,7 +59,7 @@ During **Week 1** (Project Setup & Foundation), Team 9 accomplished the followin
 - **Domain Persistence Layer**: 12 Spring Data JPA entities, repositories, and centralized error handling with `ApiResponse<T>`.
 - **Engineering Standards & CI Pipelines**: Automated GitHub Actions CI workflow, Checkstyle compliance rules (`checkstyle.xml`), and JaCoCo code coverage reporting.
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## 16 Operating Countries & Regional Matrix
 
@@ -107,13 +103,11 @@ The database schema is seeded with 16 operating countries, localized pricing mat
 | **Azerbaijan** | `AZE` | `AZN` | `₼` | 18.00% | Baku Nizami Street Bakery (Nizami St. 68) | Baku Sabail & Central |
 | **Armenia** | `ARM` | `AMD` | `֏` | 20.00% | Yerevan Abovyan Café (Abovyan St. 14) | Yerevan Kentron |
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## Mathematical Pricing & Calculation Pipeline
 
-<p align="center">
-  <img src="docs/assets/calculation-pipeline.svg" alt="Calculation Pipeline" width="100%" />
-</p>
+
 
 All computations in `PriceCalculatorService` use Java `BigDecimal` with `RoundingMode.HALF_UP` to two decimal places:
 
@@ -149,13 +143,11 @@ $$\text{Total} = \text{Amount}_{\text{incl\_VAT}} - \text{DiscountAmount} + \tex
 > [!NOTE]
 > Delivery fees are applied strictly after discounts and taxes have been computed. For bakery pickup orders, delivery fee evaluates to `0.00`.
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## Interactive Swagger UI & API Status
 
-<p align="center">
-  <img src="docs/assets/swagger-preview.svg" alt="Interactive Swagger UI Preview" width="100%" />
-</p>
+
 
 ### Week 1 Active & Planned REST Endpoints
 
@@ -173,7 +165,7 @@ $$\text{Total} = \text{Amount}_{\text{incl\_VAT}} - \text{DiscountAmount} + \tex
 | `POST` | `/api/v1/auth/login` | Authenticate with credentials and receive Bearer JWT | **Week 4 (Sprint 3)** | Planned |
 | `GET` | `/api/v1/reports/sales` | Aggregate monthly revenue, order volume, and regional breakdown | **Week 5 (Sprint 4)** | Planned |
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## System Architecture & Directory Structure
 
@@ -209,8 +201,8 @@ t09-cherry-cake/
 │   ├── PULL_REQUEST_TEMPLATE.md    # PR checklist and task CC-id tracker
 │   └── workflows/
 │       └── backend-ci.yml          # GitHub Actions CI (build, checkstyle, tests)
-├── docs/
-│   └── assets/                     # Animated SVG banners, dashboards, and diagrams
+├── frontend/                       # Vite + React 18 SPA, Redux Toolkit, UI Kit
+├── qa/                             # QA Test Plans, Postman Collections, Formulas
 ├── checkstyle.xml                  # Team code formatting and style rules
 ├── pom.xml                         # Maven dependencies & build plugins
 ├── README.md                       # Week 1 project documentation & architecture guide
@@ -242,7 +234,7 @@ t09-cherry-cake/
             └── application-test.yml
 ```
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## Database Schema & Flyway Evolution
 
@@ -274,7 +266,7 @@ erDiagram
     TIME_SLOTS ||--o{ TABLE_BOOKINGS : schedules
 ```
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## 5-Week Project Roadmap
 
@@ -282,13 +274,13 @@ The repository serves Team 9 across our 5-week Scrum development roadmap:
 
 | Stage | Timeline | Focus Area | Technical Deliverables & Outcomes | Status |
 | :---: | :---: | :--- | :--- | :---: |
-| **Week 1** | Current | Project Setup & Foundation | RACI Matrix, Git repo, DB schema (V1–V3 16 regions), `PriceCalculatorService`, CI pipeline | **Completed** |
+| **Week 1** | Current | Project Setup & Foundation | RACI Matrix, Git repo, DB schema (V1-V3 16 regions), `PriceCalculatorService`, CI pipeline | **Completed** |
 | **Week 2** | Sprint 1 | Catalog & Pricing API | Dynamic catalog endpoints (`/api/v1/catalog`), cart calculation contract (`/api/v1/cart/calculate`), UI Kit integration | Planned |
 | **Week 3** | Sprint 2 | Orders & Reservations | Order placement, server price locks, table reservations, double-booking prevention | Planned |
 | **Week 4** | Sprint 3 | Fulfillment & Security | Pickup slots, delivery zone validation, JWT authentication filters, customer dashboard | Planned |
 | **Week 5** | Sprint 4 | Analytics & Final Review | Sales reports, CSV/PDF export, stress testing, Project Plan Alignment Analysis | Planned |
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## Team & RACI Governance
 
@@ -323,7 +315,7 @@ The project is developed by **Team 9** (`t09-cherry-cake`) following Scrum metho
 
 > Legend: **R** = Responsible, **A** = Accountable, **C** = Consulted, **I** = Informed.
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## Technology Stack
 
@@ -336,7 +328,7 @@ The project is developed by **Team 9** (`t09-cherry-cake`) following Scrum metho
 - **API Documentation**: SpringDoc OpenAPI 3.0 / Swagger UI 2.6.0
 - **Testing & Quality**: JUnit 5, Mockito, AssertJ, MockMvc, JaCoCo, Checkstyle
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## Getting Started & Local Setup
 
@@ -366,7 +358,7 @@ Once the application is running:
 - **Interactive Swagger UI**: `http://localhost:8080/swagger-ui.html`
 - **Raw OpenAPI 3.0 Specification**: `http://localhost:8080/v3/api-docs`
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 ## Testing & Quality Assurance
 
@@ -393,7 +385,7 @@ For the complete 24-request Postman collection, Newman CLI automation, 16-countr
 - [🌸 **Formula Test Cases & 16-Country Reconciliations**](qa/test-cases/formula-test-cases.md)
 - [🌸 **UI & Accessibility Quality Checklist**](qa/checklists/ui-accessibility-checklist.md)
 
-<p align="center"><img src="docs/assets/animated-divider.svg" alt="Animated Divider" width="100%" /></p>
+---
 
 <p align="center">
   <img src="https://img.shields.io/badge/TL-Milana_Ulubabyan-2d0e24?style=flat-square" alt="TL" />

@@ -22,7 +22,7 @@ public class BookingResponse
     private Integer tableNumber;
 
     @JsonProperty("guests")
-    @JsonAlias({"guestsCount", "guests"})
+    @JsonAlias({ "guestsCount", "guests" })
     private Integer guests;
 
     private LocalDate date;
@@ -38,5 +38,6 @@ public class BookingResponse
     // Backward compatibility
     @com.fasterxml.jackson.annotation.JsonIgnore
     public Integer getGuestsCount() { return guests; }
+
     public void setGuestsCount(Integer g) { this.guests = g; }
 }
