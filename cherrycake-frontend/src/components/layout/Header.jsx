@@ -21,10 +21,26 @@ export function Header() {
               alt="Cherry Logo"
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = "/assets/TransparentSakuraFlower.png";
+                e.currentTarget.style.display = 'none';
+                if (e.currentTarget.nextSibling) {
+                  e.currentTarget.nextSibling.style.display = 'block';
+                }
               }}
               style={{ width: '24px', height: '24px', flexShrink: 0, objectFit: 'contain' }}
             />
+            <svg
+              style={{ display: 'none', width: '24px', height: '24px', flexShrink: 0 }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#e63960"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="3" fill="#e63960" />
+              <path d="M12 2a4 4 0 0 1 4 4c0 2-2 3-4 3-2 0-4-1-4-3a4 4 0 0 1 4-4z" fill="#ffb7c5" />
+              <path d="M22 12a4 4 0 0 1-4 4c-2 0-3-2-3-4 0-2 1-4 3-4a4 4 0 0 1 4 4z" fill="#ffb7c5" />
+              <path d="M12 22a4 4 0 0 1-4-4c0-2 2-3 4-3 2 0 4 1 4 3a4 4 0 0 1-4 4z" fill="#ffb7c5" />
+              <path d="M2 12a4 4 0 0 1 4-4c2 0 3 2 3 4 0 2-1 4-3 4a4 4 0 0 1-4-4z" fill="#ffb7c5" />
+            </svg>
           </div>
           <div className="navbar-brand-text">
             <span className="navbar-title">Cherry Cake</span>

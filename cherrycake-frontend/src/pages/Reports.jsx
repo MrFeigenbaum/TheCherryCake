@@ -8,6 +8,7 @@ import Select from '../components/ui/Select';
 import Input from '../components/ui/Input';
 import { Radio, RadioGroup } from '../components/ui/Radio';
 import { formatMoney } from '../utils/format-money';
+import { RATES_PER_CU } from '../store/regionSlice';
 
 import {
   Chart as ChartJS,
@@ -30,7 +31,13 @@ ChartJS.register(
 );
 
 export function Reports() {
-  const currencyCode = useSelector((state) => state.region.currencyCode);
+  const currencyCode = useSelector((state) => state.region?.currencyCode || 'UZS');
+  const regions = useSelector((state) => state.region?.regions || []);
+  const activeExchangeRate = useSelector((state) => state.region?.exchangeRate) || RATES_PER_CU[currencyCode] || 3000;
+
+  // Base database/report currency is UZS (1 CU = 3000 UZS)
+  // Calculate conversion factor relative to base UZS
+  const conversionFactor = (activeExchangeRate || 3000) / 3000;
 
   const [groupBy, setGroupBy] = useState('MONTH');
   const [selectedRegion, setSelectedRegion] = useState('ALL');
@@ -58,7 +65,7 @@ export function Reports() {
       })
       .catch(() => {
         if (isMounted) {
-          // Fallback mock data
+          // Fallback mock data in base CU (UZS = 3000/CU)
           setReportData({
             kpi: {
               totalRevenue: 50700000,
@@ -66,7 +73,11 @@ export function Reports() {
               averageCheck: 92181,
               vatTotal: 6084000
             },
-            rows: [
+            rows: groupBy === 'REGION' ? [
+              { period: 'Uzbekistan (UZB)', ordersCount: 280, totalRevenue: 28000000, vatTotal: 3360000, averageCheck: 100000 },
+              { period: 'Kazakhstan (KAZ)', ordersCount: 150, totalRevenue: 13500000, vatTotal: 1620000, averageCheck: 90000 },
+              { period: 'Georgia (GEO)', ordersCount: 120, totalRevenue: 9200000, vatTotal: 1104000, averageCheck: 76666 }
+            ] : [
               { period: '2026-01', ordersCount: 140, totalRevenue: 12500000, vatTotal: 1500000, averageCheck: 89285 },
               { period: '2026-02', ordersCount: 190, totalRevenue: 16800000, vatTotal: 2016000, averageCheck: 88421 },
               { period: '2026-03', ordersCount: 220, totalRevenue: 21400000, vatTotal: 2568000, averageCheck: 97272 }
@@ -91,12 +102,13 @@ export function Reports() {
         link.remove();
       })
       .catch(() => {
-        // Mock export download
-        const blob = new Blob([`Report (${format})\nPeriod,Orders,Revenue\n2026-01,140,12500000\n2026-02,190,16800000\n2026-03,220,21400000`], { type: 'text/plain' });
+        // Mock export download with converted currency values
+        const exportRows = rows.map(r => `${r.period},${r.ordersCount},${Math.round((r.totalRevenue || 0) * conversionFactor)}`).join('\n');
+        const blob = new Blob([`Report (${format}) - Currency: ${currencyCode}\nPeriod,Orders,Revenue\n${exportRows}`], { type: 'text/plain' });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `sales-report.${format.toLowerCase()}`);
+        link.setAttribute('download', `sales-report-${currencyCode}.${format.toLowerCase()}`);
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -117,7 +129,7 @@ export function Reports() {
     datasets: [
       {
         label: `Revenue (${currencyCode})`,
-        data: rows.map(r => r.totalRevenue || r.total || 0),
+        data: rows.map(r => Math.round((r.totalRevenue || r.total || 0) * conversionFactor * 100) / 100),
         backgroundColor: 'rgba(230, 57, 96, 0.75)',
         borderColor: '#e63960',
         borderWidth: 2
@@ -137,9 +149,9 @@ export function Reports() {
   const columns = [
     { key: 'period', title: groupBy === 'MONTH' ? 'Period' : 'Region' },
     { key: 'ordersCount', title: 'Orders Count' },
-    { key: 'totalRevenue', title: 'Gross Revenue', render: (val) => formatMoney(val, currencyCode) },
-    { key: 'vatTotal', title: 'Legal VAT', render: (val) => formatMoney(val, currencyCode) },
-    { key: 'averageCheck', title: 'Average Check', render: (val) => formatMoney(val, currencyCode) }
+    { key: 'totalRevenue', title: 'Gross Revenue', render: (val) => formatMoney(val * conversionFactor, currencyCode) },
+    { key: 'vatTotal', title: 'Legal VAT', render: (val) => formatMoney(val * conversionFactor, currencyCode) },
+    { key: 'averageCheck', title: 'Average Check', render: (val) => formatMoney(val * conversionFactor, currencyCode) }
   ];
 
   return (
@@ -167,7 +179,7 @@ export function Reports() {
         <Card style={{ border: '2px solid var(--cherry-border)' }}>
           <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Total Revenue</span>
           <div style={{ fontSize: 'var(--font-size-xl)', fontWeight: 700, color: 'var(--color-primary)', marginTop: 'var(--space-1)' }}>
-            {formatMoney(kpi.totalRevenue, currencyCode)}
+            {formatMoney(kpi.totalRevenue * conversionFactor, currencyCode)}
           </div>
         </Card>
         <Card style={{ border: '2px solid var(--cherry-border)' }}>
@@ -179,13 +191,13 @@ export function Reports() {
         <Card style={{ border: '2px solid var(--cherry-border)' }}>
           <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Average Check</span>
           <div style={{ fontSize: 'var(--font-size-xl)', fontWeight: 700, color: 'var(--color-text)', marginTop: 'var(--space-1)' }}>
-            {formatMoney(kpi.averageCheck, currencyCode)}
+            {formatMoney(kpi.averageCheck * conversionFactor, currencyCode)}
           </div>
         </Card>
         <Card style={{ border: '2px solid var(--cherry-border)' }}>
           <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Legal VAT Total</span>
           <div style={{ fontSize: 'var(--font-size-xl)', fontWeight: 700, color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' }}>
-            {formatMoney(kpi.vatTotal, currencyCode)}
+            {formatMoney(kpi.vatTotal * conversionFactor, currencyCode)}
           </div>
         </Card>
       </div>
@@ -211,9 +223,10 @@ export function Reports() {
             onChange={(e) => setSelectedRegion(e.target.value)}
             options={[
               { value: 'ALL', label: 'All Territories (Global)' },
-              { value: 'UZ', label: '🇺🇿 Uzbekistan (UZS)' },
-              { value: 'KZ', label: '🇰🇿 Kazakhstan (KZT)' },
-              { value: 'GE', label: '🇬🇪 Georgia (GEL)' }
+              ...regions.map((r) => ({
+                value: r.code,
+                label: `${r.flag || '🌍'} ${r.name} (${r.currencyCode})`
+              }))
             ]}
           />
           <div>

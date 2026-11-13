@@ -7,6 +7,7 @@ import Loader from '../components/ui/Loader';
 import EmptyState from '../components/ui/EmptyState';
 import ReserveTableBanner from '../components/common/ReserveTableBanner';
 import { MOCK_PRODUCTS } from '../mocks/products.mock';
+import { RATES_PER_CU } from '../store/regionSlice';
 
 export function formatVatRate(val) {
   if (val === undefined || val === null) return '12.0%';
@@ -182,11 +183,21 @@ export function Menu() {
     ];
   };
 
+  const getProductPrice = (p) => {
+    if (!p) return 0;
+    const rawPrice =
+      p.price !== undefined
+        ? p.price
+        : p.regionalPrices?.[regionCode]?.price || 0;
+    if (p.price !== undefined && !p.regionalPrices) {
+      const rate = currentRegion.exchangeRate || RATES_PER_CU[currencyCode] || 3000;
+      return Math.round((rawPrice / 3000) * rate * 100) / 100;
+    }
+    return rawPrice;
+  };
+
   const openProductModal = (product) => {
-    const basePrice =
-      product.price !== undefined
-        ? product.price
-        : product.regionalPrices?.[regionCode]?.price || 0;
+    const basePrice = getProductPrice(product);
 
     const groups = getProductModifierGroups(product, basePrice);
     setActiveProduct(product);
@@ -216,10 +227,7 @@ export function Menu() {
 
   const handleAddCustomized = () => {
     if (!activeProduct) return;
-    const basePrice =
-      activeProduct.price !== undefined
-        ? activeProduct.price
-        : activeProduct.regionalPrices?.[regionCode]?.price || 0;
+    const basePrice = getProductPrice(activeProduct);
     const modTotal = Object.values(selectedModifiers).reduce(
       (sum, val) => sum + (val.priceDelta || 0),
       0
@@ -429,10 +437,7 @@ export function Menu() {
           }}
         >
           {filteredProducts.map((p) => {
-            const price =
-              p.price !== undefined
-                ? p.price
-                : p.regionalPrices?.[regionCode]?.price || 0;
+            const price = getProductPrice(p);
             const isAvail = p.isAvailable !== false;
             const catLabel = p.badge || (p.categoryName ? p.categoryName.toUpperCase() : 'DELICACY');
 
@@ -809,9 +814,7 @@ export function Menu() {
                   <span>
                     Add to Bag ·{' '}
                     {formatCardPrice(
-                      ((activeProduct.price !== undefined
-                        ? activeProduct.price
-                        : activeProduct.regionalPrices?.[regionCode]?.price || 0) +
+                      (getProductPrice(activeProduct) +
                         Object.values(selectedModifiers).reduce((sum, v) => sum + (v.priceDelta || 0), 0)) *
                         quantity,
                       currencySymbol
