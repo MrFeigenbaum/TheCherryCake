@@ -18,7 +18,12 @@ export function formatVatRate(val) {
 
 export function formatCardPrice(amount, symbol = "so'm") {
   const num = parseFloat(amount) || 0;
-  return `${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${symbol}`;
+  const isZeroDec = ['UZS', 'KZT', 'AMD'].includes(symbol) || ["so'm", '₸', '֏'].includes(symbol);
+  const formatted = num.toLocaleString('ru-RU', {
+    minimumFractionDigits: isZeroDec ? 0 : 2,
+    maximumFractionDigits: isZeroDec ? 0 : 2
+  });
+  return `${formatted}\u00A0${symbol}`;
 }
 
 const MODIFIER_TRANSLATIONS = {
@@ -289,40 +294,17 @@ export function Menu() {
         </p>
 
         {/* Territory Status Badge */}
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            backgroundColor: 'rgba(45, 14, 36, 0.7)',
-            border: '2px solid var(--cherry-border)',
-            padding: '6px 16px',
-            borderRadius: '9999px',
-            fontSize: 'var(--font-size-xs)',
-            color: 'var(--text-dim)',
-            backdropFilter: 'blur(8px)',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)'
-          }}
-        >
-          <span>Active Territory:</span>
-          <strong style={{ color: 'var(--sakura-pink)' }}>
+        <div className="territory-status-badge">
+          <span className="territory-label">Active Territory:</span>
+          <strong className="territory-name">
             {currentRegion.name} ({currentRegion.code})
           </strong>
-          <span>•</span>
-          <span>
-            Currency: <strong style={{ color: 'var(--crust-gold)' }}>{currencySymbol}</strong>
+          <span className="territory-divider">•</span>
+          <span className="territory-currency">
+            Currency: <strong>{currencySymbol}</strong>
           </span>
-          <span>•</span>
-          <span
-            style={{
-              backgroundColor: 'rgba(56, 193, 114, 0.2)',
-              color: 'var(--mint-fresh)',
-              padding: '2px 8px',
-              borderRadius: '9999px',
-              fontWeight: 600,
-              border: '1px solid rgba(56, 193, 114, 0.4)'
-            }}
-          >
+          <span className="territory-divider">•</span>
+          <span className="territory-vat-badge">
             {formatVatRate(currentRegion.vatRate)} Legal VAT
           </span>
         </div>
@@ -484,7 +466,7 @@ export function Menu() {
                         {formatCardPrice(price, currencySymbol)}
                       </span>
                       <span className="price-vat-note">
-                        {formatVatRate(currentRegion.vatRate)} Legal VAT Incl.
+                        {formatVatRate(currentRegion.vatRate)} Legal VAT
                       </span>
                     </div>
 

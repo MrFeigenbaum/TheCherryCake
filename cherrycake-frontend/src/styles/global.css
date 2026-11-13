@@ -445,8 +445,8 @@ body {
 }
 
 [data-theme="light"] .product-card {
-  border: 1.5px solid rgba(110, 20, 42, 0.28) !important;
-  box-shadow: 0 6px 20px rgba(45, 14, 30, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+  border: 1.5px solid rgba(184, 46, 74, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(184, 46, 74, 0.16), 0 1px 3px rgba(140, 20, 45, 0.22), 0 0 0 1px rgba(184, 46, 74, 0.18) !important;
 }
 
 .product-card:hover {
@@ -457,7 +457,7 @@ body {
 
 [data-theme="light"] .product-card:hover {
   border-color: rgba(184, 46, 74, 0.8) !important;
-  box-shadow: 0 14px 34px rgba(184, 46, 74, 0.22), 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 12px 32px rgba(184, 46, 74, 0.28), 0 3px 8px rgba(140, 20, 45, 0.25), 0 0 0 1px rgba(184, 46, 74, 0.35) !important;
 }
 
 .product-card-image {
@@ -567,9 +567,9 @@ body {
 
 .product-card-footer {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   margin-top: auto;
   padding-top: 14px;
   border-top: 1px solid rgba(255, 183, 197, 0.12);
@@ -582,26 +582,39 @@ body {
 .product-price-box {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 .price-amount {
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--cheesecake-cream);
-  line-height: 1.1;
+  line-height: 1.15;
   font-family: 'Plus Jakarta Sans', sans-serif;
   letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 [data-theme="light"] .price-amount {
-  color: #2b0c16;
+  color: #b81b3e !important;
 }
 
 .price-vat-note {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--mint-fresh);
   font-weight: 600;
   margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme="light"] .price-vat-note {
+  color: #1e7e34 !important;
 }
 
 .btn-card-add {
@@ -609,14 +622,15 @@ body {
   color: #ffffff;
   border: 1px solid rgba(229, 176, 97, 0.4);
   border-radius: 9999px;
-  padding: 9px 18px;
-  font-size: 0.85rem;
+  padding: 8px 14px;
+  font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.25s ease;
   font-family: inherit;
   box-shadow: 0 4px 14px rgba(230, 57, 96, 0.3);
   white-space: nowrap;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1810,14 +1824,16 @@ textarea,
 }
 
 [data-theme="light"] .card,
+[data-theme="light"] .cc-card,
 [data-theme="light"] .product-card,
 [data-theme="light"] .reservation-banner,
 [data-theme="light"] .custom-cake-section,
 [data-theme="light"] .modifier-group-box {
-  border-width: 2px !important;
-  border-color: rgba(184, 46, 74, 0.28) !important;
+  border-width: 1.5px !important;
+  border-color: rgba(184, 46, 74, 0.32) !important;
   background-color: #ffffff !important;
   color: #1d0714 !important;
+  box-shadow: 0 4px 14px rgba(184, 46, 74, 0.16), 0 1px 3px rgba(140, 20, 45, 0.22), 0 0 0 1px rgba(184, 46, 74, 0.18) !important;
 }
 
 [data-theme="light"] .product-card-title {
@@ -1829,7 +1845,92 @@ textarea,
 }
 
 [data-theme="light"] .price-amount {
-  color: #c82348 !important;
+  color: #b81b3e !important;
+}
+
+/* Territory status badge styling */
+.territory-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(45, 14, 36, 0.85);
+  border: 1.5px solid var(--cherry-border);
+  padding: 6px 18px;
+  border-radius: 9999px;
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  margin-bottom: var(--space-4);
+}
+
+.territory-status-badge .territory-label {
+  color: #ffccd5;
+}
+
+.territory-status-badge .territory-name {
+  color: var(--sakura-pink);
+  font-weight: 700;
+}
+
+.territory-status-badge .territory-divider {
+  color: rgba(255, 183, 197, 0.4);
+}
+
+.territory-status-badge .territory-currency {
+  color: #ffccd5;
+}
+
+.territory-status-badge .territory-currency strong {
+  color: var(--crust-gold);
+}
+
+.territory-status-badge .territory-vat-badge {
+  background-color: rgba(56, 193, 114, 0.2);
+  color: var(--mint-fresh);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 600;
+  border: 1px solid rgba(56, 193, 114, 0.4);
+}
+
+/* Light Theme: Fix dark-red on dark-red in Territory Status Badge */
+[data-theme="light"] .territory-status-badge {
+  background-color: #ffffff !important;
+  border: 1.5px solid rgba(184, 46, 74, 0.35) !important;
+  color: #5c2438 !important;
+  box-shadow: 0 4px 14px rgba(184, 46, 74, 0.12), 0 1px 3px rgba(140, 20, 45, 0.18) !important;
+}
+
+[data-theme="light"] .territory-status-badge .territory-label {
+  color: #642b3e !important;
+  font-weight: 600;
+}
+
+[data-theme="light"] .territory-status-badge .territory-name {
+  color: #b81b3e !important;
+  font-weight: 700;
+}
+
+[data-theme="light"] .territory-status-badge .territory-divider {
+  color: rgba(184, 46, 74, 0.4) !important;
+}
+
+[data-theme="light"] .territory-status-badge .territory-currency {
+  color: #642b3e !important;
+}
+
+[data-theme="light"] .territory-status-badge .territory-currency strong {
+  color: #b37329 !important;
+  font-weight: 700;
+}
+
+[data-theme="light"] .territory-status-badge .territory-vat-badge {
+  background-color: rgba(40, 167, 69, 0.12) !important;
+  color: #1e7e34 !important;
+  border: 1px solid rgba(40, 167, 69, 0.3) !important;
+  font-weight: 700;
 }
 
 [data-theme="light"] .modifier-group-box {
