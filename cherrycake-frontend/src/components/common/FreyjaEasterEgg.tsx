@@ -673,8 +673,8 @@ export const FreyjaEasterEgg: React.FC = () => {
           <span className="cc-freyja-trigger-icon-wrap" aria-hidden="true">
             <svg
               className="cc-freyja-trigger-key-icon"
-              width="18"
-              height="18"
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -682,8 +682,12 @@ export const FreyjaEasterEgg: React.FC = () => {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <path d="M21 2l-2 2m-1.5 1.5L14 9l-1.5-1.5-2 2 1.5 1.5-3 3a5.5 5.5 0 1 1-2.12-2.12l3-3 1.5 1.5 2-2L14 6.5l3.5-3.5L21 2z" />
-              <circle cx="7.5" cy="16.5" r="1.5" fill="currentColor" />
+              {/* Antique royal skeleton key: ornate bow at top, straight vertical shaft, classic cut teeth */}
+              <circle cx="12" cy="6" r="4.5" />
+              <circle cx="12" cy="6" r="1.5" fill="currentColor" />
+              <line x1="12" y1="10.5" x2="12" y2="21.5" />
+              <line x1="12" y1="16.5" x2="16" y2="16.5" />
+              <line x1="12" y1="19.5" x2="15" y2="19.5" />
             </svg>
             <span className="cc-freyja-trigger-pulse-dot" />
           </span>

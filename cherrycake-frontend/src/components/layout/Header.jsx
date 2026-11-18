@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme, openCustomCake, openAboutModal } from '../../store/uiSlice';
@@ -7,14 +7,17 @@ import CartBadge from './CartBadge';
 
 export function Header() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth?.user);
   const currentTheme = useSelector((state) => state.ui?.theme || 'dark');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   return (
     <header className="site-header">
       <nav className="cc-navbar">
         {/* Brand Logo */}
-        <Link to="/" className="navbar-brand">
+        <Link to="/" className="navbar-brand" onClick={closeMobileMenu}>
           <div className="navbar-brand-icon">
             <img
               src="/TransparentSakuraFlower.png?v=3"
@@ -48,15 +51,13 @@ export function Header() {
           </div>
         </Link>
 
-        {/* Navigation Links (matching 8080 portal) */}
+        {/* Desktop Navigation Links */}
         <div className="navbar-links">
           <NavLink to="/menu" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
             <span>Artisan Menu</span>
-            <span className="sr-only">Меню</span>
           </NavLink>
           <NavLink to="/booking" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
             <span>Table Reservation</span>
-            <span className="sr-only">Бронь</span>
           </NavLink>
           <button
             type="button"
@@ -113,29 +114,25 @@ export function Header() {
             </svg>
             Custom Cake
           </button>
-          <NavLink to="/reports" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-            <span>Reports &amp; Analytics</span>
-            <span className="sr-only">Отчёты</span>
-          </NavLink>
-          <NavLink to="/account" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-            My Cabinet
+          <NavLink to="/reports" className={({ isActive }) => `nav-link nav-link-extra${isActive ? ' active' : ''}`}>
+            <span>Reports</span>
           </NavLink>
           <a
             href="/swagger.html"
             target="_blank"
             rel="noopener noreferrer"
-            className="nav-link"
+            className="nav-link nav-link-extra"
           >
-            API Reference
+            API Docs
           </a>
           {user?.role === 'ADMIN' && (
-            <NavLink to="/admin/catalog" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-              Admin Portal
+            <NavLink to="/admin/catalog" className={({ isActive }) => `nav-link nav-link-extra${isActive ? ' active' : ''}`}>
+              Admin
             </NavLink>
           )}
         </div>
 
-        {/* Right actions: Theme, Region, Cart */}
+        {/* Right actions: Theme, Region, Cart, Mobile Toggle */}
         <div className="navbar-actions">
           {/* Theme Toggle */}
           <button
@@ -173,8 +170,90 @@ export function Header() {
 
           {/* Cart */}
           <CartBadge />
+
+          {/* Mobile Hamburger Toggle Button */}
+          <button
+            type="button"
+            className="navbar-hamburger-btn"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMobileMenuOpen}
+            title="Menu"
+          >
+            {isMobileMenuOpen ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            )}
+          </button>
         </div>
       </nav>
+
+      {/* Adaptive Mobile / Tablet Drawer */}
+      {isMobileMenuOpen && (
+        <div className="mobile-nav-drawer" role="dialog" aria-label="Mobile Navigation">
+          <NavLink to="/menu" className="mobile-nav-link" onClick={closeMobileMenu}>
+            <span>Artisan Menu</span>
+          </NavLink>
+          <NavLink to="/booking" className="mobile-nav-link" onClick={closeMobileMenu}>
+            <span>Table Reservation</span>
+          </NavLink>
+          <button
+            type="button"
+            className="mobile-nav-link"
+            onClick={() => {
+              closeMobileMenu();
+              dispatch(openAboutModal());
+            }}
+          >
+            About &amp; Hours
+          </button>
+          <button
+            type="button"
+            className="mobile-nav-link"
+            onClick={() => {
+              closeMobileMenu();
+              dispatch(openCustomCake());
+            }}
+            style={{ color: 'var(--crust-gold)', fontWeight: 700 }}
+          >
+            Custom Cake Studio
+          </button>
+          {user ? (
+            <NavLink to="/account" className="mobile-nav-link" onClick={closeMobileMenu}>
+              Sign In / Account
+            </NavLink>
+          ) : (
+            <NavLink to="/login" className="mobile-nav-link" onClick={closeMobileMenu}>
+              Sign In / Account
+            </NavLink>
+          )}
+          <NavLink to="/reports" className="mobile-nav-link" onClick={closeMobileMenu}>
+            <span>Reports &amp; Analytics</span>
+          </NavLink>
+          <a
+            href="/swagger.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mobile-nav-link"
+            onClick={closeMobileMenu}
+          >
+            API Reference
+          </a>
+          {user?.role === 'ADMIN' && (
+            <NavLink to="/admin/catalog" className="mobile-nav-link" onClick={closeMobileMenu}>
+              Admin Portal
+            </NavLink>
+          )}
+        </div>
+      )}
     </header>
   );
 }

@@ -755,6 +755,12 @@
 }
 
 @media (max-width: 600px) {
+  .cc-freyja-floating-trigger {
+    bottom: 76px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+  }
   .cc-freyja-terminal {
     height: 98vh;
     border-radius: 10px;
