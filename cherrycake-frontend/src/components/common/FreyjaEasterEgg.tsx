@@ -326,7 +326,12 @@ Atunci care este rostul acestei vieți și pentru ce să mai trăiești?
 ];
 
 export const FreyjaEasterEgg: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
+  const [keyValue, setKeyValue] = useState("");
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [isQuestOpen, setIsQuestOpen] = useState(false);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [typedLength, setTypedLength] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -334,10 +339,11 @@ export const FreyjaEasterEgg: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const pausedMediaRef = useRef<{ el: HTMLMediaElement; vol: number }[]>([]);
   const isClosingRef = useRef(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Background Audio Lifecycle & Crossfade
   useEffect(() => {
-    if (isOpen) {
+    if (isQuestOpen) {
       isClosingRef.current = false;
       const mediaList: { el: HTMLMediaElement; vol: number }[] = [];
 
@@ -375,7 +381,19 @@ export const FreyjaEasterEgg: React.FC = () => {
         });
       }
     }
-  }, [isOpen]);
+  }, [isQuestOpen]);
+
+  // Focus input when key popup opens
+  useEffect(() => {
+    if (isKeyModalOpen) {
+      setKeyValue("");
+      setHasError(false);
+      setErrorMessage("");
+      setTimeout(() => {
+        if (inputRef.current) inputRef.current.focus();
+      }, 100);
+    }
+  }, [isKeyModalOpen]);
 
   // Smooth Crossfade Out on Close
   const handleSmoothClose = () => {
@@ -394,11 +412,11 @@ export const FreyjaEasterEgg: React.FC = () => {
           questAudio.pause();
           questAudio.currentTime = 0;
           questAudio.volume = 0.75;
-          setIsOpen(false);
+          setIsQuestOpen(false);
         }
       }, 35);
     } else {
-      setIsOpen(false);
+      setIsQuestOpen(false);
     }
 
     // Smoothly resume previously playing background audio on page
@@ -418,10 +436,9 @@ export const FreyjaEasterEgg: React.FC = () => {
     pausedMediaRef.current = [];
   };
 
-  // Human Typewriter Engine
-  // (Paces ~5 to 7 seconds per line, realistic pauses at punctuation, random hesitation searching for keys)
+  // Human Typewriter Engine (natural pace ~38-48ms)
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isQuestOpen) return;
 
     setTypedLength(0);
     const targetText = CHAPTERS[currentChapterIndex].poemText;
@@ -475,17 +492,24 @@ export const FreyjaEasterEgg: React.FC = () => {
       isCancelled = true;
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [isOpen, currentChapterIndex]);
+  }, [isQuestOpen, currentChapterIndex]);
 
-  // Keyboard shortcut listener
+  // Global Keyboard listener
   useEffect(() => {
     let keyBuffer = "";
     const targetCode = "freyja";
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        handleSmoothClose();
-        return;
+      // Escape handling
+      if (e.key === "Escape") {
+        if (isKeyModalOpen) {
+          setIsKeyModalOpen(false);
+          return;
+        }
+        if (isQuestOpen) {
+          handleSmoothClose();
+          return;
+        }
       }
 
       const target = e.target as HTMLElement;
@@ -493,14 +517,13 @@ export const FreyjaEasterEgg: React.FC = () => {
         return;
       }
 
-      if (isOpen) {
+      if (isQuestOpen) {
         const num = parseInt(e.key, 10);
         if (!isNaN(num) && num >= 1 && num <= CHAPTERS.length) {
           setCurrentChapterIndex(num - 1);
           return;
         }
         if (e.key === " " || e.key === "Enter") {
-          // Instantly finish typing current poem if in progress
           const fullLen = CHAPTERS[currentChapterIndex].poemText.length;
           if (typedLength < fullLen) {
             e.preventDefault();
@@ -520,7 +543,8 @@ export const FreyjaEasterEgg: React.FC = () => {
 
       keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-targetCode.length);
       if (keyBuffer === targetCode) {
-        setIsOpen(true);
+        setIsKeyModalOpen(false);
+        setIsQuestOpen(true);
         setCurrentChapterIndex(0);
         keyBuffer = "";
       }
@@ -528,9 +552,26 @@ export const FreyjaEasterEgg: React.FC = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, currentChapterIndex, typedLength]);
+  }, [isQuestOpen, isKeyModalOpen, currentChapterIndex, typedLength]);
 
-  if (!isOpen) return null;
+  // Submit Secret Key from Noir Popup
+  const handleKeySubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const cleanKey = keyValue.trim().toUpperCase();
+
+    if (cleanKey === "FREYJA") {
+      setIsKeyModalOpen(false);
+      setIsQuestOpen(true);
+      setCurrentChapterIndex(0);
+      setKeyValue("");
+      setHasError(false);
+      setErrorMessage("");
+    } else {
+      setHasError(true);
+      setErrorMessage("Ключ доступа не подходит... (Подсказка: 6 букв)");
+      setTimeout(() => setHasError(false), 1200);
+    }
+  };
 
   const currentChapter = CHAPTERS[currentChapterIndex];
   const progressPercent = ((currentChapterIndex + 1) / CHAPTERS.length) * 100;
@@ -557,183 +598,255 @@ export const FreyjaEasterEgg: React.FC = () => {
   };
 
   return (
-    <div
-      className="cc-freyja-overlay"
-      onClick={handleSmoothClose}
-      role="dialog"
-      aria-modal="true"
-    >
-      {/* Background Audio */}
-      <audio
-        ref={audioRef}
-        src="/audio/see-you-again.webm"
-        preload="auto"
-        loop
-      />
+    <>
+      {/* Discreet Noir Floating Trigger Button in Bottom-Right Corner */}
+      {!isQuestOpen && !isKeyModalOpen && (
+        <button
+          className="cc-freyja-floating-trigger"
+          onClick={() => setIsKeyModalOpen(true)}
+          title="Ввести ключ доступа // Access Key"
+          aria-label="Ввести секретный ключ"
+        >
+          🗝️
+        </button>
+      )}
 
-      <div
-        className="cc-freyja-terminal"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Chrome Header */}
-        <div className="cc-freyja-header">
-          <div className="cc-freyja-header-left">
-            <div className="cc-freyja-window-dots">
-              <span className="cc-freyja-dot red" onClick={handleSmoothClose} title="Закрыть [Esc]" />
-              <span className="cc-freyja-dot yellow" onClick={() => setCurrentChapterIndex(0)} title="В начало" />
-              <span className="cc-freyja-dot green" />
-            </div>
-
-            <div className="cc-freyja-title">
-              СЕВЕРНЫЕ ВРАТА // THE NORTHERN GATES
-            </div>
-          </div>
-
-          {/* Music Equalizer & Player */}
-          <div className="cc-freyja-audio-bar">
-            <button
-              className="cc-freyja-play-btn"
-              onClick={togglePlayMusic}
-              title={isPlaying ? "Пауза" : "Воспроизвести"}
-            >
-              {isPlaying ? "❚❚" : "▶"}
-            </button>
-            <div className="cc-freyja-track-info">
-              <span>Mustafa Avşaroğlu — I Know I Will See You Again</span>
-              <div className="cc-freyja-equalizer">
-                <span className={`cc-freyja-eq-bar ${isPlaying ? "playing" : ""}`} />
-                <span className={`cc-freyja-eq-bar ${isPlaying ? "playing" : ""}`} />
-                <span className={`cc-freyja-eq-bar ${isPlaying ? "playing" : ""}`} />
-              </div>
-            </div>
-          </div>
-
-          <div className="cc-freyja-header-actions">
-            <span className="cc-freyja-chapter-badge">
-              ГЛАВА {currentChapter.id} / {CHAPTERS.length}
-            </span>
-            <button
-              className="cc-freyja-close-btn"
-              onClick={handleSmoothClose}
-            >
-              ESC
-            </button>
-          </div>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="cc-freyja-progressbar">
+      {/* Noir Key Input Popup Modal */}
+      {isKeyModalOpen && (
+        <div
+          className="cc-freyja-key-backdrop"
+          onClick={() => setIsKeyModalOpen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
           <div
-            className="cc-freyja-progressbar-fill"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-
-        {/* Main Body */}
-        <div className="cc-freyja-body">
-          {/* Cinematic Art Card (Fixed Height 270px, never crushed) */}
-          <div className="cc-freyja-art-card">
-            <img
-              src={currentChapter.art}
-              alt={currentChapter.heading}
-              className="cc-freyja-art-img"
-            />
-            <div className="cc-freyja-art-overlay" />
-            <div className="cc-freyja-art-hud">
-              <span className="cc-freyja-hud-tag">{currentChapter.hudLeft}</span>
-              <span className="cc-freyja-hud-tag">{currentChapter.hudRight}</span>
-            </div>
-          </div>
-
-          {/* Scene Header */}
-          <div className="cc-freyja-scene-header">
-            <div className="cc-freyja-subtitle">
-              {currentChapter.tag} • {currentChapter.location}
-            </div>
-            <h2 className="cc-freyja-heading">{currentChapter.heading}</h2>
-          </div>
-
-          {/* Narrative Story */}
-          <div className="cc-freyja-narrative">
-            {currentChapter.narrative}
-          </div>
-
-          {/* Typewriter Poetry Presentation Card */}
-          <div
-            className="cc-freyja-typewriter-card"
-            onClick={() => setTypedLength(fullPoem.length)}
-            title="Кликните, чтобы показать весь текст сразу"
+            className="cc-freyja-key-card"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="cc-freyja-poem-header-bar">
-              <div className="cc-freyja-poem-title">
-                {currentChapter.poemTitle}
+            <button
+              className="cc-freyja-key-close"
+              onClick={() => setIsKeyModalOpen(false)}
+              title="Закрыть [Esc]"
+            >
+              ✕
+            </button>
+
+            <div className="cc-freyja-key-header">
+              <span className="cc-freyja-key-badge">ACCESS KEY // СЕКРЕТНЫЙ КЛЮЧ</span>
+              <h3 className="cc-freyja-key-title">Северные Врата</h3>
+              <p className="cc-freyja-key-desc">
+                Введите кодовое слово, чтобы открыть секретную главу
+              </p>
+            </div>
+
+            <form onSubmit={handleKeySubmit} className="cc-freyja-key-field-wrap">
+              <input
+                ref={inputRef}
+                type="text"
+                value={keyValue}
+                onChange={(e) => {
+                  setKeyValue(e.target.value);
+                  if (hasError) setHasError(false);
+                }}
+                placeholder="КЛЮЧ ДОСТУПА"
+                className={`cc-freyja-key-input ${hasError ? "error" : ""}`}
+                autoComplete="off"
+                spellCheck="false"
+              />
+              <div className="cc-freyja-key-hint">
+                {errorMessage || "Введите кодовое слово и нажмите Enter"}
               </div>
-              {!isTypingDone && (
-                <button
-                  className="cc-freyja-skip-type-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setTypedLength(fullPoem.length);
-                  }}
-                >
-                  ⏩ Показать всё сразу
-                </button>
-              )}
-            </div>
 
-            <div className="cc-freyja-typewriter-text">
-              {displayedPoem}
-              {!isTypingDone && <span className="cc-freyja-cursor">|</span>}
-            </div>
-          </div>
-
-          {/* Linear Action / Choices */}
-          <div className="cc-freyja-actions">
-            {currentChapter.choices.map((choice, idx) => (
-              <button
-                key={idx}
-                className="cc-freyja-choice-btn"
-                onClick={() => handleChoice(choice.nextChapter)}
-              >
-                <span>{choice.text}</span>
-                <span className="cc-freyja-key-badge">
-                  {choice.nextChapter === 0 ? "ESC" : `➔`}
-                </span>
+              <button type="submit" className="cc-freyja-key-submit-btn">
+                <span>РАЗБЛОКИРОВАТЬ</span>
+                <span>➔</span>
               </button>
-            ))}
-          </div>
-
-          {/* Timeline & Step Navigation */}
-          <div className="cc-freyja-timeline">
-            <button
-              className="cc-freyja-nav-btn"
-              disabled={currentChapterIndex === 0}
-              onClick={() => setCurrentChapterIndex((prev) => Math.max(prev - 1, 0))}
-            >
-              ← Назад
-            </button>
-
-            <div className="cc-freyja-dots-nav">
-              {CHAPTERS.map((ch, idx) => (
-                <div
-                  key={ch.id}
-                  className={`cc-freyja-step-dot ${idx === currentChapterIndex ? "active" : ""}`}
-                  onClick={() => setCurrentChapterIndex(idx)}
-                  title={`Глава ${ch.id}: ${ch.heading}`}
-                />
-              ))}
-            </div>
-
-            <button
-              className="cc-freyja-nav-btn"
-              disabled={currentChapterIndex === CHAPTERS.length - 1}
-              onClick={() => setCurrentChapterIndex((prev) => Math.min(prev + 1, CHAPTERS.length - 1))}
-            >
-              Вперёд →
-            </button>
+            </form>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+
+      {/* Full Quest Modal */}
+      {isQuestOpen && (
+        <div
+          className="cc-freyja-overlay"
+          onClick={handleSmoothClose}
+          role="dialog"
+          aria-modal="true"
+        >
+          {/* Background Audio */}
+          <audio
+            ref={audioRef}
+            src="/audio/see-you-again.webm"
+            preload="auto"
+            loop
+          />
+
+          <div
+            className="cc-freyja-terminal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Chrome Header */}
+            <div className="cc-freyja-header">
+              <div className="cc-freyja-header-left">
+                <div className="cc-freyja-window-dots">
+                  <span className="cc-freyja-dot red" onClick={handleSmoothClose} title="Закрыть [Esc]" />
+                  <span className="cc-freyja-dot yellow" onClick={() => setCurrentChapterIndex(0)} title="В начало" />
+                  <span className="cc-freyja-dot green" />
+                </div>
+
+                <div className="cc-freyja-title">
+                  СЕВЕРНЫЕ ВРАТА // THE NORTHERN GATES
+                </div>
+              </div>
+
+              {/* Music Equalizer & Player */}
+              <div className="cc-freyja-audio-bar">
+                <button
+                  className="cc-freyja-play-btn"
+                  onClick={togglePlayMusic}
+                  title={isPlaying ? "Пауза" : "Воспроизвести"}
+                >
+                  {isPlaying ? "❚❚" : "▶"}
+                </button>
+                <div className="cc-freyja-track-info">
+                  <span>Mustafa Avşaroğlu — I Know I Will See You Again</span>
+                  <div className="cc-freyja-equalizer">
+                    <span className={`cc-freyja-eq-bar ${isPlaying ? "playing" : ""}`} />
+                    <span className={`cc-freyja-eq-bar ${isPlaying ? "playing" : ""}`} />
+                    <span className={`cc-freyja-eq-bar ${isPlaying ? "playing" : ""}`} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="cc-freyja-header-actions">
+                <span className="cc-freyja-chapter-badge">
+                  ГЛАВА {currentChapter.id} / {CHAPTERS.length}
+                </span>
+                <button
+                  className="cc-freyja-close-btn"
+                  onClick={handleSmoothClose}
+                >
+                  ESC
+                </button>
+              </div>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="cc-freyja-progressbar">
+              <div
+                className="cc-freyja-progressbar-fill"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+
+            {/* Main Body */}
+            <div className="cc-freyja-body">
+              {/* Cinematic Art Card (Fixed Height 270px, never crushed) */}
+              <div className="cc-freyja-art-card">
+                <img
+                  src={currentChapter.art}
+                  alt={currentChapter.heading}
+                  className="cc-freyja-art-img"
+                />
+                <div className="cc-freyja-art-overlay" />
+                <div className="cc-freyja-art-hud">
+                  <span className="cc-freyja-hud-tag">{currentChapter.hudLeft}</span>
+                  <span className="cc-freyja-hud-tag">{currentChapter.hudRight}</span>
+                </div>
+              </div>
+
+              {/* Scene Header */}
+              <div className="cc-freyja-scene-header">
+                <div className="cc-freyja-subtitle">
+                  {currentChapter.tag} • {currentChapter.location}
+                </div>
+                <h2 className="cc-freyja-heading">{currentChapter.heading}</h2>
+              </div>
+
+              {/* Narrative Story */}
+              <div className="cc-freyja-narrative">
+                {currentChapter.narrative}
+              </div>
+
+              {/* Typewriter Poetry Presentation Card */}
+              <div
+                className="cc-freyja-typewriter-card"
+                onClick={() => setTypedLength(fullPoem.length)}
+                title="Кликните, чтобы показать весь текст сразу"
+              >
+                <div className="cc-freyja-poem-header-bar">
+                  <div className="cc-freyja-poem-title">
+                    {currentChapter.poemTitle}
+                  </div>
+                  {!isTypingDone && (
+                    <button
+                      className="cc-freyja-skip-type-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setTypedLength(fullPoem.length);
+                      }}
+                    >
+                      ⏩ Показать всё сразу
+                    </button>
+                  )}
+                </div>
+
+                <div className="cc-freyja-typewriter-text">
+                  {displayedPoem}
+                  {!isTypingDone && <span className="cc-freyja-cursor">|</span>}
+                </div>
+              </div>
+
+              {/* Linear Action / Choices */}
+              <div className="cc-freyja-actions">
+                {currentChapter.choices.map((choice, idx) => (
+                  <button
+                    key={idx}
+                    className="cc-freyja-choice-btn"
+                    onClick={() => handleChoice(choice.nextChapter)}
+                  >
+                    <span>{choice.text}</span>
+                    <span className="cc-freyja-key-badge">
+                      {choice.nextChapter === 0 ? "ESC" : `➔`}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Timeline & Step Navigation */}
+              <div className="cc-freyja-timeline">
+                <button
+                  className="cc-freyja-nav-btn"
+                  disabled={currentChapterIndex === 0}
+                  onClick={() => setCurrentChapterIndex((prev) => Math.max(prev - 1, 0))}
+                >
+                  ← Назад
+                </button>
+
+                <div className="cc-freyja-dots-nav">
+                  {CHAPTERS.map((ch, idx) => (
+                    <div
+                      key={ch.id}
+                      className={`cc-freyja-step-dot ${idx === currentChapterIndex ? "active" : ""}`}
+                      onClick={() => setCurrentChapterIndex(idx)}
+                      title={`Глава ${ch.id}: ${ch.heading}`}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  className="cc-freyja-nav-btn"
+                  disabled={currentChapterIndex === CHAPTERS.length - 1}
+                  onClick={() => setCurrentChapterIndex((prev) => Math.min(prev + 1, CHAPTERS.length - 1))}
+                >
+                  Вперёд →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
