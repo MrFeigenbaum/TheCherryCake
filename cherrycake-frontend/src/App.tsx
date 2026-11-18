@@ -11,6 +11,9 @@ import Toast from './components/ui/Toast';
 import { FreyjaEasterEgg } from './components/common/FreyjaEasterEgg';
 import SakuraBackground from './components/common/SakuraBackground';
 import AudioPlayer from './components/common/AudioPlayer';
+import CartDrawer from './components/common/CartDrawer';
+import AboutHoursModal from './components/common/AboutHoursModal';
+import CustomCakeStudioModal from './components/common/CustomCakeStudioModal';
 import UIKit from './pages/UIKit';
 
 import Home from './pages/Home';
@@ -59,6 +62,9 @@ export default function App() {
       />
 
       <AudioPlayer />
+      <CartDrawer />
+      <AboutHoursModal />
+      <CustomCakeStudioModal />
       <FreyjaEasterEgg />
     </div>
   );

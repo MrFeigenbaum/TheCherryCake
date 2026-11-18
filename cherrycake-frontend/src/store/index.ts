@@ -1,163 +1,206 @@
-
-import { configureStore, createSlice } from '@reduxjs/toolkit';
+import { configureStore, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-type RegionCode = string;
-
-type CountryInfo = {
-  name: string;
-  currencyCode: string;
-  currencySymbol: string;
-  vatRate: number;
-};
-
-type RegionState = {
-  code: RegionCode;
-  selected: RegionCode;
-  name: string;
-  currencyCode: string;
-  currencySymbol: string;
-  vatRate: number;
-};
-
-type RegionDetails = {
+export interface Region {
   code: string;
   name: string;
   currencyCode: string;
   currencySymbol: string;
   vatRate: number;
-};
+}
 
-// Fallback data when the regions API is unavailable.
-const countries: Record<string, CountryInfo> = {
-  UZB: {
-    name: 'Uzbekistan',
-    currencyCode: 'UZS',
-    currencySymbol: "so'm",
-    vatRate: 0.15,
-  },
-  KAZ: {
-    name: 'Kazakhstan',
-    currencyCode: 'KZT',
-    currencySymbol: '\u20B8',
-    vatRate: 0.20,
-  },
-  GEO: {
-    name: 'Georgia',
-    currencyCode: 'GEL',
-    currencySymbol: '\u20BE',
-    vatRate: 0.12,
-  },
-  UKR: {
-    name: 'Ukraine',
-    currencyCode: 'UAH',
-    currencySymbol: '\u20B4',
-    vatRate: 0.08,
-  },
-  CHN: {
-    name: 'China',
-    currencyCode: 'CNY',
-    currencySymbol: '\u00A5',
-    vatRate: 0.18,
-  },
-};
+export const INITIAL_REGIONS: Region[] = [
+  { code: 'UZB', name: 'Uzbekistan', currencyCode: 'UZS', currencySymbol: "so'm", vatRate: 0.15 },
+  { code: 'KAZ', name: 'Kazakhstan', currencyCode: 'KZT', currencySymbol: '₸', vatRate: 0.20 },
+  { code: 'GEO', name: 'Georgia', currencyCode: 'GEL', currencySymbol: '₾', vatRate: 0.12 },
+  { code: 'UKR', name: 'Ukraine', currencyCode: 'UAH', currencySymbol: '₴', vatRate: 0.08 },
+  { code: 'CHN', name: 'China', currencyCode: 'CNY', currencySymbol: '¥', vatRate: 0.18 },
+  { code: 'ARM', name: 'Armenia', currencyCode: 'AMD', currencySymbol: '֏', vatRate: 0.20 },
+  { code: 'AZE', name: 'Azerbaijan', currencyCode: 'AZN', currencySymbol: '₼', vatRate: 0.18 },
+  { code: 'TUR', name: 'Turkey', currencyCode: 'TRY', currencySymbol: '₺', vatRate: 0.18 },
+  { code: 'MDA', name: 'Moldova', currencyCode: 'MDL', currencySymbol: 'L', vatRate: 0.20 },
+  { code: 'EST', name: 'Estonia', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.22 },
+  { code: 'LVA', name: 'Latvia', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.21 },
+  { code: 'LTU', name: 'Lithuania', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.21 },
+  { code: 'FIN', name: 'Finland', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.24 },
+  { code: 'SWE', name: 'Sweden', currencyCode: 'SEK', currencySymbol: 'kr', vatRate: 0.25 },
+];
 
-const isValidRegionCode = (value: string): boolean =>
-  /^[A-Z]{3}$/.test(value);
+const savedRegionCode = typeof window !== 'undefined' ? localStorage.getItem('cc_region') || 'UZB' : 'UZB';
+const initialRegion = INITIAL_REGIONS.find((r) => r.code === savedRegionCode) || INITIAL_REGIONS[0];
 
-const isFallbackRegion = (value: string): boolean =>
-  Object.prototype.hasOwnProperty.call(countries, value);
-
-const savedRegion = localStorage.getItem('cc_region');
-const envRegion = import.meta.env.VITE_DEFAULT_REGION || 'UZB';
-
-const initialCode: RegionCode =
-  savedRegion && isValidRegionCode(savedRegion)
-    ? savedRegion
-    : isFallbackRegion(envRegion)
-      ? envRegion
-      : 'UZB';
-
-const initialRegionState: RegionState = {
-  code: initialCode,
-  selected: initialCode,
-  ...(countries[initialCode] ?? countries.UZB),
-};
-
-const regionSlice = createSlice({
+// 1. Region Slice
+export const regionSlice = createSlice({
   name: 'region',
-  initialState: initialRegionState,
+  initialState: {
+    code: initialRegion.code,
+    selected: initialRegion.code,
+    name: initialRegion.name,
+    currencyCode: initialRegion.currencyCode,
+    currencySymbol: initialRegion.currencySymbol,
+    vatRate: initialRegion.vatRate,
+    regions: INITIAL_REGIONS,
+    loading: false,
+    error: null as string | null,
+  },
   reducers: {
     setRegion: (state, action: PayloadAction<string>) => {
       const code = action.payload;
-      const country = countries[code];
-
-      if (!country) {
-        return;
+      state.code = code;
+      state.selected = code;
+      const found = state.regions.find((r) => r.code === code);
+      if (found) {
+        state.name = found.name;
+        state.currencyCode = found.currencyCode;
+        state.currencySymbol = found.currencySymbol;
+        state.vatRate = found.vatRate;
       }
-
-      Object.assign(state, {
-        code,
-        selected: code,
-        ...country,
-      });
-
-      localStorage.setItem('cc_region', code);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cc_region', code);
+      }
     },
-
     setRegionCode: (state, action: PayloadAction<string>) => {
-      const code = action.payload;
-      const country = countries[code];
-
-      if (!country) {
-        return;
-      }
-
-      Object.assign(state, {
-        code,
-        selected: code,
-        ...country,
-      });
-
-      localStorage.setItem('cc_region', code);
+      regionSlice.caseReducers.setRegion(state, action);
     },
-
-    // Supports all regions returned by the backend API.
-    setRegionDetails: (
-      state,
-      action: PayloadAction<RegionDetails>
-    ) => {
-      const region = action.payload;
-
-      if (
-        !isValidRegionCode(region.code) ||
-        !region.name.trim() ||
-        !region.currencyCode.trim() ||
-        !region.currencySymbol.trim() ||
-        !Number.isFinite(region.vatRate) ||
-        region.vatRate < 0
-      ) {
-        return;
+    setRegionDetails: (state, action: PayloadAction<Region>) => {
+      const r = action.payload;
+      state.code = r.code;
+      state.selected = r.code;
+      state.name = r.name;
+      state.currencyCode = r.currencyCode;
+      state.currencySymbol = r.currencySymbol;
+      state.vatRate = r.vatRate;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cc_region', r.code);
       }
-
-      state.code = region.code;
-      state.selected = region.code;
-      state.name = region.name;
-      state.currencyCode = region.currencyCode;
-      state.currencySymbol = region.currencySymbol;
-      state.vatRate = region.vatRate;
-
-      localStorage.setItem('cc_region', region.code);
     },
   },
 });
+
+export const { setRegion, setRegionCode, setRegionDetails } = regionSlice.actions;
+
+// 2. Auth Slice
+export const authSlice = createSlice({
+  name: 'auth',
+  initialState: {
+    user: null as { id?: string; email?: string; role?: string; name?: string } | null,
+    token: null as string | null,
+    status: 'idle',
+  },
+  reducers: {
+    loginSuccess: (state, action) => {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+    },
+  },
+});
+
+export const { loginSuccess, logout } = authSlice.actions;
+
+// 3. UI Slice
+const savedTheme = typeof window !== 'undefined'
+  ? ((localStorage.getItem('cherry_theme') as 'dark' | 'light') || 'dark')
+  : 'dark';
+
+if (typeof window !== 'undefined') {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+}
+
+export const uiSlice = createSlice({
+  name: 'ui',
+  initialState: {
+    theme: savedTheme,
+    toast: '',
+    toasts: [] as { id: number; message: string; type: string }[],
+    isCartDrawerOpen: false,
+    isCustomCakeOpen: false,
+    isBookingModalOpen: false,
+    isAboutModalOpen: false,
+    globalLoading: false,
+  },
+  reducers: {
+    toggleTheme: (state) => {
+      const next = state.theme === 'dark' ? 'light' : 'dark';
+      state.theme = next;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cherry_theme', next);
+        document.documentElement.setAttribute('data-theme', next);
+      }
+    },
+    setTheme: (state, action: PayloadAction<'dark' | 'light'>) => {
+      state.theme = action.payload;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cherry_theme', action.payload);
+        document.documentElement.setAttribute('data-theme', action.payload);
+      }
+    },
+    showToast: (state, action: PayloadAction<string>) => {
+      state.toast = action.payload;
+      state.toasts.push({ id: Date.now(), message: action.payload, type: 'info' });
+    },
+    hideToast: (state) => {
+      state.toast = '';
+    },
+    openCartDrawer: (state) => {
+      state.isCartDrawerOpen = true;
+    },
+    closeCartDrawer: (state) => {
+      state.isCartDrawerOpen = false;
+    },
+    toggleCartDrawer: (state) => {
+      state.isCartDrawerOpen = !state.isCartDrawerOpen;
+    },
+    openCustomCake: (state) => {
+      state.isCustomCakeOpen = true;
+    },
+    closeCustomCake: (state) => {
+      state.isCustomCakeOpen = false;
+    },
+    openAboutModal: (state) => {
+      state.isAboutModalOpen = true;
+    },
+    closeAboutModal: (state) => {
+      state.isAboutModalOpen = false;
+    },
+    openBookingModal: (state) => {
+      state.isBookingModalOpen = true;
+    },
+    closeBookingModal: (state) => {
+      state.isBookingModalOpen = false;
+    },
+  },
+});
+
+export const {
+  toggleTheme,
+  setTheme,
+  showToast,
+  hideToast,
+  openCartDrawer,
+  closeCartDrawer,
+  toggleCartDrawer,
+  openCustomCake,
+  closeCustomCake,
+  openAboutModal,
+  closeAboutModal,
+  openBookingModal,
+  closeBookingModal,
+} = uiSlice.actions;
+
+// 4. Cart Slice
 export type CartItem = {
-  id: string;
+  id?: string;
   productId: number;
   name: string;
   quantity: number;
-  modifierIds: number[];
-  photoUrl: string | null;
+  unitPrice?: number;
+  imageUrl?: string;
+  modifierIds?: number[];
+  photoUrl?: string | null;
 };
 
 export type StoredCartItem = CartItem | string;
@@ -167,167 +210,134 @@ export function isCartItem(item: StoredCartItem): item is CartItem {
 }
 
 function readCart(): StoredCartItem[] {
-  const savedCart = localStorage.getItem('cc_cart');
-  if (!savedCart) return [];
-
+  if (typeof window === 'undefined') return [];
+  const saved = localStorage.getItem('cc_cart');
+  if (!saved) return [];
   try {
-    const parsed: unknown = JSON.parse(savedCart);
-    if (!Array.isArray(parsed)) return [];
-
-    return parsed.filter((item): item is StoredCartItem => {
-      if (typeof item === 'string') return true;
-      if (!item || typeof item !== 'object') return false;
-      const candidate = item as Partial<CartItem>;
-      return (
-        typeof candidate.id === 'string' &&
-        typeof candidate.productId === 'number' &&
-        typeof candidate.name === 'string' &&
-        typeof candidate.quantity === 'number' &&
-        candidate.quantity >= 1 &&
-        Array.isArray(candidate.modifierIds) &&
-        candidate.modifierIds.every((id) => typeof id === 'number') &&
-        (typeof candidate.photoUrl === 'string' || candidate.photoUrl === null)
-      );
-    });
+    const parsed = JSON.parse(saved);
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
 }
 
-const cartSlice = createSlice({
+export const calculateCart = createAsyncThunk(
+  'cart/calculate',
+  async (_overridePromo, { getState }) => {
+    const state = getState() as RootState;
+    return { totals: state.cart.totals, promoCode: state.cart.promoCode };
+  }
+);
+
+export const cartSlice = createSlice({
   name: 'cart',
   initialState: {
     items: readCart(),
+    totals: {
+      subtotal: 0,
+      vatRate: 0.12,
+      vatAmount: 0,
+      amountInclVat: 0,
+      discountRate: 0,
+      discountAmount: 0,
+      deliveryFee: 0,
+      total: 0,
+      currencyCode: 'UZS',
+    },
+    promoCode: null as string | null,
+    promoError: null as string | null,
+    deliveryZoneId: null as string | null,
+    status: 'idle',
   },
   reducers: {
-    addToCart: (
-      state,
-      action: PayloadAction<Omit<CartItem, 'id'> & { id?: string } | string>,
-    ) => {
-      if (typeof action.payload === 'string') {
-        state.items.push(action.payload);
-        localStorage.setItem('cc_cart', JSON.stringify(state.items));
-        return;
-      }
-
+    addToCart: (state, action: PayloadAction<any>) => {
       const item = action.payload;
-      const modifierKey = [...item.modifierIds].sort((a, b) => a - b).join(',');
-      const existing = state.items.find(
-        (current) =>
-          isCartItem(current) &&
-          current.productId === item.productId &&
-          [...current.modifierIds].sort((a, b) => a - b).join(',') === modifierKey,
-      );
-
-      if (existing && isCartItem(existing)) {
-        existing.quantity += Math.max(1, item.quantity);
+      if (typeof item === 'string') {
+        state.items.push(item);
       } else {
-        state.items.push({
-          ...item,
-          id: item.id ?? `${item.productId}-${modifierKey || 'base'}`,
-          quantity: Math.max(1, item.quantity),
-        });
+        const existing = state.items.find(
+          (i) => isCartItem(i) && i.productId === item.productId
+        );
+        if (existing && isCartItem(existing)) {
+          existing.quantity += item.quantity || 1;
+        } else {
+          state.items.push({
+            ...item,
+            id: item.id || `${item.productId}-${Date.now()}`,
+            quantity: item.quantity || 1,
+            unitPrice: item.unitPrice || 0,
+          });
+        }
       }
-      localStorage.setItem('cc_cart', JSON.stringify(state.items));
-    },
-
-    removeFromCart: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter(
-        (item) => !isCartItem(item) || item.id !== action.payload,
-      );
-      localStorage.setItem('cc_cart', JSON.stringify(state.items));
-    },
-
-    updateCartQuantity: (
-      state,
-      action: PayloadAction<{ id: string; quantity: number }>,
-    ) => {
-      const item = state.items.find(
-        (current) => isCartItem(current) && current.id === action.payload.id,
-      );
-      if (item && isCartItem(item)) {
-        item.quantity = Math.max(1, action.payload.quantity);
+      if (typeof window !== 'undefined') {
         localStorage.setItem('cc_cart', JSON.stringify(state.items));
       }
     },
-
+    addItem: (state, action: PayloadAction<any>) => {
+      cartSlice.caseReducers.addToCart(state, action);
+    },
+    removeFromCart: (state, action: PayloadAction<any>) => {
+      const target = action.payload;
+      state.items = state.items.filter((item) => {
+        if (typeof target === 'string') return item !== target;
+        if (isCartItem(item)) return item.id !== target && item.productId !== target;
+        return true;
+      });
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cc_cart', JSON.stringify(state.items));
+      }
+    },
+    removeItem: (state, action: PayloadAction<any>) => {
+      cartSlice.caseReducers.removeFromCart(state, action);
+    },
+    updateCartQuantity: (state, action: PayloadAction<{ id?: string; productId?: number; quantity: number }>) => {
+      const { id, productId, quantity } = action.payload;
+      const found = state.items.find(
+        (i) => isCartItem(i) && ((id && i.id === id) || (productId && i.productId === productId))
+      );
+      if (found && isCartItem(found)) {
+        if (quantity <= 0) {
+          state.items = state.items.filter((i) => i !== found);
+        } else {
+          found.quantity = quantity;
+        }
+      }
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cc_cart', JSON.stringify(state.items));
+      }
+    },
+    updateQuantity: (state, action: PayloadAction<any>) => {
+      cartSlice.caseReducers.updateCartQuantity(state, action);
+    },
     clearCart: (state) => {
       state.items = [];
-      localStorage.removeItem('cc_cart');
-    },
-  },
-});
-
-const savedTheme = typeof window !== 'undefined'
-  ? ((localStorage.getItem('cherry_theme') as 'dark' | 'light') || 'light')
-  : 'light';
-
-if (typeof window !== 'undefined') {
-  document.documentElement.setAttribute('data-theme', savedTheme);
-}
-
-// Keep existing UI functionality.
-const uiSlice = createSlice({
-  name: 'ui',
-  initialState: {
-    toast: '',
-    theme: savedTheme,
-  },
-  reducers: {
-    showToast: (state, action: PayloadAction<string>) => {
-      state.toast = action.payload;
-    },
-
-    hideToast: (state) => {
-      state.toast = "";
-    },
-
-    toggleTheme: (state) => {
-      const next = state.theme === 'dark' ? 'light' : 'dark';
-      state.theme = next;
       if (typeof window !== 'undefined') {
-        localStorage.setItem('cherry_theme', next);
-        document.documentElement.setAttribute('data-theme', next);
-      }
-    },
-
-    setTheme: (state, action: PayloadAction<'dark' | 'light'>) => {
-      state.theme = action.payload;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('cherry_theme', action.payload);
-        document.documentElement.setAttribute('data-theme', action.payload);
+        localStorage.removeItem('cc_cart');
       }
     },
   },
 });
-
-export const {
-  setRegion,
-  setRegionCode,
-  setRegionDetails,
-} = regionSlice.actions;
 
 export const {
   addToCart,
+  addItem,
   removeFromCart,
+  removeItem,
   updateCartQuantity,
+  updateQuantity,
   clearCart,
 } = cartSlice.actions;
 
-export const {
-  showToast,
-  hideToast,
-  toggleTheme,
-  setTheme,
-} = uiSlice.actions;
-
+// 5. Store Configuration
 export const store = configureStore({
   reducer: {
     region: regionSlice.reducer,
     cart: cartSlice.reducer,
     ui: uiSlice.reducer,
+    auth: authSlice.reducer,
   },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export default store;
