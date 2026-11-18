@@ -939,7 +939,7 @@ export const FreyjaEasterEgg: React.FC = () => {
                   disabled={currentChapterIndex === 0}
                   onClick={() => setCurrentChapterIndex((prev) => Math.max(prev - 1, 0))}
                 >
-                  {language === 'en' ? '← Back' : language === 'ka' ? '← უკან' : '← Назад'}
+                  {language === 'ru' ? '← Назад' : language === 'ka' ? '← უკან' : language === 'uz' ? '← Orqaga' : language === 'kk' ? '← Артқа' : language === 'uk' ? '← Назад' : language === 'zh' ? '← 返回' : language === 'tr' ? '← Geri' : language === 'hy' ? '← Ետ' : language === 'az' ? '← Geri' : language === 'ro' ? '← Înapoi' : language === 'et' ? '← Tagasi' : language === 'lv' ? '← Atpakaļ' : language === 'lt' ? '← Atgal' : language === 'fi' ? '← Takaisin' : language === 'sv' ? '← Tillbaka' : '← Back'}
                 </button>
 
                 <div className="cc-freyja-dots-nav">
@@ -948,7 +948,7 @@ export const FreyjaEasterEgg: React.FC = () => {
                       key={ch.id}
                       className={`cc-freyja-step-dot ${idx === currentChapterIndex ? "active" : ""}`}
                       onClick={() => setCurrentChapterIndex(idx)}
-                      title={`${language === 'en' ? 'Chapter' : language === 'ka' ? 'თავი' : 'Глава'} ${ch.id}: ${ch.heading}`}
+                      title={`${language === 'ru' ? 'Глава' : language === 'ka' ? 'თავი' : language === 'uz' ? 'Bob' : language === 'kk' ? 'Тарау' : language === 'uk' ? 'Розділ' : language === 'zh' ? '第' + ch.id + '章' : language === 'tr' ? 'Bölüm' : language === 'hy' ? 'Գլուխ' : language === 'az' ? 'Fəsil' : language === 'ro' ? 'Capitolul' : language === 'et' ? 'Peatükk' : language === 'lv' ? 'Nodaļa' : language === 'lt' ? 'Skyrius' : language === 'fi' ? 'Luku' : language === 'sv' ? 'Kapitel' : 'Chapter'} ${ch.id}: ${ch.heading}`}
                     />
                   ))}
                 </div>
@@ -958,7 +958,7 @@ export const FreyjaEasterEgg: React.FC = () => {
                   disabled={currentChapterIndex === activeChapters.length - 1}
                   onClick={() => setCurrentChapterIndex((prev) => Math.min(prev + 1, activeChapters.length - 1))}
                 >
-                  {language === 'en' ? 'Next →' : language === 'ka' ? 'შემდეგი →' : 'Вперёд →'}
+                  {language === 'ru' ? 'Вперёд →' : language === 'ka' ? 'შემდეგი →' : language === 'uz' ? 'Oldinga →' : language === 'kk' ? 'Алға →' : language === 'uk' ? 'Уперед →' : language === 'zh' ? '下一篇 →' : language === 'tr' ? 'İleri →' : language === 'hy' ? 'Առաջ →' : language === 'az' ? 'İrəli →' : language === 'ro' ? 'Înainte →' : language === 'et' ? 'Edasi →' : language === 'lv' ? 'Uz priekšu →' : language === 'lt' ? 'Pirmyn →' : language === 'fi' ? 'Seuraava →' : language === 'sv' ? 'Nästa →' : 'Next →'}
                 </button>
               </div>
             </div>
