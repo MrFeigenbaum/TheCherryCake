@@ -1,233 +1,147 @@
-﻿
-import { useEffect, useState } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import type { RootState } from '../../store';
 import { setRegionDetails } from '../../store';
+import './Layout.css';
 
-type Region = {
+interface Region {
   code: string;
   name: string;
   currencyCode: string;
   currencySymbol: string;
   vatRate: number;
-};
+}
 
-type RegionSource = 'loading' | 'api' | 'mock';
-
-const mockRegions: Region[] = [
-  {
-    code: 'UZB',
-    name: 'Uzbekistan',
-    currencyCode: 'UZS',
-    currencySymbol: "so'm",
-    vatRate: 0.15,
-  },
-  {
-    code: 'KAZ',
-    name: 'Kazakhstan',
-    currencyCode: 'KZT',
-    currencySymbol: '\u20B8',
-    vatRate: 0.20,
-  },
-  {
-    code: 'GEO',
-    name: 'Georgia',
-    currencyCode: 'GEL',
-    currencySymbol: '\u20BE',
-    vatRate: 0.12,
-  },
-  {
-    code: 'UKR',
-    name: 'Ukraine',
-    currencyCode: 'UAH',
-    currencySymbol: '\u20B4',
-    vatRate: 0.08,
-  },
-  {
-    code: 'CHN',
-    name: 'China',
-    currencyCode: 'CNY',
-    currencySymbol: '\u00A5',
-    vatRate: 0.18,
-  },
+const REGIONS: Region[] = [
+  { code: 'UZB', name: 'Uzbekistan', currencyCode: 'UZS', currencySymbol: "so'm", vatRate: 0.15 },
+  { code: 'KAZ', name: 'Kazakhstan', currencyCode: 'KZT', currencySymbol: '₸', vatRate: 0.20 },
+  { code: 'GEO', name: 'Georgia', currencyCode: 'GEL', currencySymbol: '₾', vatRate: 0.12 },
+  { code: 'UKR', name: 'Ukraine', currencyCode: 'UAH', currencySymbol: '₴', vatRate: 0.08 },
+  { code: 'CHN', name: 'China', currencyCode: 'CNY', currencySymbol: '¥', vatRate: 0.18 },
+  { code: 'ARM', name: 'Armenia', currencyCode: 'AMD', currencySymbol: '֏', vatRate: 0.20 },
+  { code: 'AZE', name: 'Azerbaijan', currencyCode: 'AZN', currencySymbol: '₼', vatRate: 0.18 },
+  { code: 'TUR', name: 'Turkey', currencyCode: 'TRY', currencySymbol: '₺', vatRate: 0.18 },
+  { code: 'MDA', name: 'Moldova', currencyCode: 'MDL', currencySymbol: 'L', vatRate: 0.20 },
+  { code: 'EST', name: 'Estonia', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.22 },
+  { code: 'LVA', name: 'Latvia', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.21 },
+  { code: 'LTU', name: 'Lithuania', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.21 },
+  { code: 'FIN', name: 'Finland', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.24 },
+  { code: 'SWE', name: 'Sweden', currencyCode: 'SEK', currencySymbol: 'kr', vatRate: 0.25 },
 ];
 
-function parseRegions(body: unknown): Region[] {
-  let data: unknown[];
+const FLAG_MAP: Record<string, string> = {
+  uz: 'uzb', uzb: 'uzb',
+  kz: 'kaz', kaz: 'kaz',
+  ge: 'geo', geo: 'geo',
+  ua: 'ukr', ukr: 'ukr',
+  cn: 'chn', chn: 'chn',
+  se: 'swe', swe: 'swe',
+  fi: 'fin', fin: 'fin',
+  lt: 'ltu', ltu: 'ltu',
+  lv: 'lva', lva: 'lva',
+  ee: 'est', est: 'est',
+  by: 'blr', blr: 'blr',
+  md: 'mda', mda: 'mda',
+  ro: 'rou', rou: 'rou',
+  tr: 'tur', tur: 'tur',
+  az: 'aze', aze: 'aze',
+  am: 'arm', arm: 'arm',
+  ru: 'ru', rus: 'rus',
+};
 
-  if (Array.isArray(body)) {
-    data = body;
-  } else if (
-    typeof body === 'object' &&
-    body !== null &&
-    'data' in body &&
-    Array.isArray(body.data)
-  ) {
-    data = body.data;
-  } else {
-    return [];
-  }
+export function getFlagSrc(code: string): string {
+  const c = (code || '').toLowerCase().trim();
+  const file = FLAG_MAP[c] || c;
+  return `/assets/flags/${file}.svg`;
+}
 
-  return data.flatMap((item): Region[] => {
-    if (typeof item !== 'object' || item === null) {
-      return [];
-    }
-
-    const region = item as Record<string, unknown>;
-
-    if (
-      typeof region.code !== 'string' ||
-      !/^[A-Z]{3}$/.test(region.code) ||
-      typeof region.name !== 'string' ||
-      typeof region.currencyCode !== 'string' ||
-      typeof region.currencySymbol !== 'string' ||
-      typeof region.vatRate !== 'number' ||
-      !Number.isFinite(region.vatRate) ||
-      region.vatRate < 0 ||
-      region.active === false
-    ) {
-      return [];
-    }
-
-    return [
-      {
-        code: region.code,
-        name: region.name,
-        currencyCode: region.currencyCode,
-        currencySymbol: region.currencySymbol,
-        vatRate: region.vatRate,
-      },
-    ];
-  });
+export function formatVatDisplay(val: number): string {
+  if (val === undefined || val === null) return '12% VAT';
+  let num = val;
+  if (num < 1 && num > 0) num = num * 100;
+  return `${num % 1 === 0 ? num.toFixed(0) : num.toFixed(1)}% VAT`;
 }
 
 export default function CountrySwitcher() {
   const dispatch = useDispatch();
-
-  const selectedCode = useSelector(
-    (state: RootState) => state.region.code
-  );
-
-  const [regions, setRegions] = useState<Region[]>(
-    mockRegions
-  );
-
-  const [source, setSource] =
-    useState<RegionSource>('loading');
+  const currentRegion = useSelector((state: RootState) => state.region.code);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadRegions() {
-      try {
-        const baseUrl = (
-          import.meta.env.VITE_API_BASE_URL || '/api'
-        ).replace(/\/+$/, '');
-
-        const response = await fetch(
-          `${baseUrl}/regions`,
-          { signal: controller.signal }
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `Regions API returned ${response.status}`
-          );
-        }
-
-        const body: unknown = await response.json();
-        const apiRegions = parseRegions(body);
-
-        if (apiRegions.length === 0) {
-          throw new Error('Invalid regions response');
-        }
-
-        if (!controller.signal.aborted) {
-          setRegions(apiRegions);
-          setSource('api');
-        }
-      } catch {
-        if (!controller.signal.aborted) {
-          setRegions(mockRegions);
-          setSource('mock');
-        }
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
       }
-    }
-
-    void loadRegions();
-
-    return () => {
-      controller.abort();
     };
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
   }, []);
 
-  useEffect(() => {
-    if (source === 'loading') {
-      return;
-    }
+  const handleSelect = (r: Region) => {
+    dispatch(setRegionDetails(r));
+    setIsOpen(false);
+  };
 
-    const selectedRegion = regions.find(
-      (region) => region.code === selectedCode
-    );
-
-    if (selectedRegion) {
-      dispatch(setRegionDetails(selectedRegion));
-      return;
-    }
-
-    // Only replace an unavailable saved region
-    // when the real API has returned its full list.
-    if (source === 'api' && regions.length > 0) {
-      dispatch(setRegionDetails(regions[0]));
-    }
-  }, [dispatch, regions, selectedCode, source]);
-
-  function handleChange(code: string) {
-    const selectedRegion = regions.find(
-      (region) => region.code === code
-    );
-
-    if (!selectedRegion) {
-      return;
-    }
-
-    dispatch(setRegionDetails(selectedRegion));
-
-    localStorage.setItem(
-      'cc_region',
-      selectedRegion.code
-    );
-  }
+  const selectedRegionObj =
+    REGIONS.find((r) => r.code === currentRegion) || REGIONS[0];
 
   return (
-    <label className="cc-country-switcher">
-      <span>{'\u0421\u0442\u0440\u0430\u043D\u0430'}</span>
-
-      <select
-        value={selectedCode}
-        onChange={(event) =>
-          handleChange(event.target.value)
-        }
-        aria-label="Choose country"
+    <div
+      ref={dropdownRef}
+      style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}
+    >
+      {/* Custom Sleek Region Trigger */}
+      <button
+        type="button"
+        data-testid="country-switcher"
+        className={`region-select-trigger ${isOpen ? 'active' : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        title="Select operating country and currency"
       >
-        {!regions.some(
-          (region) => region.code === selectedCode
-        ) && (
-          <option value={selectedCode}>
-            {selectedCode} - Saved
-          </option>
-        )}
+        <img
+          src={getFlagSrc(selectedRegionObj.code)}
+          alt={selectedRegionObj.code}
+          className="region-flag-img"
+          onError={(e) => {
+            (e.currentTarget as HTMLElement).style.display = 'none';
+          }}
+        />
+        <span>{selectedRegionObj.code}</span>
+        <span className="region-select-arrow">&#9662;</span>
+      </button>
 
-        {regions.map((region) => (
-          <option
-            key={region.code}
-            value={region.code}
-          >
-            {region.code} - {region.name}
-          </option>
-        ))}
-      </select>
-    </label>
+      {/* Dropdown Menu */}
+      {isOpen && (
+        <div className="region-dropdown-menu" role="listbox">
+          {REGIONS.map((r) => {
+            const isSelected = r.code === currentRegion;
+            return (
+              <div
+                key={r.code}
+                role="option"
+                aria-selected={isSelected}
+                className={`region-option ${isSelected ? 'selected' : ''}`}
+                onClick={() => handleSelect(r)}
+              >
+                <img
+                  src={getFlagSrc(r.code)}
+                  alt={r.code}
+                  className="region-flag-img"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLElement).style.display = 'none';
+                  }}
+                />
+                <span className="region-option-code">{r.code}</span>
+                <span className="region-option-name">{r.name}</span>
+                <span className="region-option-meta">{formatVatDisplay(r.vatRate)}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }

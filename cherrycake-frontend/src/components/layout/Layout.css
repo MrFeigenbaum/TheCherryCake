@@ -1,4 +1,4 @@
-﻿/* ============================================================= */
+/* ============================================================= */
 /* Header                                                        */
 /* ============================================================= */
 
@@ -148,32 +148,135 @@
   border: 1px solid var(--color-border);
 }
 
-/* Country Switcher */
-.cc-country-switcher {
-  display: flex;
+/* ============================================================= */
+/* REGION DROPDOWN STYLING (matching backup/master)              */
+/* ============================================================= */
+.region-select-trigger {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
-  color: var(--color-muted);
-}
-
-.cc-country-switcher select {
-  min-height: 40px;
-  padding: 8px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font: inherit;
-  font-size: 13px;
+  background: var(--cherry-card, var(--color-surface)) !important;
+  border: 1px solid var(--cherry-border, var(--color-border)) !important;
+  color: var(--color-text) !important;
+  padding: 6px 14px 6px 10px;
+  border-radius: 9999px;
+  font-size: 0.85rem;
   font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-height: 34px;
 }
 
-.cc-country-switcher select:focus {
+.region-select-trigger:hover,
+.region-select-trigger:focus {
   outline: none;
-  border-color: var(--color-primary);
+  border-color: var(--raspberry-coulis) !important;
+  background: var(--cherry-card-hover, var(--color-surface-soft)) !important;
+  box-shadow: 0 0 14px var(--cherry-border-glow, rgba(230, 57, 96, 0.3));
+}
+
+.region-flag-img {
+  width: 20px;
+  height: 14px;
+  object-fit: cover;
+  border-radius: 2.5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.region-select-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sakura-pink);
+  font-size: 0.65rem;
+  margin-left: 2px;
+  flex-shrink: 0;
+  pointer-events: none;
+  transition: transform 0.25s ease;
+}
+
+.region-select-trigger.active .region-select-arrow {
+  transform: rotate(180deg);
+}
+
+.region-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 290px;
+  max-height: 380px;
+  overflow-y: auto;
+  background: var(--cherry-panel, var(--color-surface));
+  border: 1px solid var(--cherry-border, var(--color-border));
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  z-index: 1200;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.region-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--color-text);
+  font-size: 0.82rem;
+}
+
+.region-option:hover {
+  background: var(--cherry-card-hover, var(--color-surface-soft));
+  color: #ffffff;
+}
+
+[data-theme="light"] .region-option:hover {
+  background: #ffe8ee;
+  color: #2b0c16;
+}
+
+.region-option.selected {
+  background: rgba(230, 57, 96, 0.25);
+  border: 1px solid var(--raspberry-coulis);
+  font-weight: 700;
+}
+
+[data-theme="light"] .region-option.selected {
+  background: #ffe6ec;
+  border-color: #c82348;
+}
+
+.region-option-code {
+  font-weight: 700;
+  color: var(--sakura-pink);
+  min-width: 34px;
+}
+
+[data-theme="light"] .region-option-code {
+  color: #c82348;
+}
+
+.region-option-name {
+  flex-grow: 1;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.region-option-meta {
+  font-size: 0.72rem;
+  color: var(--mint-fresh, #38c172);
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
 }
 
 /* Cart Badge */
@@ -386,7 +489,7 @@
 /* Footer Bottom Bar */
 .cc-footer-bottom {
   border-top: 1px solid var(--color-border);
-  padding: 20px 0;
+  padding: 20px 0 88px;
   margin-top: 24px;
   background: var(--color-surface-soft);
 }
@@ -429,28 +532,35 @@
 .audio-bar {
   position: fixed;
   bottom: 24px;
-  left: 28px;
+  right: 28px;
+  left: auto;
   z-index: 900;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: rgba(30, 9, 23, 0.94);
+  border: 1px solid var(--cherry-border, rgba(255, 183, 197, 0.2));
   border-radius: 9999px;
-  padding: 8px 18px;
+  padding: 9px 18px;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(230, 57, 96, 0.15);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  min-width: 360px;
-  max-width: 440px;
+  min-width: 440px;
+  max-width: 520px;
   box-sizing: border-box;
   transition: all 0.3s ease;
 }
 
+[data-theme="light"] .audio-bar {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(120, 24, 48, 0.25);
+  box-shadow: 0 8px 30px rgba(184, 46, 74, 0.15);
+}
+
 .audio-bar:hover {
-  box-shadow: var(--shadow-hover);
-  border-color: var(--color-primary);
+  box-shadow: 0 10px 36px rgba(230, 57, 96, 0.25);
+  border-color: rgba(255, 183, 197, 0.4);
 }
 
 .audio-left {

@@ -661,7 +661,7 @@ export const FreyjaEasterEgg: React.FC = () => {
 
   return (
     <>
-      {/* Redesigned Noir Velvet Floating Trigger Button in Bottom-Right Corner */}
+      {/* Redesigned Noir Velvet Floating Trigger Button in Bottom-Right Corner (Icon only, no text) */}
       {!isQuestOpen && !isKeyModalOpen && (
         <button
           type="button"
@@ -673,8 +673,8 @@ export const FreyjaEasterEgg: React.FC = () => {
           <span className="cc-freyja-trigger-icon-wrap" aria-hidden="true">
             <svg
               className="cc-freyja-trigger-key-icon"
-              width="16"
-              height="16"
+              width="18"
+              height="18"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -687,7 +687,6 @@ export const FreyjaEasterEgg: React.FC = () => {
             </svg>
             <span className="cc-freyja-trigger-pulse-dot" />
           </span>
-          <span className="cc-freyja-trigger-label">Secret Key</span>
         </button>
       )}
 

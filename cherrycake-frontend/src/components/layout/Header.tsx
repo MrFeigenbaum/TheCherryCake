@@ -1,4 +1,4 @@
-﻿import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store';
 import { toggleTheme } from '../../store';
@@ -7,7 +7,6 @@ import CartBadge from './CartBadge';
 import './Layout.css';
 
 export default function Header() {
-  const currencyCode = useSelector((state: RootState) => state.region.currencyCode);
   const theme = useSelector((state: RootState) => state.ui.theme);
   const dispatch = useDispatch();
 
@@ -78,7 +77,6 @@ export default function Header() {
           </button>
 
           <CountrySwitcher />
-          <span className="cc-active-currency">{currencyCode}</span>
           <CartBadge />
         </div>
       </div>

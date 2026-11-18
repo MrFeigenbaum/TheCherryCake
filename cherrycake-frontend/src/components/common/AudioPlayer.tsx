@@ -32,19 +32,17 @@ export function AudioPlayer() {
   const [playlist, setPlaylist] = useState<AudioTrack[]>(FALLBACK_PLAYLIST);
   const [trackIndex, setTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.4);
+  const [volume, setVolume] = useState(0.5);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
-  const animFrameRef = useRef<number | null>(null);
+  const isFirstMount = useRef(true);
 
   const bar0Ref = useRef<HTMLSpanElement | null>(null);
   const bar1Ref = useRef<HTMLSpanElement | null>(null);
   const bar2Ref = useRef<HTMLSpanElement | null>(null);
   const bar3Ref = useRef<HTMLSpanElement | null>(null);
 
+  // Load playlist dynamically from public JSON
   useEffect(() => {
     fetch('/assets/audio/playlist.json')
       .then((res) => (res.ok ? res.json() : null))
@@ -67,175 +65,109 @@ export function AudioPlayer() {
 
   const currentTrack = playlist[trackIndex] || playlist[0];
 
+  // Sync volume with audio element
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
     }
   }, [volume]);
 
-  const ensureAudioAnalyser = () => {
-    if (analyserRef.current || !audioRef.current) return;
-    try {
-      const AudioCtx =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (!AudioCtx) return;
+  // Autoplay on first user click anywhere on page (browser policy compliance)
+  useEffect(() => {
+    let hasInteracted = false;
+    const handleFirstClick = () => {
+      if (!hasInteracted) {
+        hasInteracted = true;
+        if (audioRef.current && audioRef.current.paused) {
+          audioRef.current
+            .play()
+            .then(() => setIsPlaying(true))
+            .catch(() => {});
+        }
+      }
+    };
 
-      const ctx = new AudioCtx();
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 64;
-      analyser.smoothingTimeConstant = 0.7;
+    document.addEventListener('click', handleFirstClick, { once: true });
+    return () => {
+      document.removeEventListener('click', handleFirstClick);
+    };
+  }, [playlist]);
 
-      const sourceNode = ctx.createMediaElementSource(audioRef.current);
-      sourceNode.connect(analyser);
-      analyser.connect(ctx.destination);
-
-      audioCtxRef.current = ctx;
-      analyserRef.current = analyser;
-      sourceNodeRef.current = sourceNode;
-    } catch {
-      // Audio element might already be connected
+  // When track index changes, play if already playing
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
     }
-  };
+    if (audioRef.current && isPlaying) {
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {});
+    }
+  }, [trackIndex, isPlaying]);
 
-  const updateEqualizerFrame = () => {
+  // Equalizer animation synchronized with isPlaying
+  useEffect(() => {
     const bars = [bar0Ref.current, bar1Ref.current, bar2Ref.current, bar3Ref.current];
 
-    if (!audioRef.current || audioRef.current.paused) {
+    if (!isPlaying) {
       bars.forEach((b) => {
         if (b) b.style.height = '3px';
       });
-      if (animFrameRef.current) {
-        cancelAnimationFrame(animFrameRef.current);
-        animFrameRef.current = null;
-      }
       return;
     }
 
-    if (analyserRef.current) {
-      const bufferLength = analyserRef.current.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-      analyserRef.current.getByteFrequencyData(dataArray);
+    let animId: number;
+    const updateFrame = () => {
+      const t = performance.now() / 220;
+      const h0 = Math.max(3, Math.min(14, Math.round(6 + 4 * Math.sin(t * 1.5))));
+      const h1 = Math.max(3, Math.min(16, Math.round(9 + 6 * Math.cos(t * 1.8))));
+      const h2 = Math.max(3, Math.min(15, Math.round(8 + 5 * Math.sin(t * 2.2))));
+      const h3 = Math.max(3, Math.min(13, Math.round(5 + 4 * Math.cos(t * 1.2))));
 
-      let sum = 0;
-      for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
+      if (bar0Ref.current) bar0Ref.current.style.height = `${h0}px`;
+      if (bar1Ref.current) bar1Ref.current.style.height = `${h1}px`;
+      if (bar2Ref.current) bar2Ref.current.style.height = `${h2}px`;
+      if (bar3Ref.current) bar3Ref.current.style.height = `${h3}px`;
 
-      if (sum > 0) {
-        const getAvg = (start: number, end: number) => {
-          let s = 0;
-          for (let i = start; i <= end; i++) s += dataArray[i] || 0;
-          return s / (end - start + 1);
-        };
+      animId = requestAnimationFrame(updateFrame);
+    };
 
-        const currentVol = audioRef.current ? audioRef.current.volume : 1;
-        const v0 = getAvg(0, 2);
-        const v1 = getAvg(3, 5);
-        const v2 = getAvg(6, 10);
-        const v3 = getAvg(11, 18);
-
-        const bands = [v0, v1, v2, v3];
-        bars.forEach((bar, idx) => {
-          if (bar) {
-            const scaled = 3 + Math.round((bands[idx] / 255) * 11 * Math.min(1.5, currentVol + 0.3));
-            const clamped = Math.max(3, Math.min(14, scaled));
-            bar.style.height = `${clamped}px`;
-          }
-        });
-      } else {
-        const t = performance.now() / 250;
-        const fallback = [
-          Math.round(4 + 2 * Math.sin(t)),
-          Math.round(6 + 3 * Math.cos(t * 1.3)),
-          Math.round(5 + 3 * Math.sin(t * 1.7)),
-          Math.round(3 + 2 * Math.cos(t * 0.9)),
-        ];
-        bars.forEach((bar, idx) => {
-          if (bar) bar.style.height = `${fallback[idx]}px`;
-        });
-      }
-    }
-
-    animFrameRef.current = requestAnimationFrame(updateEqualizerFrame);
-  };
-
-  const startPlayback = () => {
-    if (!audioRef.current) return;
-    ensureAudioAnalyser();
-    if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
-      audioCtxRef.current.resume().catch(() => {});
-    }
-    audioRef.current
-      .play()
-      .then(() => {
-        setIsPlaying(true);
-        if (!animFrameRef.current) {
-          animFrameRef.current = requestAnimationFrame(updateEqualizerFrame);
-        }
-      })
-      .catch(() => {
-        setIsPlaying(false);
-      });
-  };
-
-  const pausePlayback = () => {
-    if (!audioRef.current) return;
-    audioRef.current.pause();
-    setIsPlaying(false);
-  };
+    animId = requestAnimationFrame(updateFrame);
+    return () => cancelAnimationFrame(animId);
+  }, [isPlaying]);
 
   const togglePlay = () => {
+    if (!audioRef.current) return;
     if (isPlaying) {
-      pausePlayback();
+      audioRef.current.pause();
+      setIsPlaying(false);
     } else {
-      startPlayback();
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
     }
   };
 
   const handleNext = () => {
     setTrackIndex((prev) => (prev + 1) % playlist.length);
-    setTimeout(() => {
-      startPlayback();
-    }, 50);
   };
 
   const handlePrev = () => {
     setTrackIndex((prev) => (prev - 1 + playlist.length) % playlist.length);
-    setTimeout(() => {
-      startPlayback();
-    }, 50);
   };
-
-  useEffect(() => {
-    return () => {
-      if (animFrameRef.current) {
-        cancelAnimationFrame(animFrameRef.current);
-      }
-      if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
-        audioCtxRef.current.close().catch(() => {});
-      }
-    };
-  }, []);
 
   return (
     <div className="audio-bar" id="audioBar" role="region" aria-label="Artisanal Music Player">
       <audio
         ref={audioRef}
         src={currentTrack?.url}
+        preload="auto"
         onEnded={handleNext}
-        onPlay={() => {
-          setIsPlaying(true);
-          ensureAudioAnalyser();
-          if (!animFrameRef.current) {
-            animFrameRef.current = requestAnimationFrame(updateEqualizerFrame);
-          }
-        }}
-        onPause={() => {
-          setIsPlaying(false);
-          const bars = [bar0Ref.current, bar1Ref.current, bar2Ref.current, bar3Ref.current];
-          bars.forEach((b) => {
-            if (b) b.style.height = '3px';
-          });
-        }}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
       />
 
       {/* LEFT: Spinning Vinyl Disc & Track Details */}
@@ -250,22 +182,23 @@ export function AudioPlayer() {
             {currentTrack?.title || 'Cherry Cake Melody'}
           </span>
           <span className="audio-status-label">
-            <span className="audio-equalizer" id="audioEq">
-              <span ref={bar0Ref}></span>
-              <span ref={bar1Ref}></span>
-              <span ref={bar2Ref}></span>
-              <span ref={bar3Ref}></span>
+            <span className={`audio-equalizer ${isPlaying ? 'playing' : ''}`} id="audioEq">
+              <span ref={bar0Ref} className="eq-bar bar-1"></span>
+              <span ref={bar1Ref} className="eq-bar bar-2"></span>
+              <span ref={bar2Ref} className="eq-bar bar-3"></span>
+              <span ref={bar3Ref} className="eq-bar bar-4"></span>
             </span>
-            <span>{isPlaying ? 'Playing' : 'Paused'}</span>
+            <span>{isPlaying ? 'Now Playing' : 'Paused'}</span>
           </span>
         </div>
       </div>
 
-      {/* CENTER: Controls */}
+      {/* CENTER: Navigation & Play/Pause */}
       <div className="audio-center-controls">
         <button
           type="button"
           className="audio-nav-btn"
+          id="prevTrackBtn"
           onClick={handlePrev}
           title="Previous Track"
           aria-label="Previous Track"
@@ -279,17 +212,18 @@ export function AudioPlayer() {
         <button
           type="button"
           className="play-toggle-btn"
+          id="playBtn"
           onClick={togglePlay}
           title={isPlaying ? 'Pause music' : 'Play music'}
           aria-label={isPlaying ? 'Pause music' : 'Play music'}
         >
           {isPlaying ? (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <rect x="6" y="4" width="4" height="16" />
               <rect x="14" y="4" width="4" height="16" />
             </svg>
           ) : (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <polygon points="5 3 19 12 5 21 5 3" />
             </svg>
           )}
@@ -298,6 +232,7 @@ export function AudioPlayer() {
         <button
           type="button"
           className="audio-nav-btn"
+          id="nextTrackBtn"
           onClick={handleNext}
           title="Next Track"
           aria-label="Next Track"
@@ -309,7 +244,7 @@ export function AudioPlayer() {
         </button>
       </div>
 
-      {/* RIGHT: Volume */}
+      {/* RIGHT: Volume Slider */}
       <div className="audio-right">
         <div className="volume-box">
           <svg className="volume-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
@@ -318,6 +253,7 @@ export function AudioPlayer() {
           <input
             type="range"
             className="volume-input"
+            id="volumeSlider"
             min="0"
             max="1"
             step="0.02"
