@@ -129,44 +129,63 @@
   line-height: 1.5;
 }
 
-/* Key Input Field with Red Velvet Border Shadow */
+/* 6-Letter Cipher Boxes with Red Velvet Border Shadow */
 .cc-freyja-key-field-wrap {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 14px;
+  align-items: center;
 }
 
-.cc-freyja-key-input {
+.cc-freyja-boxes-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
   width: 100%;
+}
+
+.cc-freyja-box-input {
+  width: 48px;
+  height: 56px;
   background: #0f070d;
   border: 1.5px solid #d2325c;
   /* Small red velvet shadow on the field border */
-  box-shadow: 0 0 16px rgba(210, 40, 80, 0.45), inset 0 0 10px rgba(180, 25, 65, 0.25);
+  box-shadow: 0 0 14px rgba(210, 40, 80, 0.42), inset 0 0 8px rgba(180, 25, 65, 0.22);
   border-radius: 10px;
-  padding: 13px 16px;
-  box-sizing: border-box;
   color: #ffffff;
-  font-size: 16px;
-  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 22px;
   font-weight: 700;
+  font-family: "SFMono-Regular", Consolas, monospace;
   text-align: center;
-  letter-spacing: 4px;
   text-transform: uppercase;
   outline: none;
-  transition: all 0.25s ease;
+  transition: all 0.22s ease;
+  caret-color: transparent;
 }
 
-.cc-freyja-key-input:focus {
+.cc-freyja-box-input:focus {
   border-color: #ff5080;
-  box-shadow: 0 0 24px rgba(240, 50, 100, 0.65), inset 0 0 14px rgba(210, 35, 80, 0.4);
-  background: #140911;
+  box-shadow: 0 0 22px rgba(240, 50, 100, 0.65), inset 0 0 12px rgba(210, 35, 80, 0.35);
+  background: #180913;
+  transform: translateY(-2px);
 }
 
-.cc-freyja-key-input.error {
+.cc-freyja-box-input.filled {
+  border-color: #ff7b9f;
+  color: #fff0f5;
+  text-shadow: 0 0 10px rgba(255, 123, 159, 0.7);
+}
+
+.cc-freyja-boxes-row.error .cc-freyja-box-input {
   border-color: #ff3333;
-  box-shadow: 0 0 22px rgba(255, 50, 50, 0.6), inset 0 0 10px rgba(255, 30, 30, 0.3);
+  box-shadow: 0 0 20px rgba(255, 50, 50, 0.65), inset 0 0 10px rgba(255, 30, 30, 0.35);
   animation: ccShake 0.4s ease;
+}
+
+.cc-freyja-boxes-row.success .cc-freyja-box-input {
+  border-color: #ff7b9f;
+  box-shadow: 0 0 24px rgba(255, 123, 159, 0.8), inset 0 0 12px rgba(255, 123, 159, 0.4);
 }
 
 @keyframes ccShake {

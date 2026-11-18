@@ -327,7 +327,7 @@ Atunci care este rostul acestei vieți și pentru ce să mai trăiești?
 
 export const FreyjaEasterEgg: React.FC = () => {
   const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
-  const [keyValue, setKeyValue] = useState("");
+  const [boxes, setBoxes] = useState<string[]>(["", "", "", "", "", ""]);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -339,7 +339,7 @@ export const FreyjaEasterEgg: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const pausedMediaRef = useRef<{ el: HTMLMediaElement; vol: number }[]>([]);
   const isClosingRef = useRef(false);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const boxRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Background Audio Lifecycle & Crossfade
   useEffect(() => {
@@ -383,14 +383,14 @@ export const FreyjaEasterEgg: React.FC = () => {
     }
   }, [isQuestOpen]);
 
-  // Focus input when key popup opens
+  // Focus first box when key popup opens
   useEffect(() => {
     if (isKeyModalOpen) {
-      setKeyValue("");
+      setBoxes(["", "", "", "", "", ""]);
       setHasError(false);
       setErrorMessage("");
       setTimeout(() => {
-        if (inputRef.current) inputRef.current.focus();
+        boxRefs.current[0]?.focus();
       }, 100);
     }
   }, [isKeyModalOpen]);
@@ -554,22 +554,84 @@ export const FreyjaEasterEgg: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isQuestOpen, isKeyModalOpen, currentChapterIndex, typedLength]);
 
-  // Submit Secret Key from Noir Popup
-  const handleKeySubmit = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const cleanKey = keyValue.trim().toUpperCase();
-
-    if (cleanKey === "FREYJA") {
+  // Verification logic for the 6-letter cipher
+  const verifyBoxes = (code: string) => {
+    if (code.trim().toUpperCase() === "FREYJA") {
       setIsKeyModalOpen(false);
       setIsQuestOpen(true);
       setCurrentChapterIndex(0);
-      setKeyValue("");
+      setBoxes(["", "", "", "", "", ""]);
       setHasError(false);
       setErrorMessage("");
     } else {
       setHasError(true);
-      setErrorMessage("Ключ доступа не подходит... (Подсказка: 6 букв)");
-      setTimeout(() => setHasError(false), 1200);
+      setErrorMessage("Ключ доступа не подходит...");
+      setTimeout(() => {
+        setHasError(false);
+        setBoxes(["", "", "", "", "", ""]);
+        boxRefs.current[0]?.focus();
+      }, 900);
+    }
+  };
+
+  const handleBoxChange = (index: number, val: string) => {
+    const char = val.slice(-1).toUpperCase();
+    const nextBoxes = [...boxes];
+    nextBoxes[index] = char;
+    setBoxes(nextBoxes);
+    if (hasError) setHasError(false);
+
+    if (char && index < 5) {
+      boxRefs.current[index + 1]?.focus();
+    }
+
+    if (char && index === 5 && nextBoxes.every((b) => b.length > 0)) {
+      verifyBoxes(nextBoxes.join(""));
+    }
+  };
+
+  const handleBoxKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace") {
+      if (boxes[index]) {
+        const nextBoxes = [...boxes];
+        nextBoxes[index] = "";
+        setBoxes(nextBoxes);
+      } else if (index > 0) {
+        boxRefs.current[index - 1]?.focus();
+        const nextBoxes = [...boxes];
+        nextBoxes[index - 1] = "";
+        setBoxes(nextBoxes);
+      }
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      boxRefs.current[index - 1]?.focus();
+    } else if (e.key === "ArrowRight" && index < 5) {
+      boxRefs.current[index + 1]?.focus();
+    } else if (e.key === "Enter") {
+      verifyBoxes(boxes.join(""));
+    }
+  };
+
+  const handleBoxPaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const text = e.clipboardData
+      .getData("text")
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-ZА-ЯЁ]/gi, "")
+      .slice(0, 6);
+    if (!text) return;
+
+    const nextBoxes = ["", "", "", "", "", ""];
+    for (let i = 0; i < text.length; i++) {
+      nextBoxes[i] = text[i];
+    }
+    setBoxes(nextBoxes);
+
+    const focusIdx = Math.min(text.length, 5);
+    boxRefs.current[focusIdx]?.focus();
+
+    if (text.length === 6) {
+      verifyBoxes(text);
     }
   };
 
@@ -639,29 +701,42 @@ export const FreyjaEasterEgg: React.FC = () => {
               </p>
             </div>
 
-            <form onSubmit={handleKeySubmit} className="cc-freyja-key-field-wrap">
-              <input
-                ref={inputRef}
-                type="text"
-                value={keyValue}
-                onChange={(e) => {
-                  setKeyValue(e.target.value);
-                  if (hasError) setHasError(false);
-                }}
-                placeholder="КЛЮЧ ДОСТУПА"
-                className={`cc-freyja-key-input ${hasError ? "error" : ""}`}
-                autoComplete="off"
-                spellCheck="false"
-              />
-              <div className="cc-freyja-key-hint">
-                {errorMessage || "Введите кодовое слово и нажмите Enter"}
+            <div className="cc-freyja-key-field-wrap">
+              <div
+                className={`cc-freyja-boxes-row ${hasError ? "error" : ""}`}
+                onPaste={handleBoxPaste}
+              >
+                {boxes.map((b, idx) => (
+                  <input
+                    key={idx}
+                    ref={(el) => {
+                      boxRefs.current[idx] = el;
+                    }}
+                    type="text"
+                    maxLength={1}
+                    value={b}
+                    onChange={(e) => handleBoxChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleBoxKeyDown(idx, e)}
+                    className={`cc-freyja-box-input ${b ? "filled" : ""}`}
+                    autoComplete="off"
+                    spellCheck="false"
+                  />
+                ))}
               </div>
 
-              <button type="submit" className="cc-freyja-key-submit-btn">
+              <div className="cc-freyja-key-hint">
+                {errorMessage || "Введите кодовое слово"}
+              </div>
+
+              <button
+                type="button"
+                className="cc-freyja-key-submit-btn"
+                onClick={() => verifyBoxes(boxes.join(""))}
+              >
                 <span>РАЗБЛОКИРОВАТЬ</span>
                 <span>➔</span>
               </button>
-            </form>
+            </div>
           </div>
         </div>
       )}
