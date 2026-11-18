@@ -7,6 +7,7 @@ import type { RootState } from './store';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Toast from './components/ui/Toast';
+import { FreyjaEasterEgg } from './components/common/FreyjaEasterEgg';
 import UIKit from './pages/UIKit';
 
 import Home from './pages/Home';
@@ -45,6 +46,8 @@ export default function App() {
         type="error"
         onClose={() => dispatch(hideToast())}
       />
+
+      <FreyjaEasterEgg />
     </div>
   );
 }
