@@ -440,14 +440,14 @@ export const FreyjaEasterEgg: React.FC = () => {
 
       const prevChar = targetText[currentIdx - 1];
 
-      // Base speed: 125-155ms per character (so a 35-character line takes ~5 to 6.5s)
-      let delay = Math.floor(Math.random() * 30) + 125;
+      // Smooth, natural reading speed (~38-48ms per character)
+      let delay = Math.floor(Math.random() * 12) + 38;
 
-      // Newline / line break: pause for 700 - 1200ms
+      // Newline / line break: natural brief pause (240 - 380ms)
       if (prevChar === "\n") {
-        delay = Math.floor(Math.random() * 500) + 700;
+        delay = Math.floor(Math.random() * 140) + 240;
       }
-      // Punctuation (comma, dash, period, quotes, ellipsis): thoughtful pause
+      // Punctuation: brief thoughtful pause (140 - 240ms)
       else if (
         prevChar === "," ||
         prevChar === "." ||
@@ -458,18 +458,18 @@ export const FreyjaEasterEgg: React.FC = () => {
         prevChar === ":" ||
         prevChar === "…"
       ) {
-        delay = Math.floor(Math.random() * 450) + 400;
+        delay = Math.floor(Math.random() * 100) + 140;
       }
-      // Random human hesitation (like looking for a letter on keyboard): ~5% chance
-      else if (Math.random() < 0.05) {
-        delay = Math.floor(Math.random() * 550) + 450;
+      // Occasional human cadence touch: ~3% chance (120 - 200ms)
+      else if (Math.random() < 0.03) {
+        delay = Math.floor(Math.random() * 80) + 120;
       }
 
       timeoutId = setTimeout(typeNextChar, delay);
     };
 
-    // Initial natural breath before typing begins
-    timeoutId = setTimeout(typeNextChar, 350);
+    // Quick natural breath before typing begins
+    timeoutId = setTimeout(typeNextChar, 180);
 
     return () => {
       isCancelled = true;
