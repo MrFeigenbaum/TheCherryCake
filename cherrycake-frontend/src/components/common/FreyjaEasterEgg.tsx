@@ -1,65 +1,135 @@
 import React, { useState, useEffect } from "react";
 import "./FreyjaEasterEgg.css";
 
-const ASCII_RIVER = `
-        .  *       .       .   *   .    *   .   .
-    *         .      /\\           *       .     *
-       .   *        /  \\  /\\             .    *
-                  _/    \\/  \\__     *      .
-    ~ ~ ~ ~ ~ ~ ~[   NARIKALA  ]~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-          .  ·   |   FORTRESS  |  ·  .
-    ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-      _   _          |     |          _   _
-     ( ) ( )       ==|=====|==       ( ) ( )
-    =============[ BRIDGE OF PEACE ]=============
-    ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-    ~ ~ ~ ~ ~ ~ ~ ~ ~ MTKVARI ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+// Scene 1: Celestial Mountain & Technical Grid (Replicating Image 1 & 2 aesthetic)
+const ASCII_CELESTIAL_PEAKS = `
+                                                  :                             
+                                                  |                             
+                                .                -+-               *            
+                           *                     .|.               |            
+  .        *        .                            :;:               |   *        
+  |        |        |           *                 |                |   |        
+ -+-       |       -+-          |                /|\\              -+- -+-       
+  |        |        |          -+-              / | \\              |   |        
+  :··:·····|········|···········|··············/··|··\\·············|···|········
+     :     |        :           :       .-=-: /   |   \\ :-=.       :   :        
+  ...|.....|........|...................+=++-==++-·..·.··...·......|...|....... 
+     :     :        :                  +++*+==::-=*#*+:.·.··.·     :   :        
+:::::::::::::::::···:::::::::····:--***+==+*:-++=##+-==-····::::::::::::::::::·:
+:::::::::::::::::::::::::::::··:=#=--=#+:+#*##*+:=++++=+*+-::::::::::::::-::::::
+·::::··:·:-=*+=-::::=-::·:::-++*=-==++*+**%%#*+=+=-:=+*******#=-:::·:::::::::::-
+:-::---*###%*--+***+**+*-=+++=-=***+*%%####-:::::··:..·-++++***#**=------=======
+=++**###%%#++==+--+*#*++====-+==-+**#*=-:.·..·:===+-==-=*+--=****===+==--:-===--
+=+=---:::::-=---+--+=+=-=*+=--=+=::.·:::··--=+==-·:--==-==--· ·-=+*+==+=:=:·····
+::. .·:-·:-===::::·.  .·:-=-·::::::·..··:·::-+-:.·.·..·-==-:·..·.....    .  .·:-
+ .....·· ....·::::··.·::::::··.·:--::··.····:::-:·   . . ·:---:·... .......  . .
++--[ CAUCASUS SECTOR // TELEMETRY GRID ]---------------------------------------+
+| LAT 41°42'38"N | LON 44°47'54"E | ALT: 2,740m | 02:40 AM | BEARING: 318° NW |
+| ATMOSPHERE: 7°C | BAROMETER: 1018 hPa | WIND: ESE 1.8 m/s | VIS: UNLIMITED   |
++------------------------------------------------------------------------------+
 `;
 
-const ASCII_BALCONY = `
-          .  *  .    ___I___    .  *  .
-       *            /       \\            *
-          .        |  (o) (o) |       .
-        ___________|__________|___________
-       |  |===|  |===|  |===|  |===|  |  |
-       |  |   |  |   |  |   |  |   |  |  |
-       |__|===|__|===|__|===|__|===|__|__|
-       [=== CARVED WOODEN BALCONY ===]
-           \\   /      |  |      \\   /
-            \\_/       |__|       \\_/
+// Scene 2: 1-Bit Dithered Caucasian Ridge & River Pines (Replicating Image 3 aesthetic)
+const ASCII_DITHERED_VALLEY = `
+@@@@@@@%@***==-:#+·::=+**##*:-+++**+*#+=:+@@@#####%%%%%#%%%%%%######*###******#@
+@@%++*=**#%++=:===::=-----+***+*++***:·=#%@@@#+***####**#**##*+**#************#@
+@%+:::·-·-:--:·----·--:==*++*++*##+=::*##@@@@@#*******************************#@
+@=::-·...           ...·-=++*#*#+-·+:*##%@@@@@@%******************************#@
+@: .                     .-:==+--:##*#%@@@@@@@@@@%%#%#***#*#@#****************#@
+@%:                       ·--::·#%%%#%@@@@@@@%%@@@@@%@%==%%%@@%%#*************#@
+@@@+      .  ..--·.·:=   -*+*##*###@@@@@@@@%##@@@@@#%%##%@@@@@@@@%%###**#*****#@
+@@@@#·  ·==::::**+:+##+-·=**++*#@@@@@@@@@%#+#@@%%@@@#+#@@@@@@%%@@@@@%%%%@%****%@
+@@@@@@#*#%+++**#***+=::=#*===+%@@@@@@@%#*#%%@@@@@@@%%#%@@@@@#%@@@@@#%@@@@@@%#@@@
+@@@@@@@@@@@@%**+====+==+*+*%%@@@@@@%%%%%@%%@@@@@@%#%%@@@@@%#@@@@@%%@@@@@@@@@@@@@
+@@@@@@@@@@@@@@*=:+##*#%##@@@@@%%##*%%%%%%%@@@@@%%%%@@@@@@%@@%%%@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@%*+**#######%#**#%%%%%%@@@@@@%%%%@@@@@@@@@@%%@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@%#+==+%#**==#**#####%%%%%%##@@%@@@@@@@@@@@@@@@@@@@@@@@%@@@@@@
+@@@@@@@@@@@@@@@@@@@@@%*==:::+=·--:*=+****####*%@%%#%%@@@@@@@@@@@@@@@@@@@@%@@@@@@
+@@@@@@@@@@@@%#%%@@@@@@@%= ..-+=-···.:+**+++=+*#@%**#**###%%%%%%@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@%@@@@@@@@@@@@#+·.  .. .-  .···-·-+*##*+=-:-:++***#**=****#*=*##%@@@@
+@@@@@@@@@@@@@@@@@%@@@@%%%@@@*-===+*%+:.     ·==*++-  *- ..··.·..--··=%:+%#@@@@@@
+@@@@@@@@@@@@@@@@%@@%##%%@@@@@@@@@@%%@@@%**==:-:#+=:·-%%*+- .·-:+%#+*%@@@@@@@@@@@
+@@@@@@@@%===*%==+*#%%@%@%+++============+++=:=+%+:·+%*##*=-:+==++**#@%@@%@@@@@@@
+@@@@@@@@@#*=*@+-·*=:*=#=·.  ...... ..·...-·-+##@+=··+++·-+#+%#*+##%%@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@%@%@%*+==:++:::*+*#*::+=++=+@*+**%%##@@@@@@@%@@%@@@@@@@@@@@@@
+@@@@@@@@@@@%@%%@@@%@@@@@@@@@%%%#####%%%%###%%%@@@%@%@@@@@@%%%@@@@@@@@@@@@@@@@@@@
++--[ MTKVARI REFLECTION // CAUCASIAN RANGE ]-----------------------------------+
+| 02:45 AM • PINE FORESTS & MOONLIT CRESTS REFLECTING ACROSS THE RIVER CURRENT |
++------------------------------------------------------------------------------+
 `;
 
-const ASCII_TEA = `
-              .·*   ☕   *·.
-                 (  )  (  )
-               .-'  \`'-'  \`'-.
-              |  🍒  🍒  🍒   |
-            .-'---------------'-.
-           |  ~ ~ ~ ~ ~ ~ ~ ~ ~  |
-           |   TBILISI  CHERRY   |
-           |      H O N E Y      |
-         .-'---------------------'-.
-        |___________________________|
+// Scene 3: Hotel Monday by DNT Group & Ushangi Chkheidze Embankment (Replicating Image 4)
+const ASCII_HOTEL_MONDAY = `
+       .   *            .         *           .         *             .
+  *             .           *           .           *            .          *
+            .         ___I___       .         *          ___I___        .
+        *            /       \\           .              /       \\
+  .                 | (o) (o) |     [HOTEL MONDAY]     | (o) (o) |          .
+      *    _________|_________|_____[ DNT  GROUP ]_____|_________|_________
+          |  |===|  |===|  |===|  |===|  |===|  |===|  |===|  |===|  |  |
+          |  |   |  |   |  |   |  |   |  |   |  |   |  |   |  |   |  |  |
+          |__|===|__|===|__|===|__|===|__|===|__|===|__|===|__|===|__|__|
+          [======= 22 USHANGI CHKHEIDZE STREET • CHUGURETI =======]
+               \\   /               |  |  |  |               \\   /
+  ~ ~ ~ ~ ~ ~ ~ \\_/~ ~ ~ ~ ~ ~ ~ ~ ~|__|__|__|~ ~ ~ ~ ~ ~ ~ ~\\_/~ ~ ~ ~ ~ ~ ~ ~ ~
+     |====|              |                               |              |====|
+  ===|    |==============|==== GALAKTION TABIDZE BRIDGE =|==============|    |===
+     |    |              |                               |              |    |
+  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ MTKVARI RIVER ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
++--[ LOCATION DOSSIER // TBILISI ]----------------------------------------------+
+| HOTEL MONDAY BY DNT GROUP • 22 USHANGI CHKHEIDZE ST, CHUGURETI, TBILISI      |
+| COORD: 41°42'38"N  44°47'54"E | RIVER ELEVATION: 412M | DISTANCE TO VERE: 120M |
++-------------------------------------------------------------------------------+
 `;
 
-type SceneId = "river" | "balcony" | "jasmine" | "stars" | "bakery";
+// Scene 4: Hot Tea & Unspoken Feelings
+const ASCII_BALCONY_TEA = `
+                     . · *       ☕       * · .
+                        (  )   (  )   (  )
+                      .-'  \`'-'  \`'-'  \`'-.
+                     |   TBILISI  CHERRY  |
+                     |     H O N E Y      |
+                   .-'--------------------'-.
+                  |  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~   |
+                  |   TWO GLASSES OF TEA     |
+                  |   USHANGI CHKHEIDZE 22   |
+                .-'--------------------------'-.
+               |________________________________|
++--[ 03:15 AM // THE MIDNIGHT BALCONY ]----------------------------------------+
+| "Some feelings don't ask for a confession. They live quietly in the cold air, |
+| in the way you remember every laughter, every walk by the Kura river,        |
+| and the humble privilege of standing beside her in this storm."              |
++------------------------------------------------------------------------------+
+`;
+
+type SceneId = "hotel" | "celestial" | "dithered" | "tea";
 
 export const FreyjaEasterEgg: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scene, setScene] = useState<SceneId>("river");
+  const [scene, setScene] = useState<SceneId>("hotel");
 
   useEffect(() => {
     let keyBuffer = "";
     const targetCode = "freyja";
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Allow closing with Escape
+      // Escape closes terminal
       if (e.key === "Escape" && isOpen) {
         setIsOpen(false);
         return;
       }
 
-      // Avoid capturing when typing inside standard inputs
+      // Hotkeys 1, 2, 3, 4 to switch scenes inside terminal
+      if (isOpen) {
+        if (e.key === "1") { setScene("hotel"); return; }
+        if (e.key === "2") { setScene("celestial"); return; }
+        if (e.key === "3") { setScene("dithered"); return; }
+        if (e.key === "4") { setScene("tea"); return; }
+      }
+
+      // Avoid capturing when typing inside standard form inputs
       const target = e.target as HTMLElement;
       if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) {
         return;
@@ -68,7 +138,7 @@ export const FreyjaEasterEgg: React.FC = () => {
       keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-targetCode.length);
       if (keyBuffer === targetCode) {
         setIsOpen(true);
-        setScene("river");
+        setScene("hotel");
         keyBuffer = "";
       }
     };
@@ -93,202 +163,189 @@ export const FreyjaEasterEgg: React.FC = () => {
         {/* Window Chrome Header */}
         <div className="cc-freyja-header">
           <div className="cc-freyja-window-dots">
-            <span className="cc-freyja-dot red" onClick={() => setIsOpen(false)} />
-            <span className="cc-freyja-dot yellow" onClick={() => setScene("river")} />
-            <span className="cc-freyja-dot green" />
+            <span className="cc-freyja-dot red" onClick={() => setIsOpen(false)} title="Close [Esc]" />
+            <span className="cc-freyja-dot yellow" onClick={() => setScene("hotel")} title="Reset [1]" />
+            <span className="cc-freyja-dot green" title="Active Link" />
           </div>
           <span className="cc-freyja-title">
-            ✦ TBILISI NIGHTS: THE ECHO OF FREYJA ✦
+            TBILISI MEMORIES // USHANGI CHKHEIDZE 22 • HOTEL MONDAY
           </span>
           <button
-            type="button"
             className="cc-freyja-close-btn"
             onClick={() => setIsOpen(false)}
+            aria-label="Close"
           >
-            ESC / CLOSE
+            ESC
           </button>
         </div>
 
-        {/* Story Screen Content */}
+        {/* Terminal Screen Body */}
         <div className="cc-freyja-body">
-          {scene === "river" && (
-            <>
-              <pre className="cc-freyja-ascii">{ASCII_RIVER}</pre>
-              <div className="cc-freyja-story-text">
-                <p>
-                  Midnight in Tbilisi. The air carries the gentle chill of late autumn,
-                  intertwined with the aroma of damp river stones, distant cedar smoke, and warm vanilla from an old bakery.
-                </p>
-                <p>
-                  Across the dark waters of the Mtkvari, the ancient stone walls of Narikala glow against the velvet sky like a quiet crown.
-                  You stand by the river embankment near the hotel, watching amber reflections ripple across the current.
-                </p>
-                <p className="cc-freyja-poem">
-                  « The water remembers the footsteps of travelers, / Yet leaves no footprint behind. »
-                </p>
-              </div>
+          {/* Navigation Bar */}
+          <div className="cc-freyja-nav-tabs">
+            <button
+              className={`cc-freyja-tab-btn ${scene === "hotel" ? "active" : ""}`}
+              onClick={() => setScene("hotel")}
+            >
+              [1] 🏨 Hotel Monday (Chkheidze 22)
+            </button>
+            <button
+              className={`cc-freyja-tab-btn ${scene === "celestial" ? "active" : ""}`}
+              onClick={() => setScene("celestial")}
+            >
+              [2] 🏔️ Caucasus Coordinate Grid
+            </button>
+            <button
+              className={`cc-freyja-tab-btn ${scene === "dithered" ? "active" : ""}`}
+              onClick={() => setScene("dithered")}
+            >
+              [3] 🌲 Mtkvari Valley (1-Bit)
+            </button>
+            <button
+              className={`cc-freyja-tab-btn ${scene === "tea" ? "active" : ""}`}
+              onClick={() => setScene("tea")}
+            >
+              [4] ☕ Midnight Balcony & Words
+            </button>
+          </div>
 
+          {/* Telemetry Bar */}
+          <div className="cc-freyja-telemetry-bar">
+            <span>📍 <strong>41°42'38"N 44°47'54"E</strong></span>
+            <span>🏨 <strong>Hotel Monday by DNT Group</strong></span>
+            <span>🌊 <strong>Mtkvari Riverfront (Chugureti)</strong></span>
+            <span>🕒 <strong>02:40 AM</strong></span>
+          </div>
+
+          {/* Scene 1: Hotel Monday & Bridge */}
+          {scene === "hotel" && (
+            <>
+              <pre className="cc-freyja-ascii">{ASCII_HOTEL_MONDAY}</pre>
+              <div className="cc-freyja-prompt">&gt; LOCATION: 22 Ushangi Chkheidze St, Chugureti District, Tbilisi.</div>
+              <p className="cc-freyja-story-text">
+                Ночь над Тбилиси. Отель Monday затих, лишь мягкий свет резных деревянных балконов отражается в тёмных водах Куры (Мтквари).
+                Справа высится арочный силуэт Моста Галактиона Табидзе, соединяющий сонный Чугурети с огнями парка Вере.
+                Горный ветерок приносит с Кавказа прохладу и аромат цветущего миндаля.
+              </p>
+              <div className="cc-freyja-poem">
+                «Вода шумит под мостом Табидзе,<br />
+                В окне на Чхеидзе горит огонек.<br />
+                Мы здесь — две параллельные птицы,<br />
+                Что делят один ночной ветерок.»
+              </div>
               <div className="cc-freyja-choices">
-                <button
-                  type="button"
-                  className="cc-freyja-choice-btn"
-                  onClick={() => setScene("balcony")}
-                >
-                  <span className="cc-freyja-key">[1]</span>
-                  <span>Walk toward the carved wooden balconies of the Old Town</span>
+                <button className="cc-freyja-choice-btn" onClick={() => setScene("celestial")}>
+                  <span className="cc-freyja-key">[2]</span> Поднять взгляд к вершинам Кавказа над Мтацминдой
                 </button>
-                <button
-                  type="button"
-                  className="cc-freyja-choice-btn"
-                  onClick={() => setScene("bakery")}
-                >
-                  <span className="cc-freyja-key">[2]</span>
-                  <span>Step into the quiet midnight bakery glowing by the river</span>
+                <button className="cc-freyja-choice-btn" onClick={() => setScene("dithered")}>
+                  <span className="cc-freyja-key">[3]</span> Спуститься к тихой кромке реки под тень сосен
+                </button>
+                <button className="cc-freyja-choice-btn" onClick={() => setScene("tea")}>
+                  <span className="cc-freyja-key">[4]</span> Вернуться на балкон к горячему вишнёвому чаю
                 </button>
               </div>
             </>
           )}
 
-          {scene === "balcony" && (
+          {/* Scene 2: Caucasus Coordinate Grid */}
+          {scene === "celestial" && (
             <>
-              <pre className="cc-freyja-ascii">{ASCII_BALCONY}</pre>
-              <div className="cc-freyja-story-text">
-                <p>
-                  Cobblestone alleys lead you beneath the timeless lace-carved balconies.
-                  A gentle mountain breeze sweeps down from Mtatsminda, rustling fallen vine leaves.
-                </p>
-                <p>
-                  For a fleeting second, you catch sight of her silhouette against the soft amber light of the upper terrace.
-                  She gazes toward the river with that unmistakable calm focus — the brilliant leader, guiding her team through every storm with grace.
-                </p>
-                <p>
-                  Her heart belongs to another, yet in this quiet Tbilisi night, there is no bitterness in your soul.
-                  Only an unspoken reverence: the profound gratitude of walking under the same constellation, sharing the same journey, and guarding her peace from afar.
-                </p>
-                <p className="cc-freyja-poem">
-                  « Some stars shine so far in the night, / We cannot hold them, yet they guide our sight. »
-                </p>
+              <pre className="cc-freyja-ascii">{ASCII_CELESTIAL_PEAKS}</pre>
+              <div className="cc-freyja-prompt">&gt; SECTOR SCAN: 318° NW // CAUCASUS ELEVATION 2,740M.</div>
+              <p className="cc-freyja-story-text">
+                Небосклон над ущельем Куры пронзительно чист. Звёзды выстроились в мерцающую координатную сетку.
+                Острые гранитные пики Большого Кавказа укрыты белым вечным снегом, а у подножия дремлет Тбилиси.
+                В этой космической тишине кажется, что весь шум земных тревог растворился без следа.
+              </p>
+              <div className="cc-freyja-poem">
+                «Пусть между нами тысячи правил,<br />
+                И жизнь начертила границу из льда —<br />
+                Но свет, что ты в этом сердце оставил,<br />
+                Не скроет туман ни за что, никогда.»
               </div>
-
               <div className="cc-freyja-choices">
-                <button
-                  type="button"
-                  className="cc-freyja-choice-btn"
-                  onClick={() => setScene("jasmine")}
-                >
-                  <span className="cc-freyja-key">[1]</span>
-                  <span>Leave a delicate white jasmine flower on the stone balustrade</span>
+                <button className="cc-freyja-choice-btn" onClick={() => setScene("dithered")}>
+                  <span className="cc-freyja-key">[3]</span> Взглянуть на отражение скал в тёмной реке
                 </button>
-                <button
-                  type="button"
-                  className="cc-freyja-choice-btn"
-                  onClick={() => setScene("stars")}
-                >
-                  <span className="cc-freyja-key">[2]</span>
-                  <span>Whisper a silent blessing to the night wind and walk back</span>
+                <button className="cc-freyja-choice-btn" onClick={() => setScene("hotel")}>
+                  <span className="cc-freyja-key">[1]</span> Вернуться к огням отеля Monday
+                </button>
+                <button className="cc-freyja-choice-btn" onClick={() => setScene("tea")}>
+                  <span className="cc-freyja-key">[4]</span> Прочитать невысказанное письмо на балконе
                 </button>
               </div>
             </>
           )}
 
-          {scene === "jasmine" && (
+          {/* Scene 3: Dithered Valley & Pines */}
+          {scene === "dithered" && (
             <>
-              <pre className="cc-freyja-ascii">{ASCII_BALCONY}</pre>
-              <div className="cc-freyja-story-text">
-                <p>
-                  You carefully place the fragrant night jasmine upon the weathered stone steps.
-                  No words, no signature — just an anonymous token of respect for a muse whose presence makes every challenge feel lighter.
-                </p>
-                <p>
-                  As you turn to leave, you hear the quiet chiming of church bells across the valley.
-                  The silent devotion of a protector asks for nothing in return.
-                </p>
+              <pre className="cc-freyja-ascii">{ASCII_DITHERED_VALLEY}</pre>
+              <div className="cc-freyja-prompt">&gt; MTKVARI GORGE: 02:45 AM // RIVER ELEVATION 412M.</div>
+              <p className="cc-freyja-story-text">
+                Берег Мтквари, где каменные склоны встречаются с быстрой прохладной водой.
+                Силуэты кавказских сосен замерли в ожидании рассвета. В воде дрожит серебряная дорожка от далёких фонарей.
+                Здесь легко дышится, и даже безответное чувство не кажется болью — оно превращается в чистую, светлую благодарность.
+              </p>
+              <div className="cc-freyja-poem">
+                «Течёт Кура сквозь вековые камни,<br />
+                Смывая горечь неслучившихся признаний.<br />
+                Быть верным другом — дар немалый,<br />
+                И в этой дружбе — крепость без изъянов.»
               </div>
-
               <div className="cc-freyja-choices">
-                <button
-                  type="button"
-                  className="cc-freyja-choice-btn"
-                  onClick={() => setScene("bakery")}
-                >
-                  <span className="cc-freyja-key">[1]</span>
-                  <span>Return to the warmth of the bakery by the water</span>
+                <button className="cc-freyja-choice-btn" onClick={() => setScene("tea")}>
+                  <span className="cc-freyja-key">[4]</span> Подняться на балкон отеля Monday
+                </button>
+                <button className="cc-freyja-choice-btn" onClick={() => setScene("celestial")}>
+                  <span className="cc-freyja-key">[2]</span> Взглянуть на звёздную телеметрию Кавказа
+                </button>
+                <button className="cc-freyja-choice-btn" onClick={() => setScene("hotel")}>
+                  <span className="cc-freyja-key">[1]</span> К набережной Ушанги Чхеидзе
                 </button>
               </div>
             </>
           )}
 
-          {scene === "stars" && (
+          {/* Scene 4: Tea & Words */}
+          {scene === "tea" && (
             <>
-              <pre className="cc-freyja-ascii">{ASCII_RIVER}</pre>
-              <div className="cc-freyja-story-text">
-                <p>
-                  You pause on the bridge as the cool breeze touches your face.
-                  To love purely without possessing is the quietest strength a samurai or an engineer can carry.
-                </p>
-                <p>
-                  Being part of her team, building something great together, watching her succeed — that honor is a precious story all its own.
-                </p>
+              <pre className="cc-freyja-ascii">{ASCII_BALCONY_TEA}</pre>
+              <div className="cc-freyja-prompt">&gt; PRIVATE LOG ENTRY // RE: FREYJA // 03:15 AM.</div>
+              <p className="cc-freyja-story-text">
+                Два стеклянных стакана в мельхиоровых подстаканниках. Пар поднимается над черным горным чаем,
+                а на блюдце блестит янтарно-вишнёвое варенье — вкус той самой кондитерской, ради которой мы создаём Cherry Cake.
+              </p>
+              <p className="cc-freyja-story-text">
+                Иногда настоящая любовь — это не разрушать чей-то чужой мир и не требовать взаимности.
+                Это умение быть надёжной опорой в команде, прикрывать спину на каждом спринте, бережно проверять код,
+                шутить на созвонах и радоваться её улыбке, даже зная, что её сердце принадлежит другому.
+              </p>
+              <div className="cc-freyja-poem">
+                «Я не нарушу твой покой и счастье,<br />
+                Но знай: пока кружится этот свет,<br />
+                В любой беде, сквозь бури и ненастья,<br />
+                Ты можешь опереться на мой след.»
               </div>
-
               <div className="cc-freyja-choices">
-                <button
-                  type="button"
-                  className="cc-freyja-choice-btn"
-                  onClick={() => setScene("bakery")}
-                >
-                  <span className="cc-freyja-key">[1]</span>
-                  <span>Find warmth in the midnight bakery</span>
+                <button className="cc-freyja-choice-btn" onClick={() => setScene("hotel")}>
+                  <span className="cc-freyja-key">[1]</span> Вернуться к панораме отеля на Чхеидзе 22
                 </button>
-              </div>
-            </>
-          )}
-
-          {scene === "bakery" && (
-            <>
-              <pre className="cc-freyja-ascii">{ASCII_TEA}</pre>
-              <div className="cc-freyja-story-text">
-                <p>
-                  You step through the oak doorway into the warm bakery.
-                  A steaming clay pot of mountain berry tea and a fresh slice of layered Cherry Honey Cake are placed before you.
-                </p>
-                <p>
-                  The sweet warmth of vanilla and tart cherry fills the room.
-                  Life is made of these fleeting, beautiful chapters: the rivers we cross, the code we write, and the people who inspire us to be better than we were yesterday.
-                </p>
-                <p className="cc-freyja-poem">
-                  « May every tomorrow bring sweetness to the one who leads with heart. »
-                </p>
-              </div>
-
-              <div className="cc-freyja-choices">
-                <button
-                  type="button"
-                  className="cc-freyja-choice-btn"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span className="cc-freyja-key">[ESC]</span>
-                  <span>Close the journal and return to the storefront</span>
+                <button className="cc-freyja-choice-btn" onClick={() => setScene("celestial")}>
+                  <span className="cc-freyja-key">[2]</span> Посмотреть на горы под звёздным небом
                 </button>
-                <button
-                  type="button"
-                  className="cc-freyja-choice-btn"
-                  onClick={() => setScene("river")}
-                >
-                  <span className="cc-freyja-key">[R]</span>
-                  <span>Walk the Mtkvari riverbank once more</span>
+                <button className="cc-freyja-choice-btn" onClick={() => setIsOpen(false)}>
+                  <span className="cc-freyja-key">[ESC]</span> Закрыть терминал и вернуться к проекту
                 </button>
               </div>
             </>
           )}
 
           <div className="cc-freyja-footer-note">
-            Secret unlocked with code «FREYJA» &bull; Press [ESC] anytime to return
+            ★ Нажимайте клавиши [1], [2], [3], [4] для переключения сцен • [ESC] для выхода ★
           </div>
         </div>
       </div>
     </div>
   );
 };
-
-export default FreyjaEasterEgg;
