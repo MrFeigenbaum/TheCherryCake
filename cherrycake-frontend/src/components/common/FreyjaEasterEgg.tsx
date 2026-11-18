@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import useTranslation from "../../i18n/useTranslation";
 import "./FreyjaEasterEgg.css";
 
 import artFebruaryPisces from "../../assets/quest/art-february-pisces.jpg";
@@ -326,6 +327,7 @@ Atunci care este rostul acestei vieți și pentru ce să mai trăiești?
 ];
 
 export const FreyjaEasterEgg: React.FC = () => {
+  const { easterEgg, language } = useTranslation();
   const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
   const [boxes, setBoxes] = useState<string[]>(["", "", "", "", "", ""]);
   const [hasError, setHasError] = useState(false);
@@ -335,6 +337,25 @@ export const FreyjaEasterEgg: React.FC = () => {
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [typedLength, setTypedLength] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const activeChapters = useMemo(() => {
+    return CHAPTERS.map((baseCh) => {
+      const tr = easterEgg.chapters[baseCh.id];
+      if (!tr) return baseCh;
+      return {
+        ...baseCh,
+        tag: tr.tag || baseCh.tag,
+        location: tr.location || baseCh.location,
+        heading: tr.heading || baseCh.heading,
+        hudLeft: tr.hudLeft || baseCh.hudLeft,
+        hudRight: tr.hudRight || baseCh.hudRight,
+        narrative: tr.narrative || baseCh.narrative,
+        poemTitle: tr.poemTitle || baseCh.poemTitle,
+        poemText: tr.poemText || baseCh.poemText,
+        choices: tr.choices && tr.choices.length ? tr.choices : baseCh.choices,
+      };
+    });
+  }, [easterEgg]);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const pausedMediaRef = useRef<{ el: HTMLMediaElement; vol: number }[]>([]);
@@ -441,7 +462,7 @@ export const FreyjaEasterEgg: React.FC = () => {
     if (!isQuestOpen) return;
 
     setTypedLength(0);
-    const targetText = CHAPTERS[currentChapterIndex].poemText;
+    const targetText = activeChapters[currentChapterIndex]?.poemText || "";
     let currentIdx = 0;
     let isCancelled = false;
     let timeoutId: any = null;
@@ -492,12 +513,12 @@ export const FreyjaEasterEgg: React.FC = () => {
       isCancelled = true;
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [isQuestOpen, currentChapterIndex]);
+  }, [isQuestOpen, currentChapterIndex, activeChapters]);
 
   // Global Keyboard listener
   useEffect(() => {
     let keyBuffer = "";
-    const targetCode = "freyja";
+    const targetCodes = ["freyja", "фрейя"];
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // Escape handling
@@ -519,12 +540,12 @@ export const FreyjaEasterEgg: React.FC = () => {
 
       if (isQuestOpen) {
         const num = parseInt(e.key, 10);
-        if (!isNaN(num) && num >= 1 && num <= CHAPTERS.length) {
+        if (!isNaN(num) && num >= 1 && num <= activeChapters.length) {
           setCurrentChapterIndex(num - 1);
           return;
         }
         if (e.key === " " || e.key === "Enter") {
-          const fullLen = CHAPTERS[currentChapterIndex].poemText.length;
+          const fullLen = activeChapters[currentChapterIndex]?.poemText?.length || 0;
           if (typedLength < fullLen) {
             e.preventDefault();
             setTypedLength(fullLen);
@@ -532,7 +553,7 @@ export const FreyjaEasterEgg: React.FC = () => {
           }
         }
         if (e.key === "ArrowRight") {
-          setCurrentChapterIndex((prev) => Math.min(prev + 1, CHAPTERS.length - 1));
+          setCurrentChapterIndex((prev) => Math.min(prev + 1, activeChapters.length - 1));
           return;
         }
         if (e.key === "ArrowLeft") {
@@ -541,8 +562,8 @@ export const FreyjaEasterEgg: React.FC = () => {
         }
       }
 
-      keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-targetCode.length);
-      if (keyBuffer === targetCode) {
+      keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-10);
+      if (targetCodes.some((code) => keyBuffer.endsWith(code))) {
         setIsKeyModalOpen(false);
         setIsQuestOpen(true);
         setCurrentChapterIndex(0);
@@ -552,11 +573,12 @@ export const FreyjaEasterEgg: React.FC = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isQuestOpen, isKeyModalOpen, currentChapterIndex, typedLength]);
+  }, [isQuestOpen, isKeyModalOpen, currentChapterIndex, typedLength, activeChapters]);
 
   // Verification logic for the 6-letter cipher
   const verifyBoxes = (code: string) => {
-    if (code.trim().toUpperCase() === "FREYJA") {
+    const cleaned = code.trim().toUpperCase();
+    if (cleaned === "FREYJA" || cleaned === "ФРЕЙЯ") {
       setIsKeyModalOpen(false);
       setIsQuestOpen(true);
       setCurrentChapterIndex(0);
@@ -565,7 +587,7 @@ export const FreyjaEasterEgg: React.FC = () => {
       setErrorMessage("");
     } else {
       setHasError(true);
-      setErrorMessage("Ключ доступа не подходит...");
+      setErrorMessage(easterEgg.keyError);
       setTimeout(() => {
         setHasError(false);
         setBoxes(["", "", "", "", "", ""]);
@@ -635,8 +657,8 @@ export const FreyjaEasterEgg: React.FC = () => {
     }
   };
 
-  const currentChapter = CHAPTERS[currentChapterIndex];
-  const progressPercent = ((currentChapterIndex + 1) / CHAPTERS.length) * 100;
+  const currentChapter = activeChapters[currentChapterIndex] || activeChapters[0];
+  const progressPercent = ((currentChapterIndex + 1) / activeChapters.length) * 100;
   const fullPoem = currentChapter.poemText;
   const isTypingDone = typedLength >= fullPoem.length;
   const displayedPoem = fullPoem.slice(0, typedLength);
@@ -667,8 +689,8 @@ export const FreyjaEasterEgg: React.FC = () => {
           type="button"
           className="cc-freyja-floating-trigger"
           onClick={() => setIsKeyModalOpen(true)}
-          title="Секретный ключ // Secret Cipher Key"
-          aria-label="Ввести секретный ключ"
+          title={easterEgg.keyTriggerTooltip || "Secret Cipher Key"}
+          aria-label={easterEgg.keyTitle}
         >
           <span className="cc-freyja-trigger-icon-wrap" aria-hidden="true">
             <svg
@@ -709,16 +731,16 @@ export const FreyjaEasterEgg: React.FC = () => {
             <button
               className="cc-freyja-key-close"
               onClick={() => setIsKeyModalOpen(false)}
-              title="Закрыть [Esc]"
+              title={easterEgg.keyClose || "Close [Esc]"}
             >
               ✕
             </button>
 
             <div className="cc-freyja-key-header">
-              <span className="cc-freyja-key-badge">ACCESS KEY // СЕКРЕТНЫЙ КЛЮЧ</span>
-              <h3 className="cc-freyja-key-title">Северные Врата</h3>
+              <span className="cc-freyja-key-badge">{easterEgg.keyBadge}</span>
+              <h3 className="cc-freyja-key-title">{easterEgg.keyTitle}</h3>
               <p className="cc-freyja-key-desc">
-                Введите кодовое слово, чтобы открыть секретную главу
+                {easterEgg.keyDesc}
               </p>
             </div>
 
@@ -746,7 +768,7 @@ export const FreyjaEasterEgg: React.FC = () => {
               </div>
 
               <div className="cc-freyja-key-hint">
-                {errorMessage || "Введите кодовое слово"}
+                {errorMessage || easterEgg.keyPlaceholder}
               </div>
 
               <button
@@ -754,7 +776,7 @@ export const FreyjaEasterEgg: React.FC = () => {
                 className="cc-freyja-key-submit-btn"
                 onClick={() => verifyBoxes(boxes.join(""))}
               >
-                <span>РАЗБЛОКИРОВАТЬ</span>
+                <span>{easterEgg.keySubmit}</span>
                 <span>➔</span>
               </button>
             </div>
@@ -801,7 +823,7 @@ export const FreyjaEasterEgg: React.FC = () => {
                 <button
                   className="cc-freyja-play-btn"
                   onClick={togglePlayMusic}
-                  title={isPlaying ? "Пауза" : "Воспроизвести"}
+                  title={isPlaying ? (language === 'en' ? 'Pause' : 'Пауза') : (language === 'en' ? 'Play' : 'Воспроизвести')}
                 >
                   {isPlaying ? "❚❚" : "▶"}
                 </button>
@@ -817,7 +839,7 @@ export const FreyjaEasterEgg: React.FC = () => {
 
               <div className="cc-freyja-header-actions">
                 <span className="cc-freyja-chapter-badge">
-                  ГЛАВА {currentChapter.id} / {CHAPTERS.length}
+                  {language === 'en' ? 'CHAPTER' : language === 'ka' ? 'თავი' : 'ГЛАВА'} {currentChapter.id} / {activeChapters.length}
                 </span>
                 <button
                   className="cc-freyja-close-btn"
@@ -869,7 +891,7 @@ export const FreyjaEasterEgg: React.FC = () => {
               <div
                 className="cc-freyja-typewriter-card"
                 onClick={() => setTypedLength(fullPoem.length)}
-                title="Кликните, чтобы показать весь текст сразу"
+                title={language === 'en' ? 'Click to show all text immediately' : language === 'ka' ? 'დააკლიკეთ მთელი ტექსტის საჩვენებლად' : 'Кликните, чтобы показать весь текст сразу'}
               >
                 <div className="cc-freyja-poem-header-bar">
                   <div className="cc-freyja-poem-title">
@@ -883,7 +905,7 @@ export const FreyjaEasterEgg: React.FC = () => {
                         setTypedLength(fullPoem.length);
                       }}
                     >
-                      ⏩ Показать всё сразу
+                      {language === 'en' ? '⏩ Show All' : language === 'ka' ? '⏩ ყველას ჩვენება' : '⏩ Показать всё сразу'}
                     </button>
                   )}
                 </div>
@@ -917,26 +939,26 @@ export const FreyjaEasterEgg: React.FC = () => {
                   disabled={currentChapterIndex === 0}
                   onClick={() => setCurrentChapterIndex((prev) => Math.max(prev - 1, 0))}
                 >
-                  ← Назад
+                  {language === 'en' ? '← Back' : language === 'ka' ? '← უკან' : '← Назад'}
                 </button>
 
                 <div className="cc-freyja-dots-nav">
-                  {CHAPTERS.map((ch, idx) => (
+                  {activeChapters.map((ch, idx) => (
                     <div
                       key={ch.id}
                       className={`cc-freyja-step-dot ${idx === currentChapterIndex ? "active" : ""}`}
                       onClick={() => setCurrentChapterIndex(idx)}
-                      title={`Глава ${ch.id}: ${ch.heading}`}
+                      title={`${language === 'en' ? 'Chapter' : language === 'ka' ? 'თავი' : 'Глава'} ${ch.id}: ${ch.heading}`}
                     />
                   ))}
                 </div>
 
                 <button
                   className="cc-freyja-nav-btn"
-                  disabled={currentChapterIndex === CHAPTERS.length - 1}
-                  onClick={() => setCurrentChapterIndex((prev) => Math.min(prev + 1, CHAPTERS.length - 1))}
+                  disabled={currentChapterIndex === activeChapters.length - 1}
+                  onClick={() => setCurrentChapterIndex((prev) => Math.min(prev + 1, activeChapters.length - 1))}
                 >
-                  Вперёд →
+                  {language === 'en' ? 'Next →' : language === 'ka' ? 'შემდეგი →' : 'Вперёд →'}
                 </button>
               </div>
             </div>

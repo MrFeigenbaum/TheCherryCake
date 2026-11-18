@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
+import useTranslation from "../i18n/useTranslation";
 
 import heroCake from "../assets/hero-cake.png";
 import treatCoffee from "../assets/treat-coffee.png";
@@ -11,6 +12,7 @@ import "./Home.css";
 
 export default function Home() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="cc-home-container">
@@ -20,22 +22,21 @@ export default function Home() {
       <section className="cc-home-hero" aria-label="Welcome and hero banner">
         <div className="cc-hero-left">
           <div className="cc-hero-tag">
-            <span>✨</span> Artisan Confectionery &amp; Café
+            <span>✨</span> {t('hero.badge', 'Artisan Confectionery & Café')}
           </div>
 
           <div className="cc-hero-headline">
             <h1 className="cc-hero-title">
-              Sweet Moments
-              <span className="cc-hero-title-cursive">Start Here</span>
+              {t('hero.title1', 'Sweet Moments')}
+              <span className="cc-hero-title-cursive">{t('hero.title2', 'Start Here')}</span>
             </h1>
             <p className="cc-hero-eyebrow-accent">
-              Welcome to Cherry Cake
+              {t('hero.badge', 'Welcome to Cherry Cake')}
             </p>
           </div>
 
           <p className="cc-hero-subtitle">
-            Handcrafted with passion and baked fresh every sunrise. We pair authentic European pastry techniques
-            with fresh wild berries, pure dairy cream, and single-origin Belgian chocolate to celebrate your every sweet milestone.
+            {t('hero.subtitle', 'Handcrafted with passion and baked fresh every sunrise. We pair authentic European pastry techniques with fresh wild berries, pure dairy cream, and single-origin Belgian chocolate to celebrate your every sweet milestone.')}
           </p>
 
           <div className="cc-hero-actions">
@@ -44,7 +45,7 @@ export default function Home() {
               onClick={() => navigate("/menu")}
               className="cc-hero-primary-btn"
             >
-              <span>View Menu</span>
+              <span>{t('hero.viewMenu', 'View Menu')}</span>
               <span className="cc-hero-arrow-bubble" aria-hidden="true">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12" />
@@ -58,7 +59,7 @@ export default function Home() {
               onClick={() => navigate("/menu")}
               className="cc-hero-secondary-btn"
             >
-              <span>Explore Flavors</span>
+              <span>{t('hero.explore', 'Explore Flavors')}</span>
               <span style={{ fontSize: "12px", color: "var(--color-primary)" }}>&gt;</span>
             </button>
           </div>
@@ -66,15 +67,15 @@ export default function Home() {
           <div className="cc-hero-perks">
             <div className="cc-hero-perk-item">
               <span className="cc-hero-perk-icon-wrap">🍓</span>
-              <span>100% Natural Berries &amp; Cream</span>
+              <span>{t('hero.perk1', '100% Natural Berries & Cream')}</span>
             </div>
             <div className="cc-hero-perk-item">
               <span className="cc-hero-perk-icon-wrap">🧁</span>
-              <span>Baked Fresh Every Day</span>
+              <span>{t('hero.perk2', 'Baked Fresh Every Day')}</span>
             </div>
             <div className="cc-hero-perk-item">
               <span className="cc-hero-perk-icon-wrap">🚚</span>
-              <span>Regional Delivery &amp; Pickup</span>
+              <span>{t('hero.perk3', 'Regional Delivery & Pickup')}</span>
             </div>
           </div>
         </div>
@@ -106,9 +107,9 @@ export default function Home() {
                 className="cc-floating-thumb"
               />
               <div className="cc-floating-info">
-                <span className="cc-floating-title">Chocolate Indulgence</span>
+                <span className="cc-floating-title">{t('hero.chocolate', 'Chocolate Indulgence')}</span>
                 <span className="cc-floating-caption">
-                  View Cake &rarr;
+                  {t('hero.viewCake', 'View Cake')} &rarr;
                 </span>
               </div>
             </div>
@@ -128,9 +129,9 @@ export default function Home() {
                 className="cc-floating-thumb"
               />
               <div className="cc-floating-info">
-                <span className="cc-floating-title">Strawberry Bliss</span>
+                <span className="cc-floating-title">{t('hero.strawberry', 'Strawberry Bliss')}</span>
                 <span className="cc-floating-caption">
-                  View Treat &rarr;
+                  {t('hero.viewTreat', 'View Treat')} &rarr;
                 </span>
               </div>
             </div>
@@ -138,7 +139,7 @@ export default function Home() {
             {/* Floating Top Rating Badge */}
             <div className="cc-floating-rating">
               <span className="cc-rating-star">★</span>
-              <span className="cc-rating-text">4.9 &bull; 1,200+ Happy Guests</span>
+              <span className="cc-rating-text">{t('hero.rating', '4.9 • 1,200+ Happy Guests')}</span>
             </div>
           </div>
         </div>
@@ -149,10 +150,10 @@ export default function Home() {
           ==================================================================== */}
       <section className="cc-home-featured" aria-label="Featured confections">
         <div className="cc-section-header">
-          <p className="cc-section-eyebrow">OUR ARTISAN SPECIALTIES</p>
-          <h2 className="cc-section-title">Signature Delights</h2>
+          <p className="cc-section-eyebrow">{t('section.delightsTag', 'OUR ARTISAN SPECIALTIES')}</p>
+          <h2 className="cc-section-title">{t('section.delightsTitle', 'Signature Delights')}</h2>
           <p className="cc-section-subtitle">
-            A curated glimpse of our handcrafted confectionery, whipped to perfection and prepared fresh every single morning.
+            {t('section.delightsSub', 'A curated glimpse of our handcrafted confectionery, whipped to perfection and prepared fresh every single morning.')}
           </p>
         </div>
 

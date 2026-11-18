@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   store,
   setRegion,
+  setLanguage,
+  setLanguageFromRegion,
   addToCart,
   clearCart,
   showToast,
@@ -16,6 +18,19 @@ describe('Redux Store', () => {
     expect(store.getState().region.selected).toBe('KAZ');
     expect(store.getState().region.currencyCode).toBe('KZT');
     expect(store.getState().region.vatRate).toBe(0.20);
+  });
+
+  it('should update language and derive from country', () => {
+    // Switch to Georgia -> language should default to Georgian ('ka')
+    store.dispatch(setLanguageFromRegion('GEO'));
+    expect(store.getState().language.current).toBe('ka');
+
+    // User can manually switch to Russian or English
+    store.dispatch(setLanguage('ru'));
+    expect(store.getState().language.current).toBe('ru');
+
+    store.dispatch(setLanguage('en'));
+    expect(store.getState().language.current).toBe('en');
   });
 
   it("should add items to cart", () => {

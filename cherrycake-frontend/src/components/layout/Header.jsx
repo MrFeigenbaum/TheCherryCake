@@ -3,10 +3,13 @@ import { Link, NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme, openCustomCake, openAboutModal } from '../../store/uiSlice';
 import CountrySwitcher from './CountrySwitcher';
+import LanguageSwitcher from './LanguageSwitcher';
 import CartBadge from './CartBadge';
+import { useTranslation } from '../../i18n/useTranslation';
 
 export function Header() {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const user = useSelector((state) => state.auth?.user);
   const currentTheme = useSelector((state) => state.ui?.theme || 'dark');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -54,10 +57,10 @@ export function Header() {
         {/* Desktop Navigation Links */}
         <div className="navbar-links">
           <NavLink to="/menu" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-            <span>Artisan Menu</span>
+            <span>{t('nav.menu', 'Artisan Menu')}</span>
           </NavLink>
           <NavLink to="/booking" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-            <span>Table Reservation</span>
+            <span>{t('nav.booking', 'Table Reservation')}</span>
           </NavLink>
           <button
             type="button"
@@ -65,15 +68,15 @@ export function Header() {
             onClick={() => dispatch(openAboutModal())}
             style={{ background: 'none', border: 'none', cursor: 'pointer' }}
           >
-            About &amp; Hours
+            {t('nav.about', 'About & Hours')}
           </button>
           {user ? (
             <NavLink to="/account" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-              Sign In / Account
+              {t('nav.account', 'Sign In / Account')}
             </NavLink>
           ) : (
             <NavLink to="/login" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-              Sign In / Account
+              {t('nav.account', 'Sign In / Account')}
             </NavLink>
           )}
           <button
@@ -112,10 +115,10 @@ export function Header() {
               <path d="M12 4h.01" />
               <path d="M17 4h.01" />
             </svg>
-            Custom Cake
+            {t('nav.customCake', 'Custom Cake')}
           </button>
           <NavLink to="/reports" className={({ isActive }) => `nav-link nav-link-extra${isActive ? ' active' : ''}`}>
-            <span>Reports</span>
+            <span>{t('nav.reports', 'Reports')}</span>
           </NavLink>
           <a
             href="/swagger.html"
@@ -123,11 +126,11 @@ export function Header() {
             rel="noopener noreferrer"
             className="nav-link nav-link-extra"
           >
-            API Docs
+            {t('nav.apiDocs', 'API Docs')}
           </a>
           {user?.role === 'ADMIN' && (
             <NavLink to="/admin/catalog" className={({ isActive }) => `nav-link nav-link-extra${isActive ? ' active' : ''}`}>
-              Admin
+              {t('nav.admin', 'Admin')}
             </NavLink>
           )}
         </div>
@@ -168,6 +171,9 @@ export function Header() {
           {/* Region Switcher */}
           <CountrySwitcher />
 
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+
           {/* Cart */}
           <CartBadge />
 
@@ -199,11 +205,15 @@ export function Header() {
       {/* Adaptive Mobile / Tablet Drawer */}
       {isMobileMenuOpen && (
         <div className="mobile-nav-drawer" role="dialog" aria-label="Mobile Navigation">
+          <div style={{ padding: '6px 16px 10px', display: 'flex', gap: '10px', alignItems: 'center', borderBottom: '1px solid var(--cherry-border)', marginBottom: '8px' }}>
+            <LanguageSwitcher />
+            <CountrySwitcher />
+          </div>
           <NavLink to="/menu" className="mobile-nav-link" onClick={closeMobileMenu}>
-            <span>Artisan Menu</span>
+            <span>{t('nav.menu', 'Artisan Menu')}</span>
           </NavLink>
           <NavLink to="/booking" className="mobile-nav-link" onClick={closeMobileMenu}>
-            <span>Table Reservation</span>
+            <span>{t('nav.booking', 'Table Reservation')}</span>
           </NavLink>
           <button
             type="button"
@@ -213,7 +223,7 @@ export function Header() {
               dispatch(openAboutModal());
             }}
           >
-            About &amp; Hours
+            {t('nav.about', 'About & Hours')}
           </button>
           <button
             type="button"
@@ -224,19 +234,19 @@ export function Header() {
             }}
             style={{ color: 'var(--crust-gold)', fontWeight: 700 }}
           >
-            Custom Cake Studio
+            {t('nav.customCake', 'Custom Cake')}
           </button>
           {user ? (
             <NavLink to="/account" className="mobile-nav-link" onClick={closeMobileMenu}>
-              Sign In / Account
+              {t('nav.account', 'Sign In / Account')}
             </NavLink>
           ) : (
             <NavLink to="/login" className="mobile-nav-link" onClick={closeMobileMenu}>
-              Sign In / Account
+              {t('nav.account', 'Sign In / Account')}
             </NavLink>
           )}
           <NavLink to="/reports" className="mobile-nav-link" onClick={closeMobileMenu}>
-            <span>Reports &amp; Analytics</span>
+            <span>{t('nav.reports', 'Reports')}</span>
           </NavLink>
           <a
             href="/swagger.html"
@@ -245,11 +255,11 @@ export function Header() {
             className="mobile-nav-link"
             onClick={closeMobileMenu}
           >
-            API Reference
+            {t('nav.apiDocs', 'API Docs')}
           </a>
           {user?.role === 'ADMIN' && (
             <NavLink to="/admin/catalog" className="mobile-nav-link" onClick={closeMobileMenu}>
-              Admin Portal
+              {t('nav.admin', 'Admin')}
             </NavLink>
           )}
         </div>

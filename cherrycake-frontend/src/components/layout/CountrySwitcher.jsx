@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setRegion } from '../../store/regionSlice';
+import { setLanguageFromRegion } from '../../store/languageSlice';
 import { calculateCart } from '../../store/cartSlice';
 
 const FLAG_MAP = {
@@ -55,6 +56,7 @@ export function CountrySwitcher({ className = '' }) {
 
   const handleSelect = (code) => {
     dispatch(setRegion(code));
+    dispatch(setLanguageFromRegion(code));
     dispatch(calculateCart());
     setIsOpen(false);
   };

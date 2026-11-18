@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import useTranslation from '../../i18n/useTranslation';
 
 export function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="storefront-footer" id="about-section">
       <div className="footer-container">
@@ -75,7 +77,7 @@ export function Footer() {
 
           {/* Column 3: Hospitality & Hours */}
           <div className="footer-col">
-            <h4 className="footer-heading">Café &amp; Hospitality</h4>
+            <h4 className="footer-heading">{t('footer.hours', 'Café & Hospitality')}</h4>
             <ul className="footer-hours-list">
               <li><span>Mon - Fri:</span> <strong>08:00 - 22:00</strong></li>
               <li><span>Sat - Sun:</span> <strong>09:00 - 23:00</strong></li>
@@ -89,14 +91,14 @@ export function Footer() {
                   <path d="M5 3h14c0 6-3 10-7 10S5 9 5 3z" />
                   <line x1="5" y1="8" x2="19" y2="8" />
                 </svg>
-                <span>Book a Café Table</span>
+                <span>{t('footer.bookTable', 'Book a Café Table')}</span>
               </Link>
             </div>
           </div>
 
           {/* Column 4: Client & API Portals */}
           <div className="footer-col">
-            <h4 className="footer-heading">Client &amp; API Portals</h4>
+            <h4 className="footer-heading">{t('footer.portals', 'Client & API Portals')}</h4>
             <ul className="footer-nav-list">
               <li>
                 <Link to="/login">

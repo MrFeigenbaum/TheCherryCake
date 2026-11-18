@@ -1,5 +1,6 @@
 import { configureStore, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { REGION_TO_LANGUAGE, type SupportedLanguage } from '../i18n/translations';
 
 export interface Region {
   code: string;
@@ -78,6 +79,39 @@ export const regionSlice = createSlice({
 });
 
 export const { setRegion, setRegionCode, setRegionDetails } = regionSlice.actions;
+
+// 1.1 Language Slice
+const savedLanguage = typeof window !== 'undefined' ? (localStorage.getItem('cc_language') as SupportedLanguage | null) : null;
+const initialLanguage: SupportedLanguage = savedLanguage || REGION_TO_LANGUAGE[savedRegionCode] || 'en';
+
+export const languageSlice = createSlice({
+  name: 'language',
+  initialState: {
+    current: initialLanguage,
+    code: initialLanguage,
+  },
+  reducers: {
+    setLanguage: (state, action: PayloadAction<SupportedLanguage | string>) => {
+      const lang = (action.payload || 'en') as SupportedLanguage;
+      state.current = lang;
+      state.code = lang;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cc_language', lang);
+      }
+    },
+    setLanguageFromRegion: (state, action: PayloadAction<string>) => {
+      const regionCode = (action.payload || '').toUpperCase();
+      const mappedLang = REGION_TO_LANGUAGE[regionCode] || 'en';
+      state.current = mappedLang;
+      state.code = mappedLang;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cc_language', mappedLang);
+      }
+    },
+  },
+});
+
+export const { setLanguage, setLanguageFromRegion } = languageSlice.actions;
 
 // 2. Auth Slice
 export const authSlice = createSlice({
@@ -332,6 +366,7 @@ export const {
 export const store = configureStore({
   reducer: {
     region: regionSlice.reducer,
+    language: languageSlice.reducer,
     cart: cartSlice.reducer,
     ui: uiSlice.reducer,
     auth: authSlice.reducer,
