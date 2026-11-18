@@ -22,12 +22,11 @@ export function Footer() {
               />
               <div className="footer-brand-title">
                 <h3 className="display-font">Cherry Cake</h3>
-                <span className="script-font">Haute Pâtisserie &amp; Café</span>
+                <span className="script-font">{t('footer.brandSubtitle', 'Haute Pâtisserie & Café')}</span>
               </div>
             </div>
             <p className="footer-desc">
-              Celebrating the harmony between classic French viennoiserie and delicate Japanese cherry blossom
-              botanicals. Handcrafted daily with single-origin butter and premium Belgian cocoa.
+              {t('footer.desc', 'Celebrating the harmony between classic French viennoiserie and delicate Japanese cherry blossom botanicals. Handcrafted daily with single-origin butter and premium Belgian cocoa.')}
             </p>
             <div className="footer-badges">
               <span className="f-badge">
@@ -38,7 +37,7 @@ export function Footer() {
                   <path d="M12 22a4 4 0 0 1-4-4c0-2 2-3 4-3 2 0 4 1 4 3a4 4 0 0 1-4 4z" />
                   <path d="M2 12a4 4 0 0 1 4-4c2 0 3 2 3 4 0 2-1 4-3 4a4 4 0 0 1-4-4z" />
                 </svg>
-                Fresh Daily
+                {t('footer.freshDaily', 'Fresh Daily')}
               </span>
               <span className="f-badge">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -47,7 +46,7 @@ export function Footer() {
                   <path d="M3 13l9-4 9 3" />
                   <circle cx="12" cy="6" r="2" />
                 </svg>
-                Artisanal Recipes
+                {t('footer.artisanalRecipes', 'Artisanal Recipes')}
               </span>
               <span className="f-badge">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -57,21 +56,21 @@ export function Footer() {
                   <line x1="10" y1="1" x2="10" y2="4" />
                   <line x1="14" y1="1" x2="14" y2="4" />
                 </svg>
-                Specialty Roasts
+                {t('footer.specialtyRoasts', 'Specialty Roasts')}
               </span>
             </div>
           </div>
 
           {/* Column 2: Artisan Menu */}
           <div className="footer-col">
-            <h4 className="footer-heading">Artisan Menu</h4>
+            <h4 className="footer-heading">{t('footer.artisanMenu', 'Artisan Menu')}</h4>
             <ul className="footer-nav-list">
-              <li><Link to="/menu">Cherry Blossom Heart Gateau</Link></li>
-              <li><Link to="/menu">Triple Berry Gumdrop Heart</Link></li>
-              <li><Link to="/menu">Golden Vanilla Fudge Heart</Link></li>
-              <li><Link to="/menu">Smiley Berry Artisan Square</Link></li>
-              <li><Link to="/menu">Sweetheart Chocolate Petite</Link></li>
-              <li><Link to="/menu">Lucky Clover Chocolate Gateau</Link></li>
+              <li><Link to="/menu">{t('footer.menuCherry', 'Cherry Blossom Heart Gateau')}</Link></li>
+              <li><Link to="/menu">{t('footer.menuBerry', 'Triple Berry Gumdrop Heart')}</Link></li>
+              <li><Link to="/menu">{t('footer.menuVanilla', 'Golden Vanilla Fudge Heart')}</Link></li>
+              <li><Link to="/menu">{t('footer.menuSmiley', 'Smiley Berry Artisan Square')}</Link></li>
+              <li><Link to="/menu">{t('footer.menuSweetheart', 'Sweetheart Chocolate Petite')}</Link></li>
+              <li><Link to="/menu">{t('footer.menuClover', 'Lucky Clover Chocolate Gateau')}</Link></li>
             </ul>
           </div>
 
@@ -79,9 +78,9 @@ export function Footer() {
           <div className="footer-col">
             <h4 className="footer-heading">{t('footer.hours', 'Café & Hospitality')}</h4>
             <ul className="footer-hours-list">
-              <li><span>Mon - Fri:</span> <strong>08:00 - 22:00</strong></li>
-              <li><span>Sat - Sun:</span> <strong>09:00 - 23:00</strong></li>
-              <li><span>Hub Pickup:</span> <strong>Daily 08:30 - 21:30</strong></li>
+              <li><span>{t('footer.monFri', 'Mon - Fri:')}</span> <strong>08:00 - 22:00</strong></li>
+              <li><span>{t('footer.satSun', 'Sat - Sun:')}</span> <strong>09:00 - 23:00</strong></li>
+              <li><span>{t('footer.hubPickup', 'Hub Pickup:')}</span> <strong>{t('footer.pickupTimes', 'Daily 08:30 - 21:30')}</strong></li>
             </ul>
             <div>
               <Link to="/booking" className="footer-btn">
@@ -106,7 +105,7 @@ export function Footer() {
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
-                  Customer Sign In / Account
+                  {t('footer.customerAccount', 'Customer Sign In / Account')}
                 </Link>
               </li>
               <li>
@@ -115,7 +114,7 @@ export function Footer() {
                     <path d="M2 4l3 12h14l3-12-5 4-5-6-5 6z" />
                     <path d="M5 20h14" />
                   </svg>
-                  Administrator Portal
+                  {t('footer.adminPortal', 'Administrator Portal')}
                 </Link>
               </li>
               <li>
@@ -124,7 +123,7 @@ export function Footer() {
                     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                     <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
                   </svg>
-                  REST API Swagger UI
+                  {t('footer.apiSwagger', 'REST API Swagger UI')}
                 </a>
               </li>
               <li>
@@ -136,7 +135,7 @@ export function Footer() {
                     <line x1="16" y1="17" x2="8" y2="17" />
                     <polyline points="10 9 9 9 8 9" />
                   </svg>
-                  OpenAPI Specification (JSON)
+                  {t('footer.apiOpenApi', 'OpenAPI Specification (JSON)')}
                 </a>
               </li>
               <li>
@@ -146,7 +145,7 @@ export function Footer() {
                     <path d="M8.5 2h7" />
                     <path d="M7 16h10" />
                   </svg>
-                  Quality Assurance Reports
+                  {t('footer.qaReports', 'Quality Assurance Reports')}
                 </Link>
               </li>
             </ul>
@@ -156,13 +155,13 @@ export function Footer() {
         {/* Bottom Sub-Footer */}
         <div className="footer-bottom">
           <div className="footer-copyright">
-            &copy; 2026 Cherry Cake Bakery &amp; Café. All rights reserved. &bull; ITPU University Teamwork 2026 (Team 9).
+            {t('footer.copyright', '© 2026 Cherry Cake Bakery & Café. All rights reserved. • ITPU University Teamwork 2026 (Team 9).')}
           </div>
           <div className="footer-bottom-links">
-            <Link to="/menu">Menu</Link>
-            <Link to="/booking">Reservations</Link>
-            <Link to="/account">Account</Link>
-            <a href="/swagger.html" target="_blank" rel="noopener noreferrer">API Reference</a>
+            <Link to="/menu">{t('footer.menu', 'Menu')}</Link>
+            <Link to="/booking">{t('footer.reservations', 'Reservations')}</Link>
+            <Link to="/account">{t('footer.account', 'Account')}</Link>
+            <a href="/swagger.html" target="_blank" rel="noopener noreferrer">{t('footer.apiRef', 'API Reference')}</a>
           </div>
         </div>
       </div>

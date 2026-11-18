@@ -167,7 +167,7 @@ export default function Home() {
             onKeyDown={(e) => e.key === "Enter" && navigate("/menu")}
           >
             <div className="cc-treat-image-wrap">
-              <span className="cc-treat-pill-tag">Specialty Barista</span>
+              <span className="cc-treat-pill-tag">{t('treat.tagBarista', 'Specialty Barista')}</span>
               <img
                 src={treatCoffee}
                 alt="Velvet Latte & Specialty Brews"
@@ -176,12 +176,12 @@ export default function Home() {
               />
             </div>
             <div className="cc-treat-body">
-              <h3 className="cc-treat-title">Velvet Latte &amp; Coffee</h3>
+              <h3 className="cc-treat-title">{t('treat.titleLatte', 'Velvet Latte & Coffee')}</h3>
               <p className="cc-treat-desc">
-                Single-origin Arabica espresso paired with velvety microfoam milk and delicate floral lavender notes.
+                {t('treat.descLatte', 'Single-origin Arabica espresso paired with velvety microfoam milk and delicate floral lavender notes.')}
               </p>
               <div className="cc-treat-footer">
-                <span className="cc-treat-link-text">Explore Drinks</span>
+                <span className="cc-treat-link-text">{t('treat.linkDrinks', 'Explore Drinks')}</span>
                 <span className="cc-treat-circle-btn">&rarr;</span>
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function Home() {
             onKeyDown={(e) => e.key === "Enter" && navigate("/menu")}
           >
             <div className="cc-treat-image-wrap">
-              <span className="cc-treat-pill-tag">Chef's Signature</span>
+              <span className="cc-treat-pill-tag">{t('treat.tagSignature', "Chef's Signature")}</span>
               <img
                 src={treatChocolate}
                 alt="Artisan Chocolate Truffle Cake"
@@ -205,12 +205,12 @@ export default function Home() {
               />
             </div>
             <div className="cc-treat-body">
-              <h3 className="cc-treat-title">Chocolate Truffle Cake</h3>
+              <h3 className="cc-treat-title">{t('treat.titleChocolate', 'Chocolate Truffle Cake')}</h3>
               <p className="cc-treat-desc">
-                Rich layers of dark Belgian chocolate sponge infused with farm-picked berries and silky cocoa ganache.
+                {t('treat.descChocolate', 'Rich layers of dark Belgian chocolate sponge infused with farm-picked berries and silky cocoa ganache.')}
               </p>
               <div className="cc-treat-footer">
-                <span className="cc-treat-link-text">Explore Cakes</span>
+                <span className="cc-treat-link-text">{t('treat.linkCakes', 'Explore Cakes')}</span>
                 <span className="cc-treat-circle-btn">&rarr;</span>
               </div>
             </div>
@@ -225,7 +225,7 @@ export default function Home() {
             onKeyDown={(e) => e.key === "Enter" && navigate("/menu")}
           >
             <div className="cc-treat-image-wrap">
-              <span className="cc-treat-pill-tag">Classic Bestseller</span>
+              <span className="cc-treat-pill-tag">{t('treat.tagBestseller', 'Classic Bestseller')}</span>
               <img
                 src={treatVanilla}
                 alt="Golden Honey & Vanilla Cake Slices"
@@ -234,12 +234,12 @@ export default function Home() {
               />
             </div>
             <div className="cc-treat-body">
-              <h3 className="cc-treat-title">Golden Honey &amp; Cream</h3>
+              <h3 className="cc-treat-title">{t('treat.titleHoney', 'Golden Honey & Cream')}</h3>
               <p className="cc-treat-desc">
-                Golden caramelised honey cake layers layered with cloud-light sour cream mousse and crumb topping.
+                {t('treat.descHoney', 'Golden caramelised honey cake layers layered with cloud-light sour cream mousse and crumb topping.')}
               </p>
               <div className="cc-treat-footer">
-                <span className="cc-treat-link-text">Explore Pastries</span>
+                <span className="cc-treat-link-text">{t('treat.linkPastries', 'Explore Pastries')}</span>
                 <span className="cc-treat-circle-btn">&rarr;</span>
               </div>
             </div>
@@ -262,16 +262,15 @@ export default function Home() {
 
         <div className="cc-spotlight-content">
           <div className="cc-hero-tag" style={{ alignSelf: "flex-start" }}>
-            <span>🧁</span> Pastry Chef's Pairing
+            <span>🧁</span> {t('spotlight.badge', "Pastry Chef's Pairing")}
           </div>
 
           <h2 className="cc-spotlight-title">
-            Artisan Pastry &amp; Coffee Pairing
+            {t('spotlight.title', 'Artisan Pastry & Coffee Pairing')}
           </h2>
 
           <p className="cc-spotlight-text">
-            Every memorable dessert deserves its perfect counterpart. Enjoy our freshly whipped berry cupcakes alongside
-            our house-specialty roast coffee — balanced to perfection for your morning coffee break or evening celebration.
+            {t('spotlight.desc', 'Every memorable dessert deserves its perfect counterpart. Enjoy our freshly whipped berry cupcakes alongside our house-specialty roast coffee — balanced to perfection for your morning coffee break or evening celebration.')}
           </p>
 
           <div>
@@ -280,7 +279,7 @@ export default function Home() {
               onClick={() => navigate("/menu")}
               className="cc-hero-primary-btn"
             >
-              <span>Explore Bakery Menu</span>
+              <span>{t('spotlight.btn', 'Explore Bakery Menu')}</span>
               <span className="cc-hero-arrow-bubble" aria-hidden="true">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12" />
@@ -298,25 +297,25 @@ export default function Home() {
       <section className="cc-home-pillars" aria-label="Bakery standards and guarantees">
         <div className="cc-pillar-item">
           <div className="cc-pillar-icon-box">🌾</div>
-          <h3 className="cc-pillar-title">Quality Ingredients, Unforgettable Taste</h3>
+          <h3 className="cc-pillar-title">{t('pillar.title1', 'Quality Ingredients, Unforgettable Taste')}</h3>
           <p className="cc-pillar-desc">
-            We source only natural dairy cream, organic flour, and farm-fresh berries without artificial coloring or preservatives.
+            {t('pillar.desc1', 'We source only natural dairy cream, organic flour, and farm-fresh berries without artificial coloring or preservatives.')}
           </p>
         </div>
 
         <div className="cc-pillar-item">
           <div className="cc-pillar-icon-box">🧁</div>
-          <h3 className="cc-pillar-title">Freshly Baked Every Single Day</h3>
+          <h3 className="cc-pillar-title">{t('pillar.title2', 'Freshly Baked Every Single Day')}</h3>
           <p className="cc-pillar-desc">
-            Baked in small artisanal batches every morning to ensure unmatched texture, moisture, and delicate aroma in every bite.
+            {t('pillar.desc2', 'Baked in small artisanal batches every morning to ensure unmatched texture, moisture, and delicate aroma in every bite.')}
           </p>
         </div>
 
         <div className="cc-pillar-item">
           <div className="cc-pillar-icon-box">🌟</div>
-          <h3 className="cc-pillar-title">1,200+ Happy Celebrations</h3>
+          <h3 className="cc-pillar-title">{t('pillar.title3', '1,200+ Happy Celebrations')}</h3>
           <p className="cc-pillar-desc">
-            From intimate afternoon tea to grand anniversaries and weddings, our desserts bring smiles across all our regions.
+            {t('pillar.desc3', 'From intimate afternoon tea to grand anniversaries and weddings, our desserts bring smiles across all our regions.')}
           </p>
         </div>
       </section>
@@ -326,9 +325,9 @@ export default function Home() {
           ==================================================================== */}
       <section className="cc-home-promo-banner" aria-label="Menu callout banner">
         <div className="cc-promo-left">
-          <h2 className="cc-promo-title">Ready to Bite into Happiness?</h2>
+          <h2 className="cc-promo-title">{t('promo.title', 'Ready to Bite into Happiness?')}</h2>
           <p className="cc-promo-text">
-            Explore our complete catalog with localized pricing, custom modifier options, and seamless checkout with delivery.
+            {t('promo.desc', 'Explore our complete catalog with localized pricing, custom modifier options, and seamless checkout with delivery.')}
           </p>
         </div>
 
@@ -337,7 +336,7 @@ export default function Home() {
           onClick={() => navigate("/menu")}
           className="cc-promo-btn"
         >
-          <span>Open Full Menu &rarr;</span>
+          <span>{t('promo.btn', 'Open Full Menu →')}</span>
         </button>
       </section>
     </div>

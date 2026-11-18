@@ -1,9 +1,11 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleCartDrawer } from '../../store/uiSlice';
+import useTranslation from '../../i18n/useTranslation';
 
 export function CartBadge({ className = '' }) {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const items = useSelector((state) => state.cart.items);
   const totalCount = items.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
@@ -21,7 +23,7 @@ export function CartBadge({ className = '' }) {
         <line x1="3" y1="6" x2="21" y2="6" />
         <path d="M16 10a4 4 0 0 1-8 0" />
       </svg>
-      <span className="cart-btn-text">Bag</span>
+      <span className="cart-btn-text">{t('nav.bag', 'Bag')}</span>
       <span className="cart-counter-badge" data-testid="cart-badge-count">{totalCount}</span>
     </button>
   );

@@ -4,27 +4,75 @@ export interface LanguageOption {
   code: SupportedLanguage;
   label: string;
   nativeName: string;
-  flag: string;
+  flagCode: string;
 }
 
 export const LANGUAGES: LanguageOption[] = [
-  { code: 'en', label: 'English', nativeName: 'English', flag: '🇬🇧' },
-  { code: 'ru', label: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
-  { code: 'ka', label: 'Georgian', nativeName: 'ქართული', flag: '🇬🇪' },
-  { code: 'uz', label: 'Uzbek', nativeName: "O'zbek", flag: '🇺🇿' },
-  { code: 'kk', label: 'Kazakh', nativeName: 'Қазақша', flag: '🇰🇿' },
-  { code: 'uk', label: 'Ukrainian', nativeName: 'Українська', flag: '🇺🇦' },
-  { code: 'zh', label: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
-  { code: 'tr', label: 'Turkish', nativeName: 'Türkçe', flag: '🇹🇷' },
-  { code: 'hy', label: 'Armenian', nativeName: 'Հայերენ', flag: '🇦🇲' },
-  { code: 'az', label: 'Azerbaijani', nativeName: 'Azərbaycan', flag: '🇦🇿' },
-  { code: 'ro', label: 'Romanian', nativeName: 'Română', flag: '🇷🇴' },
-  { code: 'et', label: 'Estonian', nativeName: 'Eesti', flag: '🇪🇪' },
-  { code: 'lv', label: 'Latvian', nativeName: 'Latviešu', flag: '🇱🇻' },
-  { code: 'lt', label: 'Lithuanian', nativeName: 'Lietuvių', flag: '🇱🇹' },
-  { code: 'fi', label: 'Finnish', nativeName: 'Suomi', flag: '🇫🇮' },
-  { code: 'sv', label: 'Swedish', nativeName: 'Svenska', flag: '🇸🇪' },
+  { code: 'en', label: 'English', nativeName: 'English', flagCode: 'en' },
+  { code: 'ru', label: 'Russian', nativeName: 'Русский', flagCode: 'ru' },
+  { code: 'ka', label: 'Georgian', nativeName: 'ქართული', flagCode: 'geo' },
+  { code: 'uz', label: 'Uzbek', nativeName: "O'zbek", flagCode: 'uzb' },
+  { code: 'kk', label: 'Kazakh', nativeName: 'Қазақша', flagCode: 'kaz' },
+  { code: 'uk', label: 'Ukrainian', nativeName: 'Українська', flagCode: 'ukr' },
+  { code: 'zh', label: 'Chinese', nativeName: '中文', flagCode: 'chn' },
+  { code: 'tr', label: 'Turkish', nativeName: 'Türkçe', flagCode: 'tur' },
+  { code: 'hy', label: 'Armenian', nativeName: 'Հայერენ', flagCode: 'arm' },
+  { code: 'az', label: 'Azerbaijani', nativeName: 'Azərbaycan', flagCode: 'aze' },
+  { code: 'ro', label: 'Romanian', nativeName: 'Română', flagCode: 'rou' },
+  { code: 'et', label: 'Estonian', nativeName: 'Eesti', flagCode: 'est' },
+  { code: 'lv', label: 'Latvian', nativeName: 'Latviešu', flagCode: 'lva' },
+  { code: 'lt', label: 'Lithuanian', nativeName: 'Lietuvių', flagCode: 'ltu' },
+  { code: 'fi', label: 'Finnish', nativeName: 'Suomi', flagCode: 'fin' },
+  { code: 'sv', label: 'Swedish', nativeName: 'Svenska', flagCode: 'swe' },
 ];
+
+export const LANGUAGE_FLAG_MAP: Record<string, string> = {
+  en: 'en',
+  gb: 'en',
+  ru: 'ru',
+  ka: 'geo',
+  ge: 'geo',
+  geo: 'geo',
+  uz: 'uzb',
+  uzb: 'uzb',
+  kk: 'kaz',
+  kz: 'kaz',
+  kaz: 'kaz',
+  uk: 'ukr',
+  ua: 'ukr',
+  ukr: 'ukr',
+  zh: 'chn',
+  cn: 'chn',
+  chn: 'chn',
+  tr: 'tur',
+  tur: 'tur',
+  hy: 'arm',
+  am: 'arm',
+  arm: 'arm',
+  az: 'aze',
+  aze: 'aze',
+  ro: 'rou',
+  rou: 'rou',
+  md: 'mda',
+  mda: 'mda',
+  et: 'est',
+  est: 'est',
+  lv: 'lva',
+  lva: 'lva',
+  lt: 'ltu',
+  ltu: 'ltu',
+  fi: 'fin',
+  fin: 'fin',
+  sv: 'swe',
+  se: 'swe',
+  swe: 'swe',
+};
+
+export function getLanguageFlagSrc(langCode: string): string {
+  const code = (langCode || 'en').toLowerCase().trim();
+  const file = LANGUAGE_FLAG_MAP[code] || 'en';
+  return `/assets/flags/${file}.svg`;
+}
 
 export const REGION_TO_LANGUAGE: Record<string, SupportedLanguage> = {
   UZB: 'uz',
@@ -43,6 +91,8 @@ export const REGION_TO_LANGUAGE: Record<string, SupportedLanguage> = {
   SWE: 'sv',
   RUS: 'ru',
   RU: 'ru',
+  US: 'en',
+  GB: 'en',
 };
 
 export interface QuestChapterTranslation {
@@ -362,6 +412,7 @@ export const EASTER_EGG_TRANSLATIONS: Record<string, EasterEggTranslations> = {
 
 export const UI_TRANSLATIONS: Record<string, Record<string, string>> = {
   en: {
+    // Nav
     'nav.menu': 'Artisan Menu',
     'nav.booking': 'Table Reservation',
     'nav.about': 'About & Hours',
@@ -371,31 +422,99 @@ export const UI_TRANSLATIONS: Record<string, Record<string, string>> = {
     'nav.apiDocs': 'API Docs',
     'nav.admin': 'Admin',
     'nav.bag': 'Bag',
-    'hero.badge': 'WELCOME TO CHERRY CAKE',
+    // Hero
+    'hero.badge': 'ARTISAN CONFECTIONERY & CAFÉ',
     'hero.title1': 'Sweet Moments',
     'hero.title2': 'Start Here',
+    'hero.welcome': 'Welcome to Cherry Cake',
     'hero.subtitle':
-      'Celebrating the harmony of French pastry artistry and delicate cherry blossoms. Handcrafted fresh every morning with organic cream and pure Belgian chocolate.',
+      'Handcrafted with passion and baked fresh every sunrise. We pair authentic European pastry techniques with fresh wild berries, pure dairy cream, and single-origin Belgian chocolate to celebrate your every sweet milestone.',
     'hero.viewMenu': 'View Menu',
     'hero.explore': 'Explore Flavors',
     'hero.perk1': '100% Natural Berries & Cream',
     'hero.perk2': 'Baked Fresh Every Day',
     'hero.perk3': 'Regional Delivery & Pickup',
     'hero.chocolate': 'Chocolate Indulgence',
-    'hero.strawberry': 'Strawberry Bliss',
     'hero.viewCake': 'View Cake',
+    'hero.strawberry': 'Strawberry Bliss',
     'hero.viewTreat': 'View Treat',
     'hero.rating': '★ 4.9 • 1,200+ Happy Guests',
+    // Featured Specialties / Signature Delights
     'section.delightsTag': 'OUR ARTISAN SPECIALTIES',
     'section.delightsTitle': 'Signature Delights',
     'section.delightsSub':
       'A curated glimpse of our handcrafted confectionery, whipped to perfection and prepared fresh every single morning.',
-    'footer.bookTable': 'Book a Café Table',
+    'treat.tagBarista': 'Specialty Barista',
+    'treat.titleLatte': 'Velvet Latte & Coffee',
+    'treat.descLatte':
+      'Single-origin Arabica espresso paired with velvety microfoam milk and delicate floral lavender notes.',
+    'treat.linkDrinks': 'Explore Drinks',
+    'treat.tagSignature': "Chef's Signature",
+    'treat.titleChocolate': 'Chocolate Truffle Cake',
+    'treat.descChocolate':
+      'Rich layers of dark Belgian chocolate sponge infused with farm-picked berries and silky cocoa ganache.',
+    'treat.linkCakes': 'Explore Cakes',
+    'treat.tagBestseller': 'Classic Bestseller',
+    'treat.titleHoney': 'Golden Honey & Cream',
+    'treat.descHoney':
+      'Golden caramelised honey cake layers layered with cloud-light sour cream mousse and crumb topping.',
+    'treat.linkPastries': 'Explore Pastries',
+    // Spotlight Pairing
+    'spotlight.badge': "Pastry Chef's Pairing",
+    'spotlight.title': 'Artisan Pastry & Coffee Pairing',
+    'spotlight.desc':
+      'Every memorable dessert deserves its perfect counterpart. Enjoy our freshly whipped berry cupcakes alongside our house-specialty roast coffee — balanced to perfection for your morning coffee break or evening celebration.',
+    'spotlight.btn': 'Explore Bakery Menu',
+    // Pillars
+    'pillar.title1': 'Quality Ingredients, Unforgettable Taste',
+    'pillar.desc1':
+      'We source only natural dairy cream, organic flour, and farm-fresh berries without artificial coloring or preservatives.',
+    'pillar.title2': 'Freshly Baked Every Single Day',
+    'pillar.desc2':
+      'Baked in small artisanal batches every morning to ensure unmatched texture, moisture, and delicate aroma in every bite.',
+    'pillar.title3': '1,200+ Happy Celebrations',
+    'pillar.desc3':
+      'From intimate afternoon tea to grand anniversaries and weddings, our desserts bring smiles across all our regions.',
+    // Promo Banner
+    'promo.title': 'Ready to Bite into Happiness?',
+    'promo.desc':
+      'Explore our complete catalog with localized pricing, custom modifier options, and seamless checkout with delivery.',
+    'promo.btn': 'Open Full Menu →',
+    // Footer
+    'footer.brandSubtitle': 'Haute Pâtisserie & Café',
+    'footer.desc':
+      'Celebrating the harmony between classic French viennoiserie and delicate Japanese cherry blossom botanicals. Handcrafted daily with single-origin butter and premium Belgian cocoa.',
+    'footer.freshDaily': 'Fresh Daily',
+    'footer.artisanalRecipes': 'Artisanal Recipes',
+    'footer.specialtyRoasts': 'Specialty Roasts',
+    'footer.artisanMenu': 'Artisan Menu',
+    'footer.menuCherry': 'Cherry Blossom Heart Gateau',
+    'footer.menuBerry': 'Triple Berry Gumdrop Heart',
+    'footer.menuVanilla': 'Golden Vanilla Fudge Heart',
+    'footer.menuSmiley': 'Smiley Berry Artisan Square',
+    'footer.menuSweetheart': 'Sweetheart Chocolate Petite',
+    'footer.menuClover': 'Lucky Clover Chocolate Gateau',
     'footer.hours': 'Café & Hospitality',
+    'footer.monFri': 'Mon - Fri:',
+    'footer.satSun': 'Sat - Sun:',
+    'footer.hubPickup': 'Hub Pickup:',
+    'footer.pickupTimes': 'Daily 08:30 - 21:30',
+    'footer.bookTable': 'Book a Café Table',
     'footer.portals': 'Client & API Portals',
-    'lang.switcherTitle': 'Select language',
+    'footer.customerAccount': 'Customer Sign In / Account',
+    'footer.adminPortal': 'Administrator Portal',
+    'footer.apiSwagger': 'REST API Swagger UI',
+    'footer.apiOpenApi': 'OpenAPI Specification (JSON)',
+    'footer.qaReports': 'Quality Assurance Reports',
+    'footer.copyright': '© 2026 Cherry Cake Bakery & Café. All rights reserved. • ITPU University Teamwork 2026 (Team 9).',
+    'footer.menu': 'Menu',
+    'footer.reservations': 'Reservations',
+    'footer.account': 'Account',
+    'footer.apiRef': 'API Reference',
+    'lang.switcherTitle': 'Select display language',
   },
   ru: {
+    // Nav
     'nav.menu': 'Авторское Меню',
     'nav.booking': 'Бронь столика',
     'nav.about': 'О нас и часы',
@@ -405,31 +524,99 @@ export const UI_TRANSLATIONS: Record<string, Record<string, string>> = {
     'nav.apiDocs': 'API Документация',
     'nav.admin': 'Админ',
     'nav.bag': 'Корзина',
-    'hero.badge': 'ДОБРО ПОЖАЛОВАТЬ В CHERRY CAKE',
+    // Hero
+    'hero.badge': 'КОНДИТЕРСКАЯ И КАФЕ',
     'hero.title1': 'Сладкие моменты',
     'hero.title2': 'Начинаются здесь',
+    'hero.welcome': 'Добро пожаловать в Cherry Cake',
     'hero.subtitle':
-      'Изящная гармония французского кондитерского искусства и нежных цветов сакуры. Ручная работа каждое утро из фермерских сливок и бельгийского шоколада.',
+      'Приготовлено с душой и выпекается каждое утро на рассвете. Мы объединяем аутентичные французские рецепты со свежими лесными ягодами, натуральными фермерскими сливками и премиальным бельгийским шоколадом.',
     'hero.viewMenu': 'Посмотреть меню',
     'hero.explore': 'Выбрать десерты',
     'hero.perk1': '100% Натуральные ягоды и крем',
     'hero.perk2': 'Свежая выпечка каждое утро',
     'hero.perk3': 'Быстрая доставка и самовывоз',
     'hero.chocolate': 'Шоколадный восторг',
-    'hero.strawberry': 'Клубничное блаженство',
     'hero.viewCake': 'Смотреть торт',
+    'hero.strawberry': 'Клубничное блаженство',
     'hero.viewTreat': 'Смотреть десерт',
     'hero.rating': '★ 4.9 • 1,200+ Довольных гостей',
+    // Featured Specialties / Signature Delights
     'section.delightsTag': 'НАШИ АВТОРСКИЕ ШЕДЕВРЫ',
     'section.delightsTitle': 'Фирменные Сладости',
     'section.delightsSub':
       'Коллекция утренней выпечки и десертов ручной работы, приготовленных со страстью и любовью.',
-    'footer.bookTable': 'Забронировать столик',
+    'treat.tagBarista': 'Выбор Бариста',
+    'treat.titleLatte': 'Бархатный Латте и Кофе',
+    'treat.descLatte':
+      'Эспрессо из 100% Арабики со взбитым бархатным молоком и нежными нотками горной лаванды.',
+    'treat.linkDrinks': 'Смотреть напитки',
+    'treat.tagSignature': 'Шедевр Шефа',
+    'treat.titleChocolate': 'Шоколадный Трюфельный Торт',
+    'treat.descChocolate':
+      'Насыщенные слои темного бельгийского шоколада с лесными ягодами и шелковистым какао-ганашем.',
+    'treat.linkCakes': 'Смотреть торты',
+    'treat.tagBestseller': 'Классический Хит',
+    'treat.titleHoney': 'Медовик с Нежным Кремом',
+    'treat.descHoney':
+      'Золотистые карамелизированные медовые коржи с воздушным сметанным муссом и хрустящей крошкой.',
+    'treat.linkPastries': 'Смотреть пирожные',
+    // Spotlight Pairing
+    'spotlight.badge': 'Рекомендация Шеф-кондитера',
+    'spotlight.title': 'Гармония Десерта и Кофе',
+    'spotlight.desc':
+      'Каждый особенный десерт заслуживает идеального аккомпанемента. Попробуйте свежие ягодные капкейки в сочетании с нашим фирменным кофе свежей обжарки.',
+    'spotlight.btn': 'Открыть Меню Кондитерской',
+    // Pillars
+    'pillar.title1': 'Натуральные Ингредиенты, Незабываемый Вкус',
+    'pillar.desc1':
+      'Только натуральные фермерские сливки, органическая мука и свежие ягоды без красителей и консервантов.',
+    'pillar.title2': 'Свежая Выпечка Каждое Утро',
+    'pillar.desc2':
+      'Выпекаем небольшими партиями каждый день на рассвете, сохраняя безупречную свежесть, текстуру и аромат.',
+    'pillar.title3': 'Более 1,200 Счастливых Праздников',
+    'pillar.desc3':
+      'От уютных чаепитий до пышных свадеб и дней рождения — наши десерты дарят радость во всех регионах.',
+    // Promo Banner
+    'promo.title': 'Готовы попробовать настоящее счастье?',
+    'promo.desc':
+      'Откройте полный каталог с актуальными региональными ценами, выбором опций и быстрой доставкой.',
+    'promo.btn': 'Открыть Всё Меню →',
+    // Footer
+    'footer.brandSubtitle': 'Высокое Кондитерское Искусство & Кафе',
+    'footer.desc':
+      'Изящная гармония классической французской выпечки и нежных цветов сакуры. Ручная работа каждое утро из фермерского масла и бельгийского какао.',
+    'footer.freshDaily': 'Свежее Каждое Утро',
+    'footer.artisanalRecipes': 'Авторские Рецепты',
+    'footer.specialtyRoasts': 'Свежая Обжарка',
+    'footer.artisanMenu': 'Авторское Меню',
+    'footer.menuCherry': 'Торт Сердце Сакуры',
+    'footer.menuBerry': 'Тройное Ягодное Сердце',
+    'footer.menuVanilla': 'Ванильно-карамельное Сердце',
+    'footer.menuSmiley': 'Ягодный Квадрат Смайли',
+    'footer.menuSweetheart': 'Шоколадный Десерт Sweetheart',
+    'footer.menuClover': 'Торт Клевер Удачи',
     'footer.hours': 'Кафе и Гостеприимство',
+    'footer.monFri': 'Пн - Пт:',
+    'footer.satSun': 'Сб - Вс:',
+    'footer.hubPickup': 'Самовывоз:',
+    'footer.pickupTimes': 'Ежедневно 08:30 - 21:30',
+    'footer.bookTable': 'Забронировать столик',
     'footer.portals': 'Клиентские и API Порталы',
-    'lang.switcherTitle': 'Выбрать язык',
+    'footer.customerAccount': 'Личный кабинет клиента',
+    'footer.adminPortal': 'Панель администратора',
+    'footer.apiSwagger': 'REST API Swagger UI',
+    'footer.apiOpenApi': 'Спецификация OpenAPI (JSON)',
+    'footer.qaReports': 'Отчёты контроля качества',
+    'footer.copyright': '© 2026 Cherry Cake Bakery & Café. Все права защищены. • ITPU University Teamwork 2026 (Team 9).',
+    'footer.menu': 'Меню',
+    'footer.reservations': 'Бронирование',
+    'footer.account': 'Профиль',
+    'footer.apiRef': 'Документация API',
+    'lang.switcherTitle': 'Выбрать язык отображения',
   },
   ka: {
+    // Nav
     'nav.menu': 'საავტორო მენიუ',
     'nav.booking': 'მაგიდის დაჯავშნა',
     'nav.about': 'ჩვენს შესახებ',
@@ -439,31 +626,99 @@ export const UI_TRANSLATIONS: Record<string, Record<string, string>> = {
     'nav.apiDocs': 'API დოკუმენტაცია',
     'nav.admin': 'ადმინი',
     'nav.bag': 'კალათა',
-    'hero.badge': 'მოგესალმებათ CHERRY CAKE',
+    // Hero
+    'hero.badge': 'საკონდიტრო და კაფე',
     'hero.title1': 'ტკბილი წუთები',
     'hero.title2': 'იწყება აქ',
+    'hero.welcome': 'მოგესალმებათ Cherry Cake-ში',
     'hero.subtitle':
-      'ფრანგული საკონდიტრო ხელოვნებისა და იაპონური ალუბლის ყვავილობის ჰარმონია. ყოველ დილით ახლად მომზადებული უმაღლესი ხარისხის ინგრედიენტებით.',
+      'სიყვარულით დამზადებული და ყოველ დილით ახლად გამომცხვარი. ფრანგული საკონდიტრო ტრადიციები, ველური კენკრა, ნამდვილი ნაღები და ბელგიური შოკოლადი.',
     'hero.viewMenu': 'მენიუს ნახვა',
     'hero.explore': 'დესერტების შერჩევა',
-    'hero.perk1': '100% ნატურალური კენკრა და კრემი',
+    'hero.perk1': '100% ნატურალური კენკრა და ნაღები',
     'hero.perk2': 'ახალი ნამცხვრები ყოველ დილით',
     'hero.perk3': 'სწრაფი მიტანა და გატანა',
     'hero.chocolate': 'შოკოლადის სიამოვნება',
-    'hero.strawberry': 'მარწყვის ნეტარება',
     'hero.viewCake': 'ტორტის ნახვა',
+    'hero.strawberry': 'მარწყვის ნეტარება',
     'hero.viewTreat': 'დესერტის ნახვა',
     'hero.rating': '★ 4.9 • 1,200+ კმაყოფილი სტუმარი',
+    // Featured Specialties / Signature Delights
     'section.delightsTag': 'ჩვენი საავტორო დესერტები',
     'section.delightsTitle': 'რჩეული ტკბილეული',
     'section.delightsSub':
       'ხელით დამზადებული საუცხოო საკონდიტრო ნაწარმი, გამომცხვარი ყოველ დილით თქვენი სიამოვნებისთვის.',
-    'footer.bookTable': 'მაგიდის დაჯავშნა',
+    'treat.tagBarista': 'ბარისტას რჩეული',
+    'treat.titleLatte': 'ხავერდოვანი ლატე და ყავა',
+    'treat.descLatte':
+      'არაბიკას ესპრესო ხავერდოვანი რძის ქაფით და ლავანდის ნაზი ნოტებით.',
+    'treat.linkDrinks': 'სასმელების ნახვა',
+    'treat.tagSignature': 'შეფის ხელწერა',
+    'treat.titleChocolate': 'შოკოლადის ტრიუფელის ტორტი',
+    'treat.descChocolate':
+      'შავი ბელგიური შოკოლადის ბისკვიტი ტყის კენკრითა და განაშით.',
+    'treat.linkCakes': 'ტორტების ნახვა',
+    'treat.tagBestseller': 'კლასიკური ბესტსელერი',
+    'treat.titleHoney': 'ოქროსფერი თაფლის ნამცხვარი',
+    'treat.descHoney':
+      'კარამელიზებული თაფლის ფენები ჰაეროვანი მუსითა და ხრაშუნა ნაფხვენით.',
+    'treat.linkPastries': 'ნამცხვრების ნახვა',
+    // Spotlight Pairing
+    'spotlight.badge': 'შეფ-კონდიტერის რეკომენდაცია',
+    'spotlight.title': 'დესერტისა და ყავის ჰარმონია',
+    'spotlight.desc':
+      'ყველა განსაკუთრებული დესერტი იმსახურებს საუკეთესო ყავას. დააგემოვნეთ ჩვენი კენკრის კექსები ახლად მოხალულ ყავასთან ერთად.',
+    'spotlight.btn': 'საკონდიტროს მენიუს გახსნა',
+    // Pillars
+    'pillar.title1': 'ხარისხიანი ინგრედიენტები, დაუვიწყარი გემო',
+    'pillar.desc1':
+      'მხოლოდ ნატურალური ნაღები, ორგანული ფქვილი და ახალი კენკრა საღებავებისა და კონსერვანტების გარეშე.',
+    'pillar.title2': 'გამომცხვარი ყოველ დილით',
+    'pillar.desc2':
+      'ვაცხობთ მცირე პარტიებად ყოველ დილით, რათა შევინარჩუნოთ საუკეთესო სინედლე და არომატი.',
+    'pillar.title3': '1,200+ ბედნიერი დღესასწაული',
+    'pillar.desc3':
+      'მყუდრო ჩაის სმიდან გრანდიოზულ ქორწილებამდე — ჩვენი დესერტები ყველას ღიმილს ჩუქნის.',
+    // Promo Banner
+    'promo.title': 'მზად ხართ გასინჯოთ ბედნიერება?',
+    'promo.desc':
+      'დაათვალიერეთ ჩვენი სრული კატალოგი რეგიონალური ფასებით, შეკვეთით დამზადებითა და მიტანით.',
+    'promo.btn': 'სრული მენიუს გახსნა →',
+    // Footer
+    'footer.brandSubtitle': 'მაღალი საკონდიტრო ხელოვნება & კაფე',
+    'footer.desc':
+      'ფრანგული საკონდიტრო ტრადიციებისა და იაპონური ალუბლის ყვავილობის ჰარმონია. ყოველდღე ხელით დამზადებული საუკეთესო ინგრედიენტებით.',
+    'footer.freshDaily': 'ყოველდღე ახალი',
+    'footer.artisanalRecipes': 'საავტორო რეცეპტები',
+    'footer.specialtyRoasts': 'რჩეული ყავა',
+    'footer.artisanMenu': 'საავტოро მენიუ',
+    'footer.menuCherry': 'ალუბლის ყვავილობის გულის ტორტი',
+    'footer.menuBerry': 'სამმაგი კენკრის გული',
+    'footer.menuVanilla': 'ვანილის ფაჯის გული',
+    'footer.menuSmiley': 'სმაილი კენკრის კვადრატი',
+    'footer.menuSweetheart': 'შოკოლადის პეტიტი',
+    'footer.menuClover': 'იღბლიანი სამყურას ტორტი',
     'footer.hours': 'კაფე და მასპინძლობა',
+    'footer.monFri': 'ორშ - პარ:',
+    'footer.satSun': 'შაბ - კვრ:',
+    'footer.hubPickup': 'გატანა:',
+    'footer.pickupTimes': 'ყოველდღე 08:30 - 21:30',
+    'footer.bookTable': 'მაგიდის დაჯავშნა',
     'footer.portals': 'კლიენტის და API პორტალები',
+    'footer.customerAccount': 'მომხმარებლის პროფილი',
+    'footer.adminPortal': 'ადმინისტრატორის პორტალი',
+    'footer.apiSwagger': 'REST API Swagger UI',
+    'footer.apiOpenApi': 'OpenAPI სპეციფიკაცია (JSON)',
+    'footer.qaReports': 'ხარისხის ანგარიშები',
+    'footer.copyright': '© 2026 Cherry Cake Bakery & Café. ყველა უფლება დაცულია. • ITPU University Teamwork 2026 (Team 9).',
+    'footer.menu': 'მენიუ',
+    'footer.reservations': 'დაჯავშნა',
+    'footer.account': 'პროფილი',
+    'footer.apiRef': 'API დოკუმენტაცია',
     'lang.switcherTitle': 'ენის არჩევა',
   },
   uz: {
+    // Nav
     'nav.menu': 'Artisan Menyu',
     'nav.booking': 'Stol Band Qilish',
     'nav.about': 'Biz Haqimizda',
@@ -473,9 +728,11 @@ export const UI_TRANSLATIONS: Record<string, Record<string, string>> = {
     'nav.apiDocs': 'API Hujjatlar',
     'nav.admin': 'Admin',
     'nav.bag': 'Savat',
-    'hero.badge': 'CHERRY CAKE GA XUSH KELIBSIZ',
+    // Hero
+    'hero.badge': 'QANDOLATCHILIK VA QAHVAXONA',
     'hero.title1': 'Shirin Lahzalar',
     'hero.title2': 'Shu Yerdan Boshlanadi',
+    'hero.welcome': 'Cherry Cake ga xush kelibsiz',
     'hero.subtitle':
       'Fransuz qandolatchiligi va nozik gilos gullari uyg‘unligi. Har kuni ertalab tabiiy qaymoq va Belgiya shokoladidan tayyorlanadi.',
     'hero.viewMenu': 'Menyuni Ko‘rish',
@@ -484,20 +741,86 @@ export const UI_TRANSLATIONS: Record<string, Record<string, string>> = {
     'hero.perk2': 'Har Kuni Yangi Pishiriqlar',
     'hero.perk3': 'Yetkazib Berish va Olib Ketish',
     'hero.chocolate': 'Shokoladli Rohat',
-    'hero.strawberry': 'Qulupnayli Sehr',
     'hero.viewCake': 'Tortni Ko‘rish',
+    'hero.strawberry': 'Qulupnayli Sehr',
     'hero.viewTreat': 'Pishiriqni Ko‘rish',
     'hero.rating': '★ 4.9 • 1,200+ Mamnun Mehmonlar',
+    // Featured
     'section.delightsTag': 'BIZNING MAXSUS SHIRINLIKLAR',
     'section.delightsTitle': 'Saralangan Lazzatlar',
     'section.delightsSub':
       'Har tong mehr bilan tayyorlanadigan qo‘l mehnati pishiriqlarimizdan sara namunalar.',
-    'footer.bookTable': 'Stol Band Qilish',
+    'treat.tagBarista': 'Barista Tanlovi',
+    'treat.titleLatte': 'Baxmal Latte va Qahva',
+    'treat.descLatte':
+      'Arabica espressosi va mayin sut ko‘pigi nozik tog‘ lavandasi ifori bilan.',
+    'treat.linkDrinks': 'Ichimliklarni ko‘rish',
+    'treat.tagSignature': 'Bosh Oshpaz Mahorati',
+    'treat.titleChocolate': 'Shokoladli Tryufel Tort',
+    'treat.descChocolate':
+      'To‘q Belgiya shokoladi, yangi mevalar va ipakdek shokoladli ganash qatlamlari.',
+    'treat.linkCakes': 'Tortlarni ko‘rish',
+    'treat.tagBestseller': 'Klassik Bestseller',
+    'treat.titleHoney': 'Asalli Mayin Tort',
+    'treat.descHoney':
+      'Karamelli asalli qatlamlar va yengil smetana mussining betakror uyg‘unligi.',
+    'treat.linkPastries': 'Pishiriqlarni ko‘rish',
+    // Spotlight
+    'spotlight.badge': 'Oshpaz Tavsiyasi',
+    'spotlight.title': 'Qandolat va Qahva Uyg‘unligi',
+    'spotlight.desc':
+      'Har bir betakror shirinlikka mos qahva kerak. Yangi pishirilgan kapkeyklarni xushbo‘y qahvamiz bilan tatib ko‘ring.',
+    'spotlight.btn': 'Katalog Menyusi',
+    // Pillars
+    'pillar.title1': 'Tabiiy Masalliqlar, Unutilmas Lazzat',
+    'pillar.desc1':
+      'Faqat tabiiy qaymoq, organik un va toza mevalar, hech qanday sun’iy bo‘yoqlarsiz.',
+    'pillar.title2': 'Har Kuni Ertalab Yangi Pishirilgan',
+    'pillar.desc2':
+      'Betakror ta’m va xushbo‘ylikni saqlash uchun har tong kichik partiyalarda pishiriladi.',
+    'pillar.title3': '1,200+ Quvonchli Bayramlar',
+    'pillar.desc3':
+      'Iliq choy kechalaridan to katta to‘ylargacha — barcha hududlarda xursandchilik ulashamiz.',
+    // Promo
+    'promo.title': 'Haqiqiy shirinlikdan bahramand bo‘ling',
+    'promo.desc':
+      'Hududiy narxlar va qulay yetkazib berish xizmati bilan to‘liq katalogimizni kashf eting.',
+    'promo.btn': 'To‘liq Menyu →',
+    // Footer
+    'footer.brandSubtitle': 'Oliy Qandolatchilik San’ati & Qahvaxona',
+    'footer.desc':
+      'Klassik fransuz pishiriqlari va yapon sakura gullari uyg‘unligi. Har tong tabiiy sariyog‘ va Belgiya kakaosi bilan tayyorlanadi.',
+    'footer.freshDaily': 'Har Kuni Yangi',
+    'footer.artisanalRecipes': 'Mualliflik Retseptlari',
+    'footer.specialtyRoasts': 'Yangi Qovurilgan Qahva',
+    'footer.artisanMenu': 'Artisan Menyu',
+    'footer.menuCherry': 'Gilos Gulli Yurak Torti',
+    'footer.menuBerry': 'Uch Qavatli Mevali Yurak',
+    'footer.menuVanilla': 'Oltin Vanilli Fadj Yurak',
+    'footer.menuSmiley': 'Smayli Mevali Shirinlik',
+    'footer.menuSweetheart': 'Shirin Shokoladli Petit',
+    'footer.menuClover': 'Omadli Yonshir Shokoladli Tort',
     'footer.hours': 'Qahvaxona va Xizmat',
+    'footer.monFri': 'Dush - Juma:',
+    'footer.satSun': 'Shan - Yak:',
+    'footer.hubPickup': 'Olib ketish:',
+    'footer.pickupTimes': 'Har kuni 08:30 - 21:30',
+    'footer.bookTable': 'Stol Band Qilish',
     'footer.portals': 'Mijoz va API Portallari',
-    'lang.switcherTitle': 'Tilni tanlang',
+    'footer.customerAccount': 'Mijoz Shaxsiy Kabineti',
+    'footer.adminPortal': 'Administrator Paneli',
+    'footer.apiSwagger': 'REST API Swagger UI',
+    'footer.apiOpenApi': 'OpenAPI Hujjati (JSON)',
+    'footer.qaReports': 'Sifat Nazorati Hisobotlari',
+    'footer.copyright': '© 2026 Cherry Cake Bakery & Café. Barcha huquqlar himoyalangan. • ITPU University Teamwork 2026 (Team 9).',
+    'footer.menu': 'Menyu',
+    'footer.reservations': 'Bronlash',
+    'footer.account': 'Profil',
+    'footer.apiRef': 'API Hujjatlar',
+    'lang.switcherTitle': 'Tilni tanlash',
   },
   kk: {
+    // Nav
     'nav.menu': 'Арнайы Мәзір',
     'nav.booking': 'Үстел Брондау',
     'nav.about': 'Біз Туралы',
@@ -507,9 +830,11 @@ export const UI_TRANSLATIONS: Record<string, Record<string, string>> = {
     'nav.apiDocs': 'API Құжаттамасы',
     'nav.admin': 'Әкімші',
     'nav.bag': 'Себет',
-    'hero.badge': 'CHERRY CAKE-КЕ ҚОШ КЕЛДІҢІЗ',
+    // Hero
+    'hero.badge': 'КОНДИТЕРЛІК ЖӘНЕ КАФЕ',
     'hero.title1': 'Тәтті Сәттер',
     'hero.title2': 'Осында Басталады',
+    'hero.welcome': 'Cherry Cake-ке қош келдіңіз',
     'hero.subtitle':
       'Француз кондитерлік өнері мен шие гүлдерінің үйлесімі. Күн сайын таңертең табиғи кілегей мен бельгиялық шоколадтан дайындалады.',
     'hero.viewMenu': 'Мәзірді Көру',
@@ -518,18 +843,83 @@ export const UI_TRANSLATIONS: Record<string, Record<string, string>> = {
     'hero.perk2': 'Күн Сайын Жаңа Пісірілген',
     'hero.perk3': 'Жеткізу Және Алып Кету',
     'hero.chocolate': 'Шоколадты Рахат',
-    'hero.strawberry': 'Құлпынай Ләззаты',
     'hero.viewCake': 'Тортты Көру',
+    'hero.strawberry': 'Құлпынай Ләззаты',
     'hero.viewTreat': 'Тәттіні Көру',
     'hero.rating': '★ 4.9 • 1,200+ Риза Қонақтар',
+    // Featured
     'section.delightsTag': 'БІЗДІҢ АРНАЙЫ ӨНІМДЕР',
     'section.delightsTitle': 'Таңдаулы Тәттілер',
     'section.delightsSub':
       'Әр таң сайын шеберлікпен және махаббатпен әзірленетін қолөнер кондитерлік өнімдері.',
-    'footer.bookTable': 'Үстел Брондау',
+    'treat.tagBarista': 'Бариста Таңдауы',
+    'treat.titleLatte': 'Барқыт Латте және Кофе',
+    'treat.descLatte':
+      'Табиғи сүт көбігі мен тау лавандасының нәзік хош иісі бар Арабика эспрессосы.',
+    'treat.linkDrinks': 'Сусындарды көру',
+    'treat.tagSignature': 'Бас Аспаз Қолтаңбасы',
+    'treat.titleChocolate': 'Шоколадты Трюфель Торты',
+    'treat.descChocolate':
+      'Бельгиялық шоколад, балғын жидектер және жібектей ганаш қабаттары.',
+    'treat.linkCakes': 'Торттарды көру',
+    'treat.tagBestseller': 'Классикалық Хит',
+    'treat.titleHoney': 'Балды нәзік торт',
+    'treat.descHoney':
+      'Карамельденген бал қабаттары мен жеңіл қаймақ муссының тамаша үйлесімі.',
+    'treat.linkPastries': 'Тәттілерді көру',
+    // Spotlight
+    'spotlight.badge': 'Бас Аспаз Ұсынысы',
+    'spotlight.title': 'Тәтті мен Кофе Үйлесімі',
+    'spotlight.desc':
+      'Әрбір керемет десерт тамаша кофеге лайық. Жаңа пісірілген капкейктерді фирмалық кофемен бірге татып көріңіз.',
+    'spotlight.btn': 'Кондитерлік Мәзір',
+    // Pillars
+    'pillar.title1': 'Табиғи Ингредиенттер, Ұмытылмас Дәм',
+    'pillar.desc1':
+      'Тек табиғи кілегей, органикалық ұн және балғын жидектер, ешқандай бояғыштарсыз.',
+    'pillar.title2': 'Әр Таңда Жаңа Пісіріледі',
+    'pillar.desc2':
+      'Керемет балғындық пен хош иісті сақтау үшін әр таң сайын шағын партиялармен дайындалады.',
+    'pillar.title3': '1,200+ Бақытты Мерекелер',
+    'pillar.desc3':
+      'Жылы шай ішуден бастап үлкен тойларға дейін — біздің десерттер барлық өңірде қуаныш сыйлайды.',
+    // Promo
+    'promo.title': 'Шынайы бақыт дәмін татуға дайынсыз ба?',
+    'promo.desc':
+      'Өңірлік бағалар, арнайы опциялар және жылдам жеткізу қызметімен толық мәзірді ашыңыз.',
+    'promo.btn': 'Толық Мәзір →',
+    // Footer
+    'footer.brandSubtitle': 'Жоғары Кондитерлік Өнер & Кафе',
+    'footer.desc':
+      'Классикалық француз кондитерлік дәстүрлері мен сакура гүлдерінің үйлесімі. Күн сайын табиғи сары май мен бельгиялық какаодан дайындалады.',
+    'footer.freshDaily': 'Күнде Жаңа',
+    'footer.artisanalRecipes': 'Авторлық Рецепттер',
+    'footer.specialtyRoasts': 'Жаңа Қуырылған Кофе',
+    'footer.artisanMenu': 'Арнайы Мәзір',
+    'footer.menuCherry': 'Шие Гүлі Жүрек Торты',
+    'footer.menuBerry': 'Үш Жидекті Жүрек Десерті',
+    'footer.menuVanilla': 'Алтын Ваниль Фадж Жүрек',
+    'footer.menuSmiley': 'Смайли Жидекті Тәттісі',
+    'footer.menuSweetheart': 'Шоколадты Петит',
+    'footer.menuClover': 'Сәтті Беде Шоколадты Торты',
     'footer.hours': 'Кафе Және Қонақжайлылық',
+    'footer.monFri': 'Дүй - Жұм:',
+    'footer.satSun': 'Сен - Жек:',
+    'footer.hubPickup': 'Алып кету:',
+    'footer.pickupTimes': 'Күн сайын 08:30 - 21:30',
+    'footer.bookTable': 'Үстел Брондау',
     'footer.portals': 'Клиент Және API Порталдары',
-    'lang.switcherTitle': 'Тілді таңдаңыз',
+    'footer.customerAccount': 'Клиент Жеке Кабинеті',
+    'footer.adminPortal': 'Әкімші Порталы',
+    'footer.apiSwagger': 'REST API Swagger UI',
+    'footer.apiOpenApi': 'OpenAPI Құжаты (JSON)',
+    'footer.qaReports': 'Сапа Бақылау Есептері',
+    'footer.copyright': '© 2026 Cherry Cake Bakery & Café. Барлық құқықтар қорғалған. • ITPU University Teamwork 2026 (Team 9).',
+    'footer.menu': 'Мәзір',
+    'footer.reservations': 'Брондау',
+    'footer.account': 'Профиль',
+    'footer.apiRef': 'API Құжаттамасы',
+    'lang.switcherTitle': 'Тілді таңдау',
   },
 };
 

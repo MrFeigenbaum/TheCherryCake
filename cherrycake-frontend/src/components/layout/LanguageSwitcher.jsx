@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLanguage } from '../../store/languageSlice';
-import { LANGUAGES } from '../../i18n/translations';
+import { LANGUAGES, getLanguageFlagSrc } from '../../i18n/translations';
 
 export function LanguageSwitcher({ className = '' }) {
   const dispatch = useDispatch();
@@ -54,7 +54,7 @@ export function LanguageSwitcher({ className = '' }) {
         ))}
       </select>
 
-      {/* Custom Sleek Language Trigger */}
+      {/* Custom Sleek Language Trigger matching CountrySwitcher */}
       <button
         type="button"
         data-testid="language-switcher"
@@ -64,7 +64,14 @@ export function LanguageSwitcher({ className = '' }) {
         aria-haspopup="listbox"
         title="Select display language"
       >
-        <span className="lang-flag-icon">{selectedLangObj.flag}</span>
+        <img
+          src={getLanguageFlagSrc(selectedLangObj.code)}
+          alt={selectedLangObj.code}
+          className="region-flag-img"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none';
+          }}
+        />
         <span className="lang-code-text">{selectedLangObj.code.toUpperCase()}</span>
         <span className="lang-select-arrow">&#9662;</span>
       </button>
@@ -86,7 +93,14 @@ export function LanguageSwitcher({ className = '' }) {
                   className={`lang-option ${isSelected ? 'selected' : ''}`}
                   onClick={() => handleSelect(l.code)}
                 >
-                  <span className="lang-option-flag">{l.flag}</span>
+                  <img
+                    src={getLanguageFlagSrc(l.code)}
+                    alt={l.code}
+                    className="region-flag-img"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
                   <span className="lang-option-code">{l.code.toUpperCase()}</span>
                   <span className="lang-option-name">{l.nativeName}</span>
                   <span className="lang-option-label">{l.label}</span>
