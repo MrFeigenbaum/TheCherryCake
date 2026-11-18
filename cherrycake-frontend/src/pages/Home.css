@@ -618,6 +618,7 @@
   position: relative;
   width: 100%;
   max-width: 340px;
+  height: 320px;
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 16px 36px rgba(123, 30, 60, 0.14);
@@ -625,7 +626,7 @@
 
 .cc-spotlight-img {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
   object-fit: cover;
   transition: transform 0.4s ease;
@@ -1016,8 +1017,14 @@
   color: #ffffff !important;
 }
 
+[data-theme="dark"] .cc-spotlight-text,
 [data-theme="dark"] .cc-spotlight-desc {
-  color: #cbb4bf !important;
+  color: #e2d1da !important;
+}
+
+[data-theme="dark"] .cc-spotlight-img-wrap {
+  border: 1px solid rgba(255, 183, 197, 0.2) !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45) !important;
 }
 
 [data-theme="dark"] .cc-spotlight-pill {
