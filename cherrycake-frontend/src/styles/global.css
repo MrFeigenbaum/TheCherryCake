@@ -430,20 +430,23 @@ body {
 }
 
 /* Responsive Adaptive Breakpoints */
-@media (max-width: 1280px) {
+@media (max-width: 1280px) and (min-width: 1141px) {
   .nav-link-extra {
     display: none !important;
   }
   .navbar-links {
-    gap: 8px;
+    gap: 6px;
   }
   .nav-link {
-    font-size: 0.85rem;
-    padding: 6px 10px;
+    font-size: 0.82rem;
+    padding: 5px 8px;
+  }
+  .navbar-actions {
+    gap: 10px;
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1140px) {
   .cc-navbar {
     padding: 10px 18px;
   }
@@ -451,7 +454,7 @@ body {
     display: none !important;
   }
   .navbar-hamburger-btn {
-    display: inline-flex;
+    display: inline-flex !important;
   }
   .cart-btn-text {
     display: none;

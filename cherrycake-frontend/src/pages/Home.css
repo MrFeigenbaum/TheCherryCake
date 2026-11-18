@@ -390,8 +390,8 @@
 /* Floating Rating Pill */
 .cc-floating-rating {
   position: absolute;
-  top: -14px;
-  right: 20px;
+  top: 20px;
+  right: 24px;
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.9);
@@ -830,6 +830,11 @@
     bottom: 0;
   }
 
+  .cc-floating-rating {
+    top: 14px;
+    right: 14px;
+  }
+
   .cc-featured-grid {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -846,6 +851,14 @@
     margin: 0 auto;
   }
 
+  .cc-home-promo-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 36px 28px;
+  }
+}
+
+@media (max-width: 1040px) {
   .cc-home-pillars {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -854,12 +867,6 @@
 
   .cc-pillar-item:not(:last-child)::after {
     display: none;
-  }
-
-  .cc-home-promo-banner {
-    flex-direction: column;
-    text-align: center;
-    padding: 36px 28px;
   }
 }
 
