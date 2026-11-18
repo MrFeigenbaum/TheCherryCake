@@ -138,7 +138,7 @@ export default function Home() {
             {/* Floating Top Rating Badge */}
             <div className="cc-floating-rating">
               <span className="cc-rating-star">★</span>
-              <span>4.9 &bull; 1,200+ Happy Guests</span>
+              <span className="cc-rating-text">4.9 &bull; 1,200+ Happy Guests</span>
             </div>
           </div>
         </div>

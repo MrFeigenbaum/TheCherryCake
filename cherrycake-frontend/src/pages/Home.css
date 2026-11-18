@@ -392,7 +392,7 @@
   position: absolute;
   top: -14px;
   right: 20px;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 999px;
@@ -410,6 +410,10 @@
 .cc-rating-star {
   color: #f39c12;
   font-size: 14px;
+}
+
+.cc-rating-text {
+  color: inherit;
 }
 
 @keyframes floatSlow {
@@ -494,8 +498,8 @@
 .cc-treat-image-wrap {
   position: relative;
   width: 100%;
-  height: 220px;
-  background: linear-gradient(135deg, #fbf5ef, #f4e8e1);
+  height: 230px;
+  background: #190714;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -506,18 +510,19 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .cc-treat-card:hover .cc-treat-img {
-  transform: scale(1.08);
+  transform: scale(1.06);
 }
 
 .cc-treat-pill-tag {
   position: absolute;
   top: 14px;
   left: 14px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 999px;
@@ -526,7 +531,8 @@
   font-weight: 800;
   letter-spacing: 0.5px;
   color: var(--color-primary);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 2;
 }
 
 .cc-treat-body {
@@ -920,9 +926,18 @@
 [data-theme="dark"] .cc-floating-card-left,
 [data-theme="dark"] .cc-floating-card-right,
 [data-theme="dark"] .cc-floating-rating {
-  background: rgba(30, 9, 23, 0.88) !important;
+  background: rgba(30, 9, 23, 0.92) !important;
   border-color: rgba(255, 183, 197, 0.25) !important;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .cc-floating-rating,
+[data-theme="dark"] .cc-floating-rating span,
+[data-theme="dark"] .cc-rating-text,
+[data-theme="dark"] .cc-rating-score,
+[data-theme="dark"] .cc-rating-label {
+  color: #ffffff !important;
 }
 
 [data-theme="dark"] .cc-floating-title {
@@ -931,14 +946,6 @@
 
 [data-theme="dark"] .cc-floating-caption {
   color: #ff85a2 !important;
-}
-
-[data-theme="dark"] .cc-rating-score {
-  color: #ffffff !important;
-}
-
-[data-theme="dark"] .cc-rating-label {
-  color: #c7a3b3 !important;
 }
 
 /* Signature Delights & Featured Cards */
@@ -966,13 +973,16 @@
 }
 
 [data-theme="dark"] .cc-treat-image-wrap {
-  background: radial-gradient(circle at 50% 60%, rgba(230, 57, 96, 0.2) 0%, rgba(25, 8, 20, 0.95) 75%) !important;
+  background: #140410 !important;
+  border-bottom: 1px solid rgba(255, 183, 197, 0.12) !important;
 }
 
 [data-theme="dark"] .cc-treat-pill-tag {
   background: rgba(25, 8, 20, 0.9) !important;
   border-color: rgba(255, 183, 197, 0.3) !important;
   color: #ff85a2 !important;
+  backdrop-filter: blur(8px);
+  z-index: 2 !important;
 }
 
 [data-theme="dark"] .cc-treat-title {
