@@ -185,7 +185,8 @@
   margin: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.24);
-  line-height: 1;
+  line-height: 0;
+  font-size: 0;
   text-align: center;
   flex-shrink: 0;
   box-sizing: border-box;
@@ -194,9 +195,9 @@
 
 .cc-hero-arrow-bubble svg {
   display: block;
-  margin: auto;
-  width: 13px;
-  height: 13px;
+  margin: 0;
+  width: 14px;
+  height: 14px;
 }
 
 .cc-hero-primary-btn:hover .cc-hero-arrow-bubble {
@@ -306,8 +307,8 @@
 /* Floating Glassmorphism Card 1: Chocolate Indulgence (Left) */
 .cc-floating-card-left {
   position: absolute;
-  top: 16px;
-  left: -28px;
+  top: 38%;
+  left: -24px;
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -390,8 +391,8 @@
 /* Floating Rating Pill */
 .cc-floating-rating {
   position: absolute;
-  top: 20px;
-  right: 24px;
+  top: 16px;
+  right: 20px;
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.9);
@@ -821,18 +822,21 @@
   }
 
   .cc-floating-card-left {
-    left: 0;
-    top: 0;
+    left: -8px;
+    top: 36%;
+    transform: scale(0.92);
   }
 
   .cc-floating-card-right {
-    right: 0;
-    bottom: 0;
+    right: -8px;
+    bottom: 12px;
+    transform: scale(0.92);
   }
 
   .cc-floating-rating {
-    top: 14px;
-    right: 14px;
+    top: 12px;
+    right: 12px;
+    transform: scale(0.92);
   }
 
   .cc-featured-grid {
@@ -855,6 +859,26 @@
     flex-direction: column;
     text-align: center;
     padding: 36px 28px;
+  }
+}
+
+@media (max-width: 520px) {
+  .cc-floating-card-left {
+    left: -4px;
+    top: 36%;
+    transform: scale(0.85);
+  }
+
+  .cc-floating-card-right {
+    right: -4px;
+    bottom: 8px;
+    transform: scale(0.85);
+  }
+
+  .cc-floating-rating {
+    top: 8px;
+    right: 8px;
+    transform: scale(0.85);
   }
 }
 
