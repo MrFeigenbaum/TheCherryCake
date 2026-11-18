@@ -418,26 +418,64 @@ export const FreyjaEasterEgg: React.FC = () => {
     pausedMediaRef.current = [];
   };
 
-  // Typewriter Engine (Character by character letter typing animation)
+  // Human Typewriter Engine
+  // (Paces ~5 to 7 seconds per line, realistic pauses at punctuation, random hesitation searching for keys)
   useEffect(() => {
+    if (!isOpen) return;
+
     setTypedLength(0);
     const targetText = CHAPTERS[currentChapterIndex].poemText;
     let currentIdx = 0;
+    let isCancelled = false;
+    let timeoutId: any = null;
 
-    const timer = setInterval(() => {
-      // Step faster on newlines or spaces so rhythm feels natural
-      const nextChar = targetText[currentIdx];
-      const step = nextChar === " " || nextChar === "\n" ? 2 : 1;
-      currentIdx = Math.min(targetText.length, currentIdx + step);
+    const typeNextChar = () => {
+      if (isCancelled) return;
+      if (currentIdx >= targetText.length) return;
+
+      currentIdx += 1;
       setTypedLength(currentIdx);
 
-      if (currentIdx >= targetText.length) {
-        clearInterval(timer);
-      }
-    }, 24);
+      if (currentIdx >= targetText.length) return;
 
-    return () => clearInterval(timer);
-  }, [currentChapterIndex]);
+      const prevChar = targetText[currentIdx - 1];
+
+      // Base speed: 125-155ms per character (so a 35-character line takes ~5 to 6.5s)
+      let delay = Math.floor(Math.random() * 30) + 125;
+
+      // Newline / line break: pause for 700 - 1200ms
+      if (prevChar === "\n") {
+        delay = Math.floor(Math.random() * 500) + 700;
+      }
+      // Punctuation (comma, dash, period, quotes, ellipsis): thoughtful pause
+      else if (
+        prevChar === "," ||
+        prevChar === "." ||
+        prevChar === "—" ||
+        prevChar === "–" ||
+        prevChar === "?" ||
+        prevChar === "!" ||
+        prevChar === ":" ||
+        prevChar === "…"
+      ) {
+        delay = Math.floor(Math.random() * 450) + 400;
+      }
+      // Random human hesitation (like looking for a letter on keyboard): ~5% chance
+      else if (Math.random() < 0.05) {
+        delay = Math.floor(Math.random() * 550) + 450;
+      }
+
+      timeoutId = setTimeout(typeNextChar, delay);
+    };
+
+    // Initial natural breath before typing begins
+    timeoutId = setTimeout(typeNextChar, 350);
+
+    return () => {
+      isCancelled = true;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isOpen, currentChapterIndex]);
 
   // Keyboard shortcut listener
   useEffect(() => {
@@ -462,7 +500,7 @@ export const FreyjaEasterEgg: React.FC = () => {
           return;
         }
         if (e.key === " " || e.key === "Enter") {
-          // Instantly finish typing if still in progress
+          // Instantly finish typing current poem if in progress
           const fullLen = CHAPTERS[currentChapterIndex].poemText.length;
           if (typedLength < fullLen) {
             e.preventDefault();
@@ -484,7 +522,6 @@ export const FreyjaEasterEgg: React.FC = () => {
       if (keyBuffer === targetCode) {
         setIsOpen(true);
         setCurrentChapterIndex(0);
-        setTypedLength(0);
         keyBuffer = "";
       }
     };
@@ -639,7 +676,7 @@ export const FreyjaEasterEgg: React.FC = () => {
                     setTypedLength(fullPoem.length);
                   }}
                 >
-                  ⏩ Показать всё
+                  ⏩ Показать всё сразу
                 </button>
               )}
             </div>
