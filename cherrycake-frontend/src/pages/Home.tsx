@@ -45,7 +45,12 @@ export default function Home() {
               className="cc-hero-primary-btn"
             >
               <span>View Menu</span>
-              <span className="cc-hero-arrow-bubble">&rarr;</span>
+              <span className="cc-hero-arrow-bubble" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </span>
             </Button>
 
             <button
@@ -275,7 +280,12 @@ export default function Home() {
               className="cc-hero-primary-btn"
             >
               <span>Explore Bakery Menu</span>
-              <span className="cc-hero-arrow-bubble">&rarr;</span>
+              <span className="cc-hero-arrow-bubble" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </span>
             </Button>
           </div>
         </div>

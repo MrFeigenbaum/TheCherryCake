@@ -3,36 +3,87 @@
    Atmosphere: Midnight Cyber-Noir, Typewriter Poetry & Mustafa Avşaroğlu Audio
    ========================================================================== */
 
-/* Discreet Floating Trigger Button (Bottom Right) */
+/* Redesigned Noir Velvet Floating Trigger Button (Bottom Right) */
 .cc-freyja-floating-trigger {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: rgba(12, 6, 10, 0.88);
-  border: 1px solid rgba(220, 50, 95, 0.45);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), 0 0 12px rgba(210, 40, 80, 0.25);
-  color: #ff9bbb;
-  font-size: 15px;
-  display: flex;
+  bottom: 24px;
+  right: 28px;
+  z-index: 950;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 10px;
+  padding: 8px 18px 8px 14px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(35, 11, 28, 0.94), rgba(16, 5, 13, 0.98));
+  border: 1px solid rgba(255, 183, 197, 0.35);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 16px rgba(230, 57, 96, 0.25);
+  color: #ffd5df;
   cursor: pointer;
-  z-index: 9998;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  text-decoration: none;
   outline: none;
 }
 
 .cc-freyja-floating-trigger:hover {
-  transform: scale(1.12);
-  border-color: #ff5f8a;
-  background: rgba(26, 10, 20, 0.95);
-  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.8), 0 0 20px rgba(235, 60, 110, 0.55);
+  transform: translateY(-2px) scale(1.04);
+  border-color: rgba(255, 183, 197, 0.65);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.75), 0 0 24px rgba(230, 57, 96, 0.5);
   color: #ffffff;
+}
+
+.cc-freyja-trigger-icon-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(230, 57, 96, 0.35) 0%, rgba(45, 14, 36, 0.6) 100%);
+  border: 1px solid rgba(255, 183, 197, 0.3);
+  color: #ffb7c5;
+  flex-shrink: 0;
+}
+
+.cc-freyja-trigger-key-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.cc-freyja-trigger-pulse-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff3864;
+  box-shadow: 0 0 6px #ff3864;
+  animation: rubyPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.cc-freyja-trigger-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fdf2f5;
+  white-space: nowrap;
+}
+
+@keyframes rubyPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
 }
 
 /* Key Input Popup Modal (Black Noir Theme) */

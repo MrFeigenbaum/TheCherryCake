@@ -1,5 +1,14 @@
 ﻿import { describe, it, expect } from 'vitest';
-import { store, setRegion, addToCart, clearCart, showToast, hideToast } from './index';
+import {
+  store,
+  setRegion,
+  addToCart,
+  clearCart,
+  showToast,
+  hideToast,
+  toggleTheme,
+  setTheme,
+} from './index';
 
 describe('Redux Store', () => {
   it('should update selected region', () => {
@@ -26,6 +35,17 @@ describe('Redux Store', () => {
 
     store.dispatch(hideToast());
     expect(store.getState().ui.toast).toBe("");
+  });
+
+  it('should toggle and set theme', () => {
+    store.dispatch(setTheme('light'));
+    expect(store.getState().ui.theme).toBe('light');
+
+    store.dispatch(toggleTheme());
+    expect(store.getState().ui.theme).toBe('dark');
+
+    store.dispatch(toggleTheme());
+    expect(store.getState().ui.theme).toBe('light');
   });
 });
 

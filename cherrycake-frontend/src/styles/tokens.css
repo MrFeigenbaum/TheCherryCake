@@ -1,4 +1,5 @@
-:root {
+:root,
+[data-theme="light"] {
   /* Brand colors */
   --color-primary: #7b1e3c;
   --color-primary-hover: #5e1530;
@@ -50,4 +51,39 @@
 
   --shadow-card: 0 8px 30px rgba(80, 30, 45, 0.07);
   --shadow-hover: 0 14px 35px rgba(80, 30, 45, 0.12);
+
+  /* Signature Accents */
+  --sakura-pink: #d96280;
+  --raspberry-coulis: #7b1e3c;
+}
+
+[data-theme="dark"] {
+  /* Cherry Void Dark Theme Tokens */
+  --color-primary: #ff527b;
+  --color-primary-hover: #ff7597;
+  --color-accent: #401426;
+
+  /* Backgrounds */
+  --color-background: #12060e;
+  --color-surface: #1e0918;
+  --color-surface-soft: #2a0d22;
+
+  /* Text */
+  --color-text: #fdf2f5;
+  --color-muted: #c7a3b3;
+
+  /* Feedback */
+  --color-success: #38c172;
+  --color-error: #ff4757;
+  --color-warning: #e5b061;
+
+  /* Borders */
+  --color-border: rgba(255, 183, 197, 0.2);
+
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 14px 35px rgba(230, 57, 96, 0.3);
+
+  /* Signature Accents */
+  --sakura-pink: #ffb7c5;
+  --raspberry-coulis: #e63960;
 }

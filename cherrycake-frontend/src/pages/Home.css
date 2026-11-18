@@ -179,12 +179,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.22);
-  font-size: 13px;
+  line-height: 1;
+  text-align: center;
+  flex-shrink: 0;
   transition: transform 0.2s ease;
+}
+
+.cc-hero-arrow-bubble svg {
+  display: block;
 }
 
 .cc-hero-primary-btn:hover .cc-hero-arrow-bubble {

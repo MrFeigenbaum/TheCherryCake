@@ -661,15 +661,33 @@ export const FreyjaEasterEgg: React.FC = () => {
 
   return (
     <>
-      {/* Discreet Noir Floating Trigger Button in Bottom-Right Corner */}
+      {/* Redesigned Noir Velvet Floating Trigger Button in Bottom-Right Corner */}
       {!isQuestOpen && !isKeyModalOpen && (
         <button
+          type="button"
           className="cc-freyja-floating-trigger"
           onClick={() => setIsKeyModalOpen(true)}
-          title="Ввести ключ доступа // Access Key"
+          title="Секретный ключ // Secret Cipher Key"
           aria-label="Ввести секретный ключ"
         >
-          🗝️
+          <span className="cc-freyja-trigger-icon-wrap" aria-hidden="true">
+            <svg
+              className="cc-freyja-trigger-key-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 2l-2 2m-1.5 1.5L14 9l-1.5-1.5-2 2 1.5 1.5-3 3a5.5 5.5 0 1 1-2.12-2.12l3-3 1.5 1.5 2-2L14 6.5l3.5-3.5L21 2z" />
+              <circle cx="7.5" cy="16.5" r="1.5" fill="currentColor" />
+            </svg>
+            <span className="cc-freyja-trigger-pulse-dot" />
+          </span>
+          <span className="cc-freyja-trigger-label">Secret Key</span>
         </button>
       )}
 

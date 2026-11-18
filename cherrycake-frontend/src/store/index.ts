@@ -258,11 +258,20 @@ const cartSlice = createSlice({
   },
 });
 
+const savedTheme = typeof window !== 'undefined'
+  ? ((localStorage.getItem('cherry_theme') as 'dark' | 'light') || 'light')
+  : 'light';
+
+if (typeof window !== 'undefined') {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+}
+
 // Keep existing UI functionality.
 const uiSlice = createSlice({
   name: 'ui',
   initialState: {
     toast: '',
+    theme: savedTheme,
   },
   reducers: {
     showToast: (state, action: PayloadAction<string>) => {
@@ -271,6 +280,23 @@ const uiSlice = createSlice({
 
     hideToast: (state) => {
       state.toast = "";
+    },
+
+    toggleTheme: (state) => {
+      const next = state.theme === 'dark' ? 'light' : 'dark';
+      state.theme = next;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cherry_theme', next);
+        document.documentElement.setAttribute('data-theme', next);
+      }
+    },
+
+    setTheme: (state, action: PayloadAction<'dark' | 'light'>) => {
+      state.theme = action.payload;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cherry_theme', action.payload);
+        document.documentElement.setAttribute('data-theme', action.payload);
+      }
     },
   },
 });
@@ -291,6 +317,8 @@ export const {
 export const {
   showToast,
   hideToast,
+  toggleTheme,
+  setTheme,
 } = uiSlice.actions;
 
 export const store = configureStore({
