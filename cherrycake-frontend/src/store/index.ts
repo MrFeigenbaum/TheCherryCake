@@ -20,11 +20,14 @@ export const INITIAL_REGIONS: Region[] = [
   { code: 'AZE', name: 'Azerbaijan', currencyCode: 'AZN', currencySymbol: '₼', vatRate: 0.18 },
   { code: 'TUR', name: 'Turkey', currencyCode: 'TRY', currencySymbol: '₺', vatRate: 0.18 },
   { code: 'MDA', name: 'Moldova', currencyCode: 'MDL', currencySymbol: 'L', vatRate: 0.20 },
+  { code: 'ROU', name: 'Romania', currencyCode: 'RON', currencySymbol: 'lei', vatRate: 0.19 },
   { code: 'EST', name: 'Estonia', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.22 },
   { code: 'LVA', name: 'Latvia', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.21 },
   { code: 'LTU', name: 'Lithuania', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.21 },
   { code: 'FIN', name: 'Finland', currencyCode: 'EUR', currencySymbol: '€', vatRate: 0.24 },
   { code: 'SWE', name: 'Sweden', currencyCode: 'SEK', currencySymbol: 'kr', vatRate: 0.25 },
+  { code: 'BLR', name: 'Belarus', currencyCode: 'BYN', currencySymbol: 'Br', vatRate: 0.20 },
+  { code: 'RUS', name: 'Russia', currencyCode: 'RUB', currencySymbol: '₽', vatRate: 0.20 },
 ];
 
 const savedRegionCode = typeof window !== 'undefined' ? localStorage.getItem('cc_region') || 'UZB' : 'UZB';

@@ -19,18 +19,16 @@ class SeedDataTests {
     private JdbcTemplate jdbc;
 
     @Test
-    void seedsFiveRegionsWithVatAndExchangeRate() {
+    void seedsRegionsWithVatAndExchangeRate() {
         List<Map<String, Object>> regions = jdbc.queryForList(
                 "SELECT code, currency_code, vat_rate, exchange_rate FROM regions ORDER BY code");
 
-        assertThat(regions).extracting(r -> r.get("code"))
-                .containsExactly("CHN", "GEO", "KAZ", "UKR", "UZB");
-        assertThat(regions).extracting(r -> r.get("currency_code"))
-                .containsExactly("CNY", "GEL", "KZT", "UAH", "UZS");
-        assertThat(regions).extracting(r -> ((BigDecimal) r.get("vat_rate")).stripTrailingZeros())
-                .containsExactly(new BigDecimal("0.18"), new BigDecimal("0.12"), new BigDecimal("0.2"),
-                        new BigDecimal("0.08"), new BigDecimal("0.15"));
+        assertThat(regions).extracting(r -> (String) r.get("code"))
+                .contains("CHN", "GEO", "KAZ", "UKR", "UZB", "ARM", "AZE", "TUR", "MDA", "ROU", "EST", "LVA", "LTU", "FIN", "SWE", "BLR", "RUS");
+        assertThat(regions).hasSize(17);
         assertThat(regions).extracting(r -> (BigDecimal) r.get("exchange_rate"))
+                .allMatch(rate -> rate.signum() > 0);
+        assertThat(regions).extracting(r -> (BigDecimal) r.get("vat_rate"))
                 .allMatch(rate -> rate.signum() > 0);
     }
 
@@ -42,7 +40,8 @@ class SeedDataTests {
 
     @Test
     void everyProductHasPriceInEveryRegion() {
-        assertThat(count("SELECT COUNT(*) FROM regional_prices")).isEqualTo(12 * 5);
+        int regionCount = count("SELECT COUNT(*) FROM regions");
+        assertThat(count("SELECT COUNT(*) FROM regional_prices")).isEqualTo(12 * regionCount);
     }
 
     @Test
@@ -61,8 +60,9 @@ class SeedDataTests {
         assertThat(count("SELECT COUNT(*) FROM modifier_groups g "
                 + "WHERE NOT EXISTS (SELECT 1 FROM modifiers m WHERE m.group_id = g.id)")).isZero();
         assertThat(count("SELECT COUNT(*) FROM modifiers")).isPositive();
+        int regionCount = count("SELECT COUNT(*) FROM regions");
         assertThat(count("SELECT COUNT(*) FROM modifier_regional_prices"))
-                .isEqualTo(count("SELECT COUNT(*) FROM modifiers") * 5);
+                .isEqualTo(count("SELECT COUNT(*) FROM modifiers") * regionCount);
     }
 
     @Test

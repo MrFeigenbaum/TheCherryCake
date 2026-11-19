@@ -29,7 +29,7 @@ class CatalogControllerTests {
     void regionsExposeCurrencyAndVatButNotExchangeRate() throws Exception {
         mvc.perform(get("/api/regions"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$", hasSize(17)))
                 .andExpect(jsonPath("$[0].code").value("UZB"))
                 .andExpect(jsonPath("$[0].currencyCode").value("UZS"))
                 .andExpect(jsonPath("$[0].currencySymbol").value("so'm"))
@@ -58,6 +58,15 @@ class CatalogControllerTests {
 
         mvc.perform(get("/api/products").param("region", "GEO"))
                 .andExpect(jsonPath("$[0].price").value(85.80));
+
+        mvc.perform(get("/api/products").param("region", "ARM"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(12)))
+                .andExpect(jsonPath("$[0].price").value(12000.00));
+
+        mvc.perform(get("/api/products").param("region", "TUR"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].price").value(1020.00));
     }
 
     @Test
