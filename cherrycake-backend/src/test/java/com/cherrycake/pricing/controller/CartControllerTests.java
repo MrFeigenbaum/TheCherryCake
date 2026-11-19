@@ -48,6 +48,65 @@ class CartControllerTests {
     }
 
     @Test
+    void calculatesCartInNewlyAddedRegionsWithExchangeRatesAndVat() throws Exception {
+        // Turkey (TRY, VAT 18%, Exchange rate 8.5)
+        calculate("TUR", item(product("Cherry Cake"), 1, modifier("Cherry Cake", "Medium, 10 slices")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currencyCode").value("TRY"))
+                .andExpect(jsonPath("$.items[0].unitPrice").value(1020.00))
+                .andExpect(jsonPath("$.items[0].modifiersPrice").value(340.00))
+                .andExpect(jsonPath("$.items[0].lineTotal").value(1360.00))
+                .andExpect(jsonPath("$.subtotal").value(1360.00))
+                .andExpect(jsonPath("$.vatRate").value(0.18))
+                .andExpect(jsonPath("$.vatAmount").value(244.80))
+                .andExpect(jsonPath("$.amountInclVat").value(1604.80))
+                .andExpect(jsonPath("$.discountRate").value(0.03))
+                .andExpect(jsonPath("$.discountAmount").value(48.14))
+                .andExpect(jsonPath("$.total").value(1556.66));
+
+        // Armenia (AMD, VAT 20%, Exchange rate 100.0)
+        calculate("ARM", item(product("Tiramisu"), 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currencyCode").value("AMD"))
+                .andExpect(jsonPath("$.items[0].unitPrice").value(3000.00))
+                .andExpect(jsonPath("$.items[0].lineTotal").value(6000.00))
+                .andExpect(jsonPath("$.subtotal").value(6000.00))
+                .andExpect(jsonPath("$.vatRate").value(0.20))
+                .andExpect(jsonPath("$.vatAmount").value(1200.00))
+                .andExpect(jsonPath("$.amountInclVat").value(7200.00))
+                .andExpect(jsonPath("$.discountRate").value(0.0))
+                .andExpect(jsonPath("$.total").value(7200.00));
+
+        // Estonia (EUR, VAT 22%, Exchange rate 0.23)
+        calculate("EST", item(product("Cherry Cake"), 1, modifier("Cherry Cake", "Medium, 10 slices")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currencyCode").value("EUR"))
+                .andExpect(jsonPath("$.items[0].unitPrice").value(27.60))
+                .andExpect(jsonPath("$.items[0].modifiersPrice").value(9.20))
+                .andExpect(jsonPath("$.items[0].lineTotal").value(36.80))
+                .andExpect(jsonPath("$.subtotal").value(36.80))
+                .andExpect(jsonPath("$.vatRate").value(0.22))
+                .andExpect(jsonPath("$.vatAmount").value(8.10))
+                .andExpect(jsonPath("$.amountInclVat").value(44.90))
+                .andExpect(jsonPath("$.discountRate").value(0.03))
+                .andExpect(jsonPath("$.discountAmount").value(1.35))
+                .andExpect(jsonPath("$.total").value(43.55));
+
+        // Sweden (SEK, VAT 25%, Exchange rate 2.6)
+        calculate("SWE", item(product("Tiramisu"), 2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currencyCode").value("SEK"))
+                .andExpect(jsonPath("$.items[0].unitPrice").value(78.00))
+                .andExpect(jsonPath("$.items[0].lineTotal").value(156.00))
+                .andExpect(jsonPath("$.subtotal").value(156.00))
+                .andExpect(jsonPath("$.vatRate").value(0.25))
+                .andExpect(jsonPath("$.vatAmount").value(39.00))
+                .andExpect(jsonPath("$.amountInclVat").value(195.00))
+                .andExpect(jsonPath("$.discountRate").value(0.0))
+                .andExpect(jsonPath("$.total").value(195.00));
+    }
+
+    @Test
     void discountThresholdIsScaledByExchangeRate() throws Exception {
         calculate("UZB", item(product("Tiramisu"), 1))
                 .andExpect(status().isOk())

@@ -33,6 +33,37 @@ class SeedDataTests {
     }
 
     @Test
+    void newlyAddedRegionsHaveConfiguredCurrencySymbolAndVat() {
+        Map<String, Object> turkey = jdbc.queryForMap(
+                "SELECT currency_code, currency_symbol, vat_rate, exchange_rate FROM regions WHERE code = 'TUR'");
+        assertThat(turkey.get("currency_code")).isEqualTo("TRY");
+        assertThat(turkey.get("currency_symbol")).isEqualTo("₺");
+        assertThat((BigDecimal) turkey.get("vat_rate")).isEqualByComparingTo("0.18");
+        assertThat((BigDecimal) turkey.get("exchange_rate")).isEqualByComparingTo("8.5");
+
+        Map<String, Object> armenia = jdbc.queryForMap(
+                "SELECT currency_code, currency_symbol, vat_rate, exchange_rate FROM regions WHERE code = 'ARM'");
+        assertThat(armenia.get("currency_code")).isEqualTo("AMD");
+        assertThat(armenia.get("currency_symbol")).isEqualTo("֏");
+        assertThat((BigDecimal) armenia.get("vat_rate")).isEqualByComparingTo("0.20");
+        assertThat((BigDecimal) armenia.get("exchange_rate")).isEqualByComparingTo("100");
+
+        Map<String, Object> estonia = jdbc.queryForMap(
+                "SELECT currency_code, currency_symbol, vat_rate, exchange_rate FROM regions WHERE code = 'EST'");
+        assertThat(estonia.get("currency_code")).isEqualTo("EUR");
+        assertThat(estonia.get("currency_symbol")).isEqualTo("€");
+        assertThat((BigDecimal) estonia.get("vat_rate")).isEqualByComparingTo("0.22");
+        assertThat((BigDecimal) estonia.get("exchange_rate")).isEqualByComparingTo("0.23");
+
+        Map<String, Object> sweden = jdbc.queryForMap(
+                "SELECT currency_code, currency_symbol, vat_rate, exchange_rate FROM regions WHERE code = 'SWE'");
+        assertThat(sweden.get("currency_code")).isEqualTo("SEK");
+        assertThat(sweden.get("currency_symbol")).isEqualTo("kr");
+        assertThat((BigDecimal) sweden.get("vat_rate")).isEqualByComparingTo("0.25");
+        assertThat((BigDecimal) sweden.get("exchange_rate")).isEqualByComparingTo("2.6");
+    }
+
+    @Test
     void seedsThreeCategoriesAndTwelveProducts() {
         assertThat(count("SELECT COUNT(*) FROM categories")).isEqualTo(3);
         assertThat(count("SELECT COUNT(*) FROM products")).isEqualTo(12);

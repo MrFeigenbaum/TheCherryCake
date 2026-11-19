@@ -114,6 +114,61 @@ class OrderControllerTests {
     }
 
     @Test
+    void createsGuestOrderInNewlyAddedRegionWithSnapshotAndVat() throws Exception {
+        long cakeId = product("Cherry Cake");
+        long sizeMod = modifier("Cherry Cake", "Medium, 10 slices");
+        String tomorrow = LocalDate.now().plusDays(1).toString();
+
+        String body = """
+                {
+                  "region": "TUR",
+                  "customer": {
+                    "name": "Ahmet Yilmaz",
+                    "phone": "+905551234567",
+                    "email": "ahmet@example.com"
+                  },
+                  "orderDate": "%s",
+                  "items": [
+                    { "productId": %d, "quantity": 1, "modifierIds": [%d] }
+                  ]
+                }
+                """.formatted(tomorrow, cakeId, sizeMod);
+
+        MvcResult result = mvc.perform(post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.orderNumber").value(startsWith("CC-")))
+                .andExpect(jsonPath("$.region").value("TUR"))
+                .andExpect(jsonPath("$.items[0].productName").value("Cherry Cake"))
+                .andExpect(jsonPath("$.subtotal").value(1360.00))
+                .andExpect(jsonPath("$.vatRate").value(0.18))
+                .andExpect(jsonPath("$.vatAmount").value(244.80))
+                .andExpect(jsonPath("$.amountInclVat").value(1604.80))
+                .andExpect(jsonPath("$.discountRate").value(0.03))
+                .andExpect(jsonPath("$.discountAmount").value(48.14))
+                .andExpect(jsonPath("$.deliveryFee").value(0.00))
+                .andExpect(jsonPath("$.total").value(1556.66))
+                .andExpect(jsonPath("$.currencyCode").value("TRY"))
+                .andReturn();
+
+        JsonNode json = objectMapper.readTree(result.getResponse().getContentAsString());
+        String orderNumber = json.get("orderNumber").asText();
+
+        long turId = jdbc.queryForObject("SELECT id FROM regions WHERE code = 'TUR'", Long.class);
+        var saved = orderRepository.findByOrderNumber(orderNumber).orElseThrow();
+        assertThat(saved.getRegionId()).isEqualTo(turId);
+        assertThat(saved.getCurrencyCode()).isEqualTo("TRY");
+        assertThat(saved.getSubtotal()).isEqualByComparingTo("1360.00");
+        assertThat(saved.getVatRate()).isEqualByComparingTo("0.18");
+        assertThat(saved.getVatAmount()).isEqualByComparingTo("244.80");
+        assertThat(saved.getAmountInclVat()).isEqualByComparingTo("1604.80");
+        assertThat(saved.getDiscountRate()).isEqualByComparingTo("0.03");
+        assertThat(saved.getDiscountAmount()).isEqualByComparingTo("48.14");
+        assertThat(saved.getTotal()).isEqualByComparingTo("1556.66");
+    }
+
+    @Test
     void rejectsPastOrderDateAndInvalidCustomerEmail() throws Exception {
         long tiramisuId = product("Tiramisu");
         String yesterday = LocalDate.now().minusDays(1).toString();

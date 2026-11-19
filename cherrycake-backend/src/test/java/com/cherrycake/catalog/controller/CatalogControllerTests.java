@@ -114,6 +114,27 @@ class CatalogControllerTests {
     }
 
     @Test
+    void productDetailHasModifierGroupsInNewRegionsCurrency() throws Exception {
+        mvc.perform(get("/api/products/{id}", productId("Cherry Cake")).param("region", "TUR"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.price").value(1020.00))
+                .andExpect(jsonPath("$.modifierGroups[0].modifiers[1].name").value("Medium, 10 slices"))
+                .andExpect(jsonPath("$.modifierGroups[0].modifiers[1].priceDelta").value(340.00));
+
+        mvc.perform(get("/api/products/{id}", productId("Cherry Cake")).param("region", "ARM"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.price").value(12000.00))
+                .andExpect(jsonPath("$.modifierGroups[0].modifiers[1].name").value("Medium, 10 slices"))
+                .andExpect(jsonPath("$.modifierGroups[0].modifiers[1].priceDelta").value(4000.00));
+
+        mvc.perform(get("/api/products/{id}", productId("Cherry Cake")).param("region", "EST"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.price").value(27.60))
+                .andExpect(jsonPath("$.modifierGroups[0].modifiers[1].name").value("Medium, 10 slices"))
+                .andExpect(jsonPath("$.modifierGroups[0].modifiers[1].priceDelta").value(9.20));
+    }
+
+    @Test
     void productWithoutModifiersHasEmptyGroups() throws Exception {
         mvc.perform(get("/api/products/{id}", productId("Tiramisu")).param("region", "UZB"))
                 .andExpect(status().isOk())

@@ -10,27 +10,57 @@ import {
   hideToast,
   toggleTheme,
   setTheme,
+  INITIAL_REGIONS,
 } from './index';
 
 describe('Redux Store', () => {
-  it('should update selected region', () => {
-    store.dispatch(setRegion('KAZ'));
-    expect(store.getState().region.selected).toBe('KAZ');
-    expect(store.getState().region.currencyCode).toBe('KZT');
-    expect(store.getState().region.vatRate).toBe(0.20);
+  it('should include all 17 regions in INITIAL_REGIONS', () => {
+    expect(INITIAL_REGIONS).toHaveLength(17);
+    const codes = INITIAL_REGIONS.map((r) => r.code);
+    expect(codes).toContain('TUR');
+    expect(codes).toContain('ARM');
+    expect(codes).toContain('EST');
+    expect(codes).toContain('SWE');
+    expect(codes).toContain('ROU');
+    expect(codes).toContain('BLR');
+    expect(codes).toContain('RUS');
   });
 
-  it('should update language and derive from country', () => {
-    // Switch to Georgia -> language should default to Georgian ('ka')
-    store.dispatch(setLanguageFromRegion('GEO'));
-    expect(store.getState().language.current).toBe('ka');
+  it('should update selected region and currency metadata for new regions', () => {
+    store.dispatch(setRegion('TUR'));
+    expect(store.getState().region.selected).toBe('TUR');
+    expect(store.getState().region.currencyCode).toBe('TRY');
+    expect(store.getState().region.currencySymbol).toBe('₺');
+    expect(store.getState().region.vatRate).toBe(0.18);
 
-    // User can manually switch to Russian or English
-    store.dispatch(setLanguage('ru'));
-    expect(store.getState().language.current).toBe('ru');
+    store.dispatch(setRegion('ARM'));
+    expect(store.getState().region.selected).toBe('ARM');
+    expect(store.getState().region.currencyCode).toBe('AMD');
+    expect(store.getState().region.currencySymbol).toBe('֏');
+    expect(store.getState().region.vatRate).toBe(0.20);
 
-    store.dispatch(setLanguage('en'));
-    expect(store.getState().language.current).toBe('en');
+    store.dispatch(setRegion('SWE'));
+    expect(store.getState().region.selected).toBe('SWE');
+    expect(store.getState().region.currencyCode).toBe('SEK');
+    expect(store.getState().region.currencySymbol).toBe('kr');
+    expect(store.getState().region.vatRate).toBe(0.25);
+  });
+
+  it('should derive default language from newly supported countries', () => {
+    store.dispatch(setLanguageFromRegion('ARM'));
+    expect(store.getState().language.current).toBe('hy');
+
+    store.dispatch(setLanguageFromRegion('TUR'));
+    expect(store.getState().language.current).toBe('tr');
+
+    store.dispatch(setLanguageFromRegion('EST'));
+    expect(store.getState().language.current).toBe('et');
+
+    store.dispatch(setLanguageFromRegion('SWE'));
+    expect(store.getState().language.current).toBe('sv');
+
+    store.dispatch(setLanguageFromRegion('FIN'));
+    expect(store.getState().language.current).toBe('fi');
   });
 
   it("should add items to cart", () => {
